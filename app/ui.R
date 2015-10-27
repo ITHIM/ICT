@@ -83,7 +83,26 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      radioButtons("flipMETHG", label = "Flip Histogram:", METSwitchRButton, inline = TRUE),
                                      HTML("<hr>"),
                                      radioButtons("phyGuideline", label = "% Meeting WHO Physical Guideline", phyGLRButton, selected = phyGLRButton[2], inline = TRUE)
+                    ),
+                    conditionalPanel(condition="input.conditionedPanels==5",
+                                     selectInput(inputId = "inTTMS", label = "Select Cycling Multiplier:", choices =  uBDMS),
+                                     selectInput(inputId = "inTTTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uBDTDR, selected = uTDR[length(uTDR)]),
+                                     selectInput(inputId = "inTTEB", label = "Select Ebike (EB):", choices =  uBDEB),
+                                     selectInput(inputId = "inTTEQ", label = "Select Equity (EQ):", choices =  uBDEQ),
+                                     HTML("<hr>"),
+                                     selectizeInput("inTTag", "Age Group:", ag, selected = ag[1], multiple = F),
+                                     radioButtons("inTTgender", "Gender: ", gender, inline = TRUE),
+                                     selectizeInput("inTTses", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                                     selectizeInput("inTTethnicity", "Ethnic Group:", ethnicity, selected = ethnicity[1], multiple = F)
+                    ),
+                    conditionalPanel(condition="input.conditionedPanels==6",
+                                     selectInput(inputId = "inFTMS", label = "Select Cycling Multiplier:", choices =  uBDMS),
+                                     selectInput(inputId = "inFTTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uBDTDR, selected = uTDR[length(uTDR)]),
+                                     selectInput(inputId = "inFTEB", label = "Select Ebike (EB):", choices =  uBDEB),
+                                     selectInput(inputId = "inFTEQ", label = "Select Equity (EQ):", choices =  uBDEQ)
                     )
+                    
+                    
                   ),
                   
                   mainPanel(
@@ -102,9 +121,17 @@ shinyUI(fluidPage(width="100%", height="100%",
                       tabPanel("Mode of Travel", value=3,
                                showOutput('plotMode', "highcharts")
                       ), 
-                      tabPanel("METs", value=4,
+                      tabPanel("Physical Activity", value=4,
                                showOutput('plotMET', "highcharts"),
                                showOutput('plotScenarioMET', "highcharts")
+                      ),
+                      tabPanel("Trip Time", value=5,
+                               showOutput('plotTripTime', "highcharts"),
+                               showOutput('plotTripTimeDifference', "highcharts")
+                               
+                      ),
+                      tabPanel("Faster Trips", value=6,
+                               showOutput('plotBDFasterTrips', "highcharts")
                       ),
                       
                       id = "conditionedPanels"

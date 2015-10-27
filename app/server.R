@@ -10,12 +10,20 @@ library(dplyr)
 library(plyr)
 library(ggplot2)
 library(stringr)
+library(Hmisc)
 
 pd <- idata$total_mmet
 scMETdata <- NULL
 scFilteredMETdata <- NULL
+scTimeTraveldata <- NULL
+scFilteredTimeTraveldata <- NULL
+scFilteredTripTimeTraveldata <- NULL
+ftdata <- NULL
 bd <- NULL
 pdl <- NULL
+
+# Functions
+source("functions.R")
 
 shinyServer(function(input, output, session){
   
@@ -41,6 +49,80 @@ shinyServer(function(input, output, session){
     data[is.na(data)] <- 0
     
     pd <<- data
+  })
+  
+  
+  filterTimeTravelData <- reactive({
+    data <- scenariosTimeTravelIdata
+    
+    if (input$inTTag != 'All'){
+      data <- subset(data, age == input$inTTag)
+    }
+    if (input$inTTgender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inTTgender)
+    
+    if (input$inTTses != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inTTses)
+    }
+    
+    if (input$inTTethnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
+    }
+    data[is.na(data)] <- 0
+    
+    #pd <<- data
+    
+    #data <- scenariosTimeTravelIdata
+    
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
+                        paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
+    
+    #tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
+    
+    data["timetravel"] <- data[,columnName]
+    
+    data <- arrange(data, timetravel)
+    
+    #Convert data in minutes to hours
+    data["timetravel"] <- data["timetravel"]/60
+    
+    scTimeTraveldata["timetravel"] <<- scenariosTimeTravelIdata[,columnName]
+    scFilteredTimeTraveldata <<- data
+    #     scFilteredTripTimeTraveldata <<- tripData
+  })
+  
+  tripTimeData <- reactive({
+    data <- scenariosTripTimeTravelIdata
+    
+    if (input$inTTag != 'All'){
+      data <- subset(data, age_group == input$inTTag)
+    }
+    if (input$inTTgender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inTTgender)
+    
+    if (input$inTTses != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inTTses)
+    }
+    
+    if (input$inTTethnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
+    }
+    data[is.na(data)] <- 0
+    
+    
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
+                        paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
+    
+    #cat(columnName, "\n")
+    
+    tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
+    tripData <- data[,c("baseline", columnName)]
+    
+    tripData <- as.data.frame((tripData$baseline - tripData[[columnName]]) / tripData$baseline * 100)
+    
+    colnames(tripData) <- c("diff")
+    tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
+    scFilteredTripTimeTraveldata <<- tripDataSubset
   })
   
   
@@ -99,6 +181,7 @@ shinyServer(function(input, output, session){
       h1$plotOptions(column=list(animation=FALSE))
       
       filtered_title <- getBaselineFilteredTitle(tdata)
+      #cat(filtered_title, "\n" )
       extended_title <- paste("Main Mode: Total population versus population selected for scenario")
       #(selected population currently defined as ", filtered_title, ")", sep = "")
       h1$title(text = extended_title)
@@ -129,6 +212,7 @@ shinyServer(function(input, output, session){
       if(filter){
         h1$series(data = bcounts[["Selected Population"]], name = "Selected Population")
         h1$yAxis(min = 0, max = max(80, max(bcounts[["Total Population"]], na.rm=TRUE), max(bcounts[["Selected Population"]], na.rm=TRUE)), tickInterval = 20, title = list(text = 'Percentage %'))
+        h1$subtitle(text = paste("Selected Population: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
@@ -395,13 +479,114 @@ shinyServer(function(input, output, session){
     }
   })
   
-  getFilteredBDTitle <- function (){
-    filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", TDR: ", input$inBDTDR, ", Ebike: ", input$inBDEB, " and Equity: ", input$inBDEQ, sep = "" )
+  output$plotTripTime <- renderChart({
+    filterTimeTravelData()
+    #scenariosTimeTravelIdata
+    if (!is.null(scFilteredTimeTraveldata) && length(scFilteredTimeTraveldata) > 0){
+      
+      h1 <- Highcharts$new()
+      h1$chart(type = "column")
+      
+      #       minv <- min(scFilteredTimeTraveldata[["timetravel"]])
+      #       maxv <- max(scFilteredTimeTraveldata[["timetravel"]])
+      if (length (scFilteredTimeTraveldata$timetravel) > 0){
+        #         data.decile <- cut(scFilteredTimeTraveldata$timetravel, breaks = quantile(scFilteredTimeTraveldata$timetravel, probs= seq(0, 1, by= 0.1)), include.lowest=T, labels = c(1:10))
+        
+        data.decile <- cut2(scFilteredTimeTraveldata$timetravel, g = 10)
+        
+        #       bcounts <- as.data.frame(table(cut(scFilteredTimeTraveldata$timetravel, breaks=seq(minv,maxv, by=2))))
+        
+        #       h1$series(data = bcounts$Freq, name = "Time Travel (Hours)")
+        h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Time Travel (Hours)")
+        h1$xAxis(categories = c(1:10), title = "Decile")
+        h1$yAxis(title = list(text = '# of Hours'))
+        
+      }
+      
+      h1$set(dom = 'plotTripTime')
+      h1$exporting(enabled = T)
+      return(h1)
+    }
+    
+  })
+  
+  
+  output$plotTripTimeDifference <- renderChart({
+    tripTimeData()
+    #scenariosTimeTravelIdata
+    if (!is.null(scFilteredTripTimeTraveldata) && length(scFilteredTripTimeTraveldata) > 0){
+      
+      h1 <- Highcharts$new()
+      h1$chart(type = "column")
+      
+      h1$plotOptions(column = list(dataLabels = list(enabled = T, 
+                                                     crop = FALSE, 
+                                                     rotation = -90, 
+                                                     align = 'right', 
+                                                     color = '#FFFFFF', 
+                                                     width = 100,
+                                                     x = 4, 
+                                                     y = 10, 
+                                                     style = list(fontSize = '13px', fontFamily = 'Verdana, sans-serif'))),
+                     series = list(dataLabels = list(crop = F))
+      )
+      
+      if (length (scFilteredTripTimeTraveldata$diff) > 0){
+        
+        #         data.decile <- cut2(scFilteredTripTimeTraveldata$diff, g = 10)
+        #         
+        #         data <- as.data.frame(table(data.decile))
+        
+        dhit <- hist(scFilteredTripTimeTraveldata$diff)
+        #data <- data.frame(breaks = dhit$breaks[-length(dhit$breaks)], counts = dhit$counts)
+        data <- data.frame(breaks = dhit$breaks, counts = append(dhit$counts, 0))
+        data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+        data <- subset(data, freq >= 0.1)
+        
+        h1$series(data =  data$freq, name = "Time Difference from Baseline (%)")
+        
+        if (nrow(data) == 1){
+          xlabel <- data$breaks
+          h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
+                                                                    fontFamily = 'Verdana, sans-serif',
+                                                                    whiteSpace = 'nowrap',
+                                                                    paddingLeft = '10px',
+                                                                    paddingRight = '10px',
+                                                                    paddingTop = '10px'))
+          )
+          #h1$xAxis(categories = "20%")
+          cat(" Single label: ", xlabel, "\n")
+          
+        }else{
+          
+          h1$xAxis(categories = paste(data$breaks, "%"))
+        }
+#         cat("length: ", nrow(data), "Freq: ", data$freq, "\n Breaks: ",  paste(data$breaks, "%"), "\n")
+        h1$yAxis(min = 0, max = 100, tickInterval = 20, title = list(text = 'Percentage %'))
+        
+        h1$tooltip(valueSuffix= '%')
+        
+      }
+      
+      h1$set(dom = 'plotTripTimeDifference')
+      h1$exporting(enabled = T)
+      return(h1)
+    }
+    
+  })
+  
+  getFilteredBDTitle <- function (src){
+    filtered_title <- ""
+    if (src == "BD")
+      filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", TDR: ", input$inBDTDR, ", Ebike: ", input$inBDEB, " and Equity: ", input$inBDEQ, sep = "" )
+    else if (src == "FT")
+      filtered_title <- paste("Cycling Multiplier: ", input$inFTMS, ", TDR: ", input$inFTTDR, ", Ebike: ", input$inFTEB, " and Equity: ", input$inFTEQ, sep = "" )
+    
     filtered_title
   }
   
   getBaselineFilteredTitle <- function(data){
-    filtered_title <- "total population (baseline)"
+    filtered_title <- "Total Population (Baseline)"
     if (nrow(data) != nrow (pd)){
       
       displayGender <- "All"
@@ -438,7 +623,7 @@ shinyServer(function(input, output, session){
   }
   
   getMETFilteredTitle <- function(data, src){
-    filtered_title <- "total population (baseline)"
+    filtered_title <- "Total Population (Baseline)"
     if (src == "baseline")
       dataSource = idata
     else
@@ -499,6 +684,23 @@ shinyServer(function(input, output, session){
   })
   
   
+  generateFasterTripsTable <- reactive({
+    
+    lMS <- input$inFTMS
+    lTDR <- input$inFTTDR
+    lEB <- input$inFTEB
+    lEQ <- input$inFTEQ
+    
+    data <- fasterTripData
+    data <- subset(data, MS == lMS & TDR == lTDR & equity == lEQ & ebike == lEB)
+    
+    data[is.na(data)] <- 0
+    data <- arrange(data, MS)
+    ftdata <<- data
+    
+  })
+  
+  
   generateScenarioTable<- reactive({
     
     #     lMS <- input$inMS
@@ -536,9 +738,11 @@ shinyServer(function(input, output, session){
     h1$yAxis(title = list(text = var))
     h1$xAxis(categories = sort(unique(sdata$MS), decreasing = F), title = list(text = 'Cycling Multiplier'))
     
+    h1$series(data = baselineSummary[[var]] , name = "Baseline")
+    
     if (input$inTDR == "All"){
       if (input$inEB != "All" & input$inEQ != "All"){
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
+        sub1 <- append(0, subset(scdata, TDR == 0.7 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ)))
         h1$series(data = sub1[[var]], name = paste("TDR 0.7 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.8 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
         h1$series(data = sub1[[var]], name = paste("TDR 0.8 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
@@ -690,8 +894,8 @@ shinyServer(function(input, output, session){
       h1$chart(type = "column")
       h1$plotOptions(column=list(animation=FALSE))
       
-      filtered_title <- getFilteredBDTitle()
-      extended_title <- paste("Mode Share: Total population versus selected scenario (scenario defined as ", filtered_title, ")", sep = "")
+      filtered_title <- getFilteredBDTitle("BD")
+      extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
       h1$title(text = extended_title)
       baseline <- subset(msharedtata, MS == 1)
       h1$series(data = baseline$case, name = "Baseline")
@@ -699,9 +903,35 @@ shinyServer(function(input, output, session){
       
       h1$xAxis(categories = c("Walk", "Car Driver", "Car Passenger", "Bus", "Train", "Other", "Bicycle", "Ebike"))
       
+      h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      
       h1$tooltip(valueSuffix= '%')
       
       h1$set(dom = 'plotBDMode')
+      h1$exporting(enabled = T)
+      return (h1)
+    }
+  })
+  
+  
+  output$plotBDFasterTrips <- renderChart({
+    generateFasterTripsTable()
+    if (!is.null(ftdata)){
+      h1 <- Highcharts$new()
+      h1$chart(type = "column")
+      h1$plotOptions(column=list(animation=FALSE))
+      
+      filtered_title <- getFilteredBDTitle("FT")
+      extended_title <- paste("Faster Trips: Selected Scenario")
+      h1$title(text = extended_title)
+      h1$series(data = ftdata$case, name = "Scenario")
+      h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      
+      h1$xAxis(categories = c("Walk", "Car Passenger", "Bus", "Train", "Other", "Bicycle"))
+      
+      h1$tooltip(valueSuffix= '%')
+      
+      h1$set(dom = 'plotBDFasterTrips')
       h1$exporting(enabled = T)
       return (h1)
     }
