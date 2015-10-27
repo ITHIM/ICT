@@ -86,7 +86,7 @@ shinyServer(function(input, output, session){
     #Convert data in minutes to hours
     data["timetravel"] <- data["timetravel"]/60
     
-    scTimeTraveldata["timetravel"] <<- scenariosTimeTravelIdata[,columnName]
+    #     scTimeTraveldata["timetravel"] <<- scenariosTimeTravelIdata[,columnName]
     scFilteredTimeTraveldata <<- data
     #     scFilteredTripTimeTraveldata <<- tripData
   })
@@ -561,7 +561,7 @@ shinyServer(function(input, output, session){
           
           h1$xAxis(categories = paste(data$breaks, "%"))
         }
-#         cat("length: ", nrow(data), "Freq: ", data$freq, "\n Breaks: ",  paste(data$breaks, "%"), "\n")
+        #         cat("length: ", nrow(data), "Freq: ", data$freq, "\n Breaks: ",  paste(data$breaks, "%"), "\n")
         h1$yAxis(min = 0, max = 100, tickInterval = 20, title = list(text = 'Percentage %'))
         
         h1$tooltip(valueSuffix= '%')
