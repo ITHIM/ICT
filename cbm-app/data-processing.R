@@ -21,5 +21,4 @@ scenariosIdata <- read.csv("data/b_eng_mmet.csv", as.is = T)
 scenariosTimeTravelIdata <- read.csv("data/triptim_filtered.csv", as.is = T)
 
 scenariosTripTimeTravelIdata <- read.csv("data/bd_triptime.csv", as.is = T)
-# scenariosTripTimeTravelIdata <- read.csv("..data/BD_triptimes.csv", as.is = T)
 
