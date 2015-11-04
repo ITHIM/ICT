@@ -16,3 +16,23 @@ createPhyActTable <- function(data){
   m <- as.data.frame(m)
   m
 }
+
+lookup_table <- function(data, ag){
+  
+  var <- ag$V2[match(data, ag$V1)]
+  var
+}
+
+format_function <- "#! function() {
+        var fraction  = this.y / this.series.yAxis.max * 100;
+        if (fraction > 20){
+              return this.y;
+        }else{
+            return null;
+        }
+      }!#"
+
+getSeriesName <- function( EQ, TDR , EB){
+  paste("EQ:", EQ, "& TDR:", TDR, "& EB:", EB, sep = " ")
+  
+}
