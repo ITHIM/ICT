@@ -19,8 +19,12 @@ scTimeTraveldata <- NULL
 scFilteredTimeTraveldata <- NULL
 scFilteredTripTimeTraveldata <- NULL
 ftdata <- NULL
+swdata <- NULL
 bd <- NULL
 pdl <- NULL
+bldata <- NULL
+scYllData <- NULL
+scYllReductionData <- NULL
 
 # Functions
 source("functions.R")
@@ -48,7 +52,7 @@ shinyServer(function(input, output, session){
     }
     data[is.na(data)] <- 0
     
-    pd <<- data
+    bldata <<- data
   })
   
   
@@ -70,14 +74,9 @@ shinyServer(function(input, output, session){
     }
     data[is.na(data)] <- 0
     
-    #pd <<- data
-    
-    #data <- scenariosTimeTravelIdata
-    
     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
                         paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
     
-    #tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
     
     data["timetravel"] <- data[,columnName]
     
@@ -113,18 +112,47 @@ shinyServer(function(input, output, session){
     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
                         paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
     
-    #cat(columnName, "\n")
-    
     tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
     tripData <- data[,c("baseline", columnName)]
     
-    tripData <- as.data.frame((tripData$baseline - tripData[[columnName]]) / tripData$baseline * 100)
+    tripData <- as.data.frame(((tripData[[columnName]] - tripData$baseline) / tripData$baseline ) * 100)
     
     colnames(tripData) <- c("diff")
     tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
+    tripDataSubset <- subset(tripDataSubset, diff != 0 )
     scFilteredTripTimeTraveldata <<- tripDataSubset
   })
   
+  filterHealthData <- reactive({
+    data1 <- yll
+    # Temporarily removing YLL total values
+    data1 <- subset(data1, age.band != "All Ages")
+    data2 <- yll_red
+    
+    if (input$inHealthAG != 'All'){
+      # Temporarily removing YLL total values
+      data1 <- subset(data1, age.band == input$inHealthAG)
+      data2 <- subset(data2, age.band == input$inHealthAG | age.band == "All Ages")
+    }
+    if (input$inHealthG != 'All'){
+      # Temporarily removing YLL total values
+      data1 <- subset(data1, gender %in% input$inHealthG)
+      data2 <- subset(data2, gender %in% input$inHealthG | gender == "Both Gender")
+    }
+    
+    columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("TDR", input$inHealthTDR,sep = ""),
+                        paste("ebik", input$inHealthEB,sep = ""), paste("eq", input$inHealthEQ,sep = ""), sep="_")
+    
+    data1 <- data1[,c("age.band", "gender",columnName)]
+    colnames(data1) <- c("age.band", "gender", "scenario")
+    
+    data2 <- data2[,c("age.band", "gender",columnName)]
+    colnames(data2) <- c("age.band", "gender", "scenario")
+    
+    scYllData <<- data1
+    scYllReductionData <<- data2
+    
+  })
   
   plotMETDataTable<- reactive({
     data <- idata
@@ -175,14 +203,14 @@ shinyServer(function(input, output, session){
   
   output$plotMode <- renderChart({
     plotBLDataTable()
-    if (!is.null(pd)){
+    if (!is.null(bldata)){
       h1 <- Highcharts$new()
       h1$chart(type = "column")
       h1$plotOptions(column=list(animation=FALSE))
       
       filtered_title <- getBaselineFilteredTitle(tdata)
       #cat(filtered_title, "\n" )
-      extended_title <- paste("Main Mode: Total population versus population selected for scenario")
+      extended_title <- paste("Main Mode: Total population versus Selected Population")
       #(selected population currently defined as ", filtered_title, ")", sep = "")
       h1$title(text = extended_title)
       bcounts <- count(tdata, "MainMode_reduced_val")
@@ -194,7 +222,7 @@ shinyServer(function(input, output, session){
       bcounts$tp <- round(bcounts$tp, digits = 1)
       bcounts$freq <- NULL
       
-      scounts <- count(pd, "MainMode_reduced_val")
+      scounts <- count(bldata, "MainMode_reduced_val")
       filter <- FALSE
       if (sum(scounts$freq, na.rm = T) >= 10)
         filter <- TRUE
@@ -228,10 +256,10 @@ shinyServer(function(input, output, session){
   
   
   output$plotMET <- renderChart({
-    plotMETDataTable()
-    
     input$flipMETHG
     input$phyGuideline
+    
+    plotMETDataTable()
     
     if (!is.null(idata) & !is.null(scMETdata)){
       if (input$flipMETHG == 'sep'){
@@ -242,8 +270,8 @@ shinyServer(function(input, output, session){
         
         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
         
-        firstColName <- "Baseline"
-        secondColName <- "Baseline (Filtered)"
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Baseline (Sub-Population)"
         
       }else{
         # Keep the data mixed
@@ -252,16 +280,14 @@ shinyServer(function(input, output, session){
         
         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
         
-        firstColName <- "Baseline"
-        secondColName <- "Scenario"
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Scenario (Sub-Population)"
       }
       
       filtered_title <- getMETFilteredTitle(secondColData, "baseline")
       
       h1 <- Highcharts$new()
       h1$chart(type = "column")
-      h1$plotOptions(column=list(animation=FALSE))
-      
       
       if (input$phyGuideline == 'on'){
         bc <- createPhyActTable(firstColData)
@@ -270,12 +296,12 @@ shinyServer(function(input, output, session){
         h1$xAxis(categories = c("Lower the guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
                                 "Meeting the guidelines (METh > 17.5)"), 
                  title = list(text = 'Marginal MET Hours'))
-        h1$series(data = bc$Freq, name = paste(firstColName, "Population", sep = " "))
+        h1$series(data = bc$Freq, name = firstColName)
         
         bc <- createPhyActTable(secondColData)#$total_mmet)
         bc$Freq <- round(bc$Freq  / nrow(secondColData) * 100, digits = 1)
         
-        h1$series(data = bc$Freq, name = paste(secondColName, "Population", sep = " "))
+        h1$series(data = bc$Freq, name = secondColName)
         
         if (nrow(firstColData) < 10){
           h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
@@ -285,6 +311,18 @@ shinyServer(function(input, output, session){
         
         h1$yAxis(tickInterval = 20, title = list(text = 'Percentage %'))
         
+        h1$plotOptions(column=list(animation=FALSE, 
+                                   dataLabels = list(enabled = T, 
+                                                     crop = FALSE, 
+                                                     rotation = -90, 
+                                                     align = 'right', 
+                                                     color = '#FFFFFF', 
+                                                     width = 100,
+                                                     x = 4, 
+                                                     y = 10, 
+                                                     style = list(fontSize = '10px', fontFamily = 'Verdana, sans-serif'))))
+        
+        
       }else{
         
         bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
@@ -292,7 +330,7 @@ shinyServer(function(input, output, session){
         bc1max <- max(bc$Freq, na.rm = T)
         
         h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "52.7+")), title = list(text = 'Marginal MET Hours'))
-        h1$series(data = bc$Freq, name = paste(firstColName, "Population", sep = " "))
+        h1$series(data = bc$Freq, name = firstColName)
         max_val <- 0
         if (nrow(secondColData) > 1)
           max_val <- max(secondColData$total_mmet, na.rm = T)
@@ -320,12 +358,14 @@ shinyServer(function(input, output, session){
         h1$yAxis(min = 0, max = max(30, max_y), tickInterval = 10, title = list(text = 'Percentage %'))
         
         if(filter){
-          h1$series(data = bc$Freq, name = paste(secondColName, "Population", sep = " "))
+          h1$series(data = bc$Freq, name = secondColName)
           h1$subtitle(text= filtered_title)
           
         }else{
           h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
         }
+        
+        h1$plotOptions(column=list(animation=FALSE))
       }
       
     }
@@ -349,8 +389,8 @@ shinyServer(function(input, output, session){
         secondColData = scFilteredMETdata
         extended_title <- paste("Marginal MET hours of Scenario")
         
-        firstColName <- "Scenario"
-        secondColName <- "Scenario (Filtered)"
+        firstColName <- "Scenario (Total Population)"
+        secondColName <- "Scenario (Sub-population)"
         
         
         
@@ -360,8 +400,8 @@ shinyServer(function(input, output, session){
         secondColData = scFilteredMETdata
         extended_title <- paste("Baseline versus Scenario - Marginal MET hour of Filtered Population")
         
-        firstColName <- "Baseline (Filtered)"
-        secondColName <- "Scenario (Filtered)"
+        firstColName <- "Baseline (Sub-population)"
+        secondColName <- "Scenario (Sub-population)"
         
       }
       
@@ -369,7 +409,7 @@ shinyServer(function(input, output, session){
       
       h1 <- Highcharts$new()
       h1$chart(type = "column")
-      h1$plotOptions(column=list(animation=FALSE))
+      
       
       if (input$phyGuideline == 'on'){
         bc <- createPhyActTable(firstColData)
@@ -378,12 +418,12 @@ shinyServer(function(input, output, session){
         h1$xAxis(categories = c("Lower the guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
                                 "Meeting the guidelines (METh > 17.5)"), 
                  title = list(text = 'Marginal MET Hours'))
-        h1$series(data = bc$Freq, name = paste(firstColName, "Population", sep = " "))
+        h1$series(data = bc$Freq, name = firstColName)
         
         bc <- createPhyActTable(secondColData)#$total_mmet)
         bc$Freq <- round(bc$Freq  / nrow(secondColData) * 100, digits = 1)
         
-        h1$series(data = bc$Freq, name = paste(secondColName, "Population", sep = " "))
+        h1$series(data = bc$Freq, name = secondColName)
         
         if (nrow(firstColData) < 10){
           h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
@@ -393,6 +433,17 @@ shinyServer(function(input, output, session){
         
         h1$yAxis(tickInterval = 20, title = list(text = 'Percentage %'))
         
+        h1$plotOptions(column=list(animation=FALSE, 
+                                   dataLabels = list(enabled = T, 
+                                                     crop = FALSE, 
+                                                     rotation = -90, 
+                                                     align = 'right', 
+                                                     color = '#FFFFFF', 
+                                                     width = 100,
+                                                     x = 4, 
+                                                     y = 10, 
+                                                     style = list(fontSize = '10px', fontFamily = 'Verdana, sans-serif'))))
+        
       }else{
         
         bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
@@ -400,7 +451,7 @@ shinyServer(function(input, output, session){
         bc1max <- max(bc$Freq, na.rm = T)
         
         h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "52.7+")), title = list(text = 'Marginal MET Hours'))
-        h1$series(data = bc$Freq, name = paste(firstColName, "Population", sep = " "))
+        h1$series(data = bc$Freq, name = firstColName)
         max_val <- 0
         if (nrow(secondColData) > 1)
           max_val <- max(secondColData$total_mmet, na.rm = T)
@@ -429,12 +480,14 @@ shinyServer(function(input, output, session){
         
         
         if(filter){
-          h1$series(data = bc$Freq, name = paste(secondColName, "Population", sep = " "))
+          h1$series(data = bc$Freq, name = secondColName)
           h1$subtitle(text= filtered_title)
           
         }else{
           h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
         }
+        
+        h1$plotOptions(column=list(animation=FALSE))
       }
       
     }
@@ -446,6 +499,47 @@ shinyServer(function(input, output, session){
     return(h1)
     
   })
+  output$plotYLL <- renderChart({
+    filterHealthData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    if (nrow(scYllReductionData) > 0){
+      h1$xAxis(categories = paste(scYllData$gender, "and", scYllData$age.band, "old",  sep = " "), 
+               title = list(text = 'Years of Life Lost (YLL)'))
+      h1$series(data = scYllData$scenario, name = "YLL")
+      h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    
+    h1$title(text = "Years of Life Lost (YLL)")
+    h1$set(dom = 'plotYLL')
+    h1$exporting(enabled = T)
+    return(h1)
+  })
+  
+  output$plotYLLReduction <- renderChart({
+    
+    filterHealthData()
+    
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    if (nrow(scYllReductionData) > 0){
+      h1$xAxis(categories = append("All ages and both gender", paste(scYllReductionData$gender[-1], "and", scYllReductionData$age.band[-1],  "old", sep = " ")), 
+                                   title = list(text = 'Reduction in Years of Life Lost (YLL)'))
+      h1$series(data = scYllReductionData$scenario, name = "Reduction in YLL(%)")
+      h1$yAxis(title = list(text = 'Percentage (%)'))
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    
+    h1$title(text = "Reduction in Years of Life Lost (YLL)")
+    h1$tooltip(valueSuffix= '%')
+    h1$set(dom = 'plotYLLReduction')
+    h1$exporting(enabled = T)
+    return(h1)
+  })
+  
   
   output$plotBaseline <- renderChart({
     if (!is.null(tdata)){
@@ -486,6 +580,7 @@ shinyServer(function(input, output, session){
       
       h1 <- Highcharts$new()
       h1$chart(type = "column")
+      h1$plotOptions(column=list(animation=FALSE))
       
       #       minv <- min(scFilteredTimeTraveldata[["timetravel"]])
       #       maxv <- max(scFilteredTimeTraveldata[["timetravel"]])
@@ -514,80 +609,75 @@ shinyServer(function(input, output, session){
   output$plotTripTimeDifference <- renderChart({
     tripTimeData()
     #scenariosTimeTravelIdata
-    if (!is.null(scFilteredTripTimeTraveldata) && length(scFilteredTripTimeTraveldata) > 0){
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    h1$yAxis(title = list(text = 'Percentage %'))
+    #              , min = 0, max = 80 )
+    
+    if (!is.null(scFilteredTripTimeTraveldata) && nrow(scFilteredTripTimeTraveldata) > 0){
       
-      h1 <- Highcharts$new()
-      h1$chart(type = "column")
-      
-      h1$plotOptions(column = list(dataLabels = list(enabled = T, 
-                                                     crop = FALSE, 
+      h1$plotOptions(column = list(animation=FALSE,
+                                   dataLabels = list(enabled = T, 
+                                                     formatter = format_function,      
                                                      rotation = -90, 
                                                      align = 'right', 
                                                      color = '#FFFFFF', 
                                                      width = 100,
                                                      x = 4, 
                                                      y = 10, 
-                                                     style = list(fontSize = '13px', fontFamily = 'Verdana, sans-serif'))),
+                                                     style = list(fontSize = '11px', fontFamily = 'Verdana, sans-serif'))),
                      series = list(dataLabels = list(crop = F))
       )
       
-      if (length (scFilteredTripTimeTraveldata$diff) > 0){
+      dhit <- hist(scFilteredTripTimeTraveldata$diff)
+      
+      data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
+      data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+      data <- subset(data, freq >= 0.1)
+      data <- subset(data, breaks != 0)
+      h1$title(text = "Trip Duration Difference of a Scenario with the Baseline")
+      h1$series(data =  data$freq, name = "Time Difference from Baseline (%)")
+      
+      if (nrow(data) == 1){
+        xlabel <- data$breaks
+        h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
+                                                                  fontFamily = 'Verdana, sans-serif',
+                                                                  whiteSpace = 'nowrap',
+                                                                  paddingLeft = '10px',
+                                                                  paddingRight = '10px',
+                                                                  paddingTop = '10px'))
+        )
         
-        #         data.decile <- cut2(scFilteredTripTimeTraveldata$diff, g = 10)
-        #         
-        #         data <- as.data.frame(table(data.decile))
+      }else{
         
-        dhit <- hist(scFilteredTripTimeTraveldata$diff)
-        #data <- data.frame(breaks = dhit$breaks[-length(dhit$breaks)], counts = dhit$counts)
-        data <- data.frame(breaks = dhit$breaks, counts = append(dhit$counts, 0))
-        data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-        data <- subset(data, freq >= 0.1)
-        
-        h1$series(data =  data$freq, name = "Time Difference from Baseline (%)")
-        
-        if (nrow(data) == 1){
-          xlabel <- data$breaks
-          h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
-                                                                    fontFamily = 'Verdana, sans-serif',
-                                                                    whiteSpace = 'nowrap',
-                                                                    paddingLeft = '10px',
-                                                                    paddingRight = '10px',
-                                                                    paddingTop = '10px'))
-          )
-          #h1$xAxis(categories = "20%")
-          cat(" Single label: ", xlabel, "\n")
-          
-        }else{
-          
-          h1$xAxis(categories = paste(data$breaks, "%"))
-        }
-        #         cat("length: ", nrow(data), "Freq: ", data$freq, "\n Breaks: ",  paste(data$breaks, "%"), "\n")
-        h1$yAxis(min = 0, max = 100, tickInterval = 20, title = list(text = 'Percentage %'))
-        
-        h1$tooltip(valueSuffix= '%')
-        
+        h1$xAxis(categories = paste(data$breaks, "%"))
       }
       
-      h1$set(dom = 'plotTripTimeDifference')
-      h1$exporting(enabled = T)
-      return(h1)
+      h1$tooltip(valueSuffix= '%')
+      
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
+    
+    h1$set(dom = 'plotTripTimeDifference')
+    h1$exporting(enabled = T)
+    return(h1)
     
   })
   
   getFilteredBDTitle <- function (src){
     filtered_title <- ""
     if (src == "BD")
-      filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", TDR: ", input$inBDTDR, ", Ebike: ", input$inBDEB, " and Equity: ", input$inBDEQ, sep = "" )
+      filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", Equity: ", input$inBDEQ, ", TDR: ", input$inBDTDR, " and Ebike: ", input$inBDEB , sep = "" )
     else if (src == "FT")
-      filtered_title <- paste("Cycling Multiplier: ", input$inFTMS, ", TDR: ", input$inFTTDR, ", Ebike: ", input$inFTEB, " and Equity: ", input$inFTEQ, sep = "" )
+      filtered_title <- paste("Cycling Multiplier: ", input$inFTMS, ", Equity: ", input$inFTEQ, ", TDR: ", input$inFTTDR, " and Ebike: ", input$inFTEB, sep = "" )
     
     filtered_title
   }
   
   getBaselineFilteredTitle <- function(data){
     filtered_title <- "Total Population (Baseline)"
-    if (nrow(data) != nrow (pd)){
+    if (nrow(data) != nrow (bldata)){
       
       displayGender <- "All"
       if (input$bgender == 1){
@@ -623,7 +713,7 @@ shinyServer(function(input, output, session){
   }
   
   getMETFilteredTitle <- function(data, src){
-    filtered_title <- "Total Population (Baseline)"
+    filtered_title <- "Baseline (Total Population)"
     if (src == "baseline")
       dataSource = idata
     else
@@ -700,6 +790,22 @@ shinyServer(function(input, output, session){
     
   })
   
+  generateSlowerTripsTable <- reactive({
+    
+    lMS <- input$inFTMS
+    lTDR <- input$inFTTDR
+    lEB <- input$inFTEB
+    lEQ <- input$inFTEQ
+    
+    data <- slowerTripData
+    data <- subset(data, MS == lMS & TDR == lTDR & equity == lEQ & ebike == lEB)
+    
+    data[is.na(data)] <- 0
+    data <- arrange(data, MS)
+    swdata <<- data
+    
+  })
+  
   
   generateScenarioTable<- reactive({
     
@@ -736,144 +842,145 @@ shinyServer(function(input, output, session){
     h1$chart(type = "spline")
     # types of charts: http://api.highcharts.com/highcharts#plotOptions
     h1$yAxis(title = list(text = var))
-    h1$xAxis(categories = sort(unique(sdata$MS), decreasing = F), title = list(text = 'Cycling Multiplier'))
     
-    h1$series(data = baselineSummary[[var]] , name = "Baseline")
+    h1$xAxis(categories = append("Baseline", sort(unique(sdata$MS), decreasing = F)), title = list(text = 'Cycling Increase'))
     
     if (input$inTDR == "All"){
       if (input$inEB != "All" & input$inEQ != "All"){
-        sub1 <- append(0, subset(scdata, TDR == 0.7 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ)))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.7 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
+        sub1 <- subset(scdata, TDR == 0.7 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.7, input$inEB ))
         sub1 <- subset(scdata, TDR == 0.8 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.8 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.8, input$inEB ))#paste("TDR 0.8 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.9 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.9 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.9, input$inEB ))#paste("TDR 0.9 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 1.0 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 1.0 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1, input$inEB ))#paste("TDR 1.0 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
       }
       
       if (input$inEB == "All" & input$inEQ != "All"){
         sub1 <- subset(scdata, TDR == 0.7 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.7 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.7, input$inEB ))#paste("TDR 0.7 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.7 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.7 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.7, input$inEB ))#paste("TDR 0.7 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.8 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.8 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.8, input$inEB ))#paste("TDR 0.8 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.8 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.8 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.8, input$inEB ))#paste("TDR 0.8 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.9 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.9 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.9, input$inEB ))#paste("TDR 0.9 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.9 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.9 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.9, input$inEB ))#paste("TDR 0.9 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 1.0 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 1.0 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1, input$inEB ))#paste("TDR 1.0 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == 1.0 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR 1.0 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1, input$inEB ))#paste("TDR 1.0 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
       }
       
       
       if (input$inEB != "All" & input$inEQ == "All"){
         sub1 <- subset(scdata, TDR == 0.7 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.7 (EB ", input$inEB, " and EQ 0)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.7, input$inEB ))#paste("TDR 0.7 (EB ", input$inEB, " and EQ 0)" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.7 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.7 (EB ", input$inEB, " and EQ 1)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.7, input$inEB ))#paste("TDR 0.7 (EB ", input$inEB, " and EQ 1)" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.8 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.8 (EB", input$inEB, " and EQ 0)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.8, input$inEB ))#paste("TDR 0.8 (EB", input$inEB, " and EQ 0)" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.8 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.8 (EB ", input$inEB, " and EQ 1)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.8, input$inEB ))#paste("TDR 0.8 (EB ", input$inEB, " and EQ 1)" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.9 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.9 (EB ", input$inEB, " and EQ 0)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.9, input$inEB ))#paste("TDR 0.9 (EB ", input$inEB, " and EQ 0)" , sep = ""))
         sub1 <- subset(scdata, TDR == 0.9 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 0.9 (EB ", input$inEB, " and EQ 1)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.9, input$inEB ))#paste("TDR 0.9 (EB ", input$inEB, " and EQ 1)" , sep = ""))
         sub1 <- subset(scdata, TDR == 1.0 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 1.0 (EB ", input$inEB, "and EQ 0)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1, input$inEB ))#paste("TDR 1.0 (EB ", input$inEB, "and EQ 0)" , sep = ""))
         sub1 <- subset(scdata, TDR == 1.0 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR 1.0 (EB ", input$inEB, "and EQ 1)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1, input$inEB ))#paste("TDR 1.0 (EB ", input$inEB, "and EQ 1)" , sep = ""))
       }
       
       if (input$inEB == "All" & input$inEQ == "All"){
         sub1 <- subset(scdata, TDR == 0.7 & ebike == 0 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 0.7 (EB 0 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.7, 0))#"TDR 0.7 (EB 0 and EQ 0)")
         sub1 <- subset(scdata, TDR == 0.7 & ebike == 0 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 0.7 (EB 0 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.7, 0))#"TDR 0.7 (EB 0 and EQ 1)")
         sub1 <- subset(scdata, TDR == 0.7 & ebike == 1 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 0.7 (EB 1 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.7, 1 ))#"TDR 0.7 (EB 1 and EQ 0)")
         sub1 <- subset(scdata, TDR == 0.7 & ebike == 1 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 0.7 (EB 1 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.7, 1))#"TDR 0.7 (EB 1 and EQ 1)")
         
         
         sub1 <- subset(scdata, TDR == 0.8 & ebike == 0 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 0.8 (EB 0 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.8, 0))#"TDR 0.8 (EB 0 and EQ 0)")
         sub1 <- subset(scdata, TDR == 0.8 & ebike == 0 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 0.8 (EB 0 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.8, 0 ))#"TDR 0.8 (EB 0 and EQ 1)")
         sub1 <- subset(scdata, TDR == 0.8 & ebike == 1 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 0.8 (EB 1 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.8, 1 ))#"TDR 0.8 (EB 1 and EQ 0)")
         sub1 <- subset(scdata, TDR == 0.8 & ebike == 1 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 0.8 (EB 1 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.8, 1))#"TDR 0.8 (EB 1 and EQ 1)")
         
         sub1 <- subset(scdata, TDR == 0.9 & ebike == 0 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 0.9 (EB 0 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.9, 0))#"TDR 0.9 (EB 0 and EQ 0)")
         sub1 <- subset(scdata, TDR == 0.9 & ebike == 0 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 0.9 (EB 0 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.9, 0))#"TDR 0.9 (EB 0 and EQ 1)")
         sub1 <- subset(scdata, TDR == 0.9 & ebike == 1 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 0.9 (EB 1 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.9, 1 ))#"TDR 0.9 (EB 1 and EQ 0)")
         sub1 <- subset(scdata, TDR == 0.9 & ebike == 1 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 0.9 (EB 1 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.9, 1 ))#"TDR 0.9 (EB 1 and EQ 1)")
         
         sub1 <- subset(scdata, TDR == 1.0 & ebike == 0 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 1.0 (EB 0 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1, 0 ))#"TDR 1.0 (EB 0 and EQ 0)")
         sub1 <- subset(scdata, TDR == 1.0 & ebike == 0 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 1.0 (EB 0 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1, 0))#"TDR 1.0 (EB 0 and EQ 1)")
         sub1 <- subset(scdata, TDR == 1.0 & ebike == 1 & equity == 0)
-        h1$series(data = sub1[[var]], name = "TDR 1.0 (EB 1 and EQ 0)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1, 1))#"TDR 1.0 (EB 1 and EQ 0)")
         sub1 <- subset(scdata, TDR == 1.0 & ebike == 1 & equity == 1)
-        h1$series(data = sub1[[var]], name = "TDR 1.0 (EB 1 and EQ 1)")
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1, 1))#"TDR 1.0 (EB 1 and EQ 1)")
       }
       
     }else{
       
       if (input$inEB != "All" & input$inEQ != "All"){
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inTDR, input$inEB ))#paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
         
       }
       
       if (input$inEB == "All" & input$inEQ != "All"){
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inTDR, 0 ))#paste("TDR ", input$inTDR, " (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inTDR, 1 ))#paste("TDR ", input$inTDR, " (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
         
       }
       
       
       if (input$inEB != "All" & input$inEQ == "All"){
         sub1 <- subset(scdata, TDR == input$inTDR & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ 0)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, input$inTDR, input$inEB ))#paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ 0)" , sep = ""))
         sub1 <- subset(scdata, TDR == input$inTDR & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ 1)" , sep = ""))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inTDR, input$inEB ))#paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ 1)" , sep = ""))
         
       }
       
       if (input$inEB == "All" & input$inEQ == "All"){
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == 0 & equity == 0)
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB 0 and EQ 0)"))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, input$inTDR, 0 ))#paste("TDR ", input$inTDR, " (EB 0 and EQ 0)"))
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == 0 & equity == 1)
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB 0 and EQ 1)"))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inTDR, 0 ))#paste("TDR ", input$inTDR, " (EB 0 and EQ 1)"))
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == 1 & equity == 0)
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB 1 and EQ 0)"))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, input$inTDR, 1 ))#paste("TDR ", input$inTDR, " (EB 1 and EQ 0)"))
         sub1 <- subset(scdata, TDR == input$inTDR & ebike == 1 & equity == 1)
-        h1$series(data = sub1[[var]], name = paste("TDR ", input$inTDR, " (EB 1 and EQ 1)"))
+        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inTDR, 1 ))#paste("TDR ", input$inTDR, " (EB 1 and EQ 1)"))
         
       }
     }
+    
     h1$exporting(enabled = T)
     return(h1)
   }
   
   output$plotCycPercent <- renderChart({
     generateScenarioTable()
-    h <- genericPlot("% Cycl. Total Population")
+    h <- genericPlot("% Cyclists in the Total Population")
+    h$title(text = "% Cyclists in the Total Population")
     h$set(dom = 'plotCycPercent')
     return (h)
   })
@@ -882,6 +989,7 @@ shinyServer(function(input, output, session){
     generateScenarioTable()
     #retrieveVariableName()
     h <- genericPlot(input$varname)
+    h$title(text = input$varname)
     h$set(dom = 'plotGenericVariable')
     return (h)
   })
@@ -898,10 +1006,11 @@ shinyServer(function(input, output, session){
       extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
       h1$title(text = extended_title)
       baseline <- subset(msharedtata, MS == 1)
-      h1$series(data = baseline$case, name = "Baseline")
-      h1$series(data = bd$case, name = "Scenario")
+      h1$series(data = baseline$case, name = "Baseline (Total Population)")
+      h1$series(data = bd$case, name = "Scenario (Total Population)")
       
       h1$xAxis(categories = c("Walk", "Car Driver", "Car Passenger", "Bus", "Train", "Other", "Bicycle", "Ebike"))
+      h1$yAxis(title = list(text = 'Percentage %'))
       
       h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
       
@@ -919,15 +1028,19 @@ shinyServer(function(input, output, session){
     if (!is.null(ftdata)){
       h1 <- Highcharts$new()
       h1$chart(type = "column")
-      h1$plotOptions(column=list(animation=FALSE))
+      h1$plotOptions(column = list(animation=FALSE))
       
       filtered_title <- getFilteredBDTitle("FT")
-      extended_title <- paste("Faster Trips: Selected Scenario")
+      extended_title <- paste("Faster Trips: Modal Split of Trips Switched to Cycling in the Selected Scenario")
       h1$title(text = extended_title)
       h1$series(data = ftdata$case, name = "Scenario")
+      #       cat("ftdata$case : ", ftdata$modefinal, "\n")
       h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
       
-      h1$xAxis(categories = c("Walk", "Car Passenger", "Bus", "Train", "Other", "Bicycle"))
+      lab_xAxis <- tp_mode$mode[match(ftdata$modefinal, tp_mode$code)]
+      
+      h1$xAxis(categories = lab_xAxis)#c("Walk", "Car Passenger", "Bus", "Train", "Other", "Bicycle"))
+      h1$yAxis(title = list(text = 'Percentage %'))
       
       h1$tooltip(valueSuffix= '%')
       
@@ -936,5 +1049,32 @@ shinyServer(function(input, output, session){
       return (h1)
     }
   })
+  
+  output$plotBDSlowerTrips <- renderChart({
+    generateSlowerTripsTable()
+    if (!is.null(swdata)){
+      h1 <- Highcharts$new()
+      h1$chart(type = "column")
+      h1$plotOptions(column=list(animation=FALSE))
+      
+      filtered_title <- getFilteredBDTitle("FT")
+      extended_title <- paste("Slower Trips:  Modal Split of Trips Switched to Cycling in the Selected Scenario")
+      h1$title(text = extended_title)
+      h1$series(data = swdata$case, name = "Scenario")
+      h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      
+      lab_xAxis <- tp_mode$mode[match(swdata$modefinal, tp_mode$code)]
+      
+      h1$xAxis(categories = lab_xAxis)
+      h1$yAxis(title = list(text = 'Percentage %'))
+      
+      h1$tooltip(valueSuffix= '%')
+      
+      h1$set(dom = 'plotBDSlowerTrips')
+      h1$exporting(enabled = T)
+      return (h1)
+    }
+  })
+  
   
 })
