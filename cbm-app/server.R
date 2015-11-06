@@ -18,6 +18,8 @@ scFilteredMETdata <- NULL
 scTimeTraveldata <- NULL
 scFilteredTimeTraveldata <- NULL
 scFilteredTripTimeTraveldata <- NULL
+scCarMilesData <- NULL
+scCarMilesFileredData <- NULL
 ftdata <- NULL
 swdata <- NULL
 bd <- NULL
@@ -154,6 +156,48 @@ shinyServer(function(input, output, session){
     
   })
   
+  filterCarMilesData <- reactive ({
+    # IndividualID  age	Sex_B01ID	NSSec_B03ID	EthGroupTS_B02ID
+    data <- carMiles
+    
+    if (input$inCMAG != 'All'){
+      data <- subset(data, age == input$inCMAG)
+    }
+    if (input$inCMGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inCMGender)
+    
+    if (input$inCMSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inCMSES)
+    }
+    
+    if (input$inCMEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inCMEthnicity)
+    }
+    data[is.na(data)] <- 0
+    #     cat(input$inCMAG, "\n")
+    #     cat(nrow(data), ":", nrow(carMiles), "\n")
+    
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
+                        paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
+    
+    
+    data1 <- carMiles[,c("IndividualID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
+    
+    names(data1)[names(data1) == columnName] <- 'scenario'
+    
+    data1 <- arrange(data1, scenario)
+    
+    data2 <- data[,c("IndividualID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
+    
+    names(data2)[names(data2) == columnName] <- 'scenario'
+    
+    data2 <- arrange(data2, scenario)
+    
+    scCarMilesData <<- data1
+    scCarMilesFileredData <<- data2
+    
+  })
+  
   plotMETDataTable<- reactive({
     data <- idata
     if (input$mag != 'All'){
@@ -272,6 +316,8 @@ shinyServer(function(input, output, session){
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Baseline (Sub-Population)"
+        if (nrow(idata) == nrow(pd))
+          secondColName <- "Baseline (Total Population)"
         
       }else{
         # Keep the data mixed
@@ -282,6 +328,8 @@ shinyServer(function(input, output, session){
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Scenario (Sub-Population)"
+        if (nrow(idata) == nrow(scMETdata))
+          secondColName <- "Scenario (Total Population)"
       }
       
       filtered_title <- getMETFilteredTitle(secondColData, "baseline")
@@ -503,14 +551,44 @@ shinyServer(function(input, output, session){
     filterHealthData()
     h1 <- Highcharts$new()
     h1$chart(type = "column")
+    
+    
     if (nrow(scYllReductionData) > 0){
-      h1$xAxis(categories = paste(scYllData$gender, "and", scYllData$age.band, "old",  sep = " "), 
-               title = list(text = 'Years of Life Lost (YLL)'))
+      
+      #       a <- hPlot(freq ~ Exer, data = plyr::count(MASS::survey, c('Sex', 'Exer')), type = 'bar', group = 'Sex', group.na = 'NA\'s')
+      #       a$show('inline', include_assets = TRUE, cdn = TRUE)
+      #       
+      #       
+      #       h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band, sep = " "), 
+      #                title = list(text = 'Years of Life Lost (YLL)'))
+      #       
+      #       h1$xAxis(categories = list(name = c('20 - 29','40 - 49','60+'),
+      #                                  categories = c("Male", "Female")),
+      #                title = list(text = 'Years of Life Lost (YLL)'))
+      #     xAxis: {
+      #       categories: [{
+      #         name: "Fruit",
+      #         categories: ["Apple", "Banana", "Orange"]
+      #       }, {
+      #         name: "Vegetable",
+      #         categories: ["Carrot", "Potato", "Tomato"]
+      #       }, {
+      #         name: "Fish",
+      #         categories: ["Cod", "Salmon", "Tuna"]
+      #       }]
+      #     }
+      
       h1$series(data = scYllData$scenario, name = "YLL")
+      h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band, sep = " "), 
+               title = list(text = 'Years of Life Lost (YLL)'))
+      
       h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
+    
+    
+    
     
     h1$title(text = "Years of Life Lost (YLL)")
     h1$set(dom = 'plotYLL')
@@ -525,8 +603,8 @@ shinyServer(function(input, output, session){
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     if (nrow(scYllReductionData) > 0){
-      h1$xAxis(categories = append("All ages and both gender", paste(scYllReductionData$gender[-1], "and", scYllReductionData$age.band[-1],  "old", sep = " ")), 
-                                   title = list(text = 'Reduction in Years of Life Lost (YLL)'))
+      h1$xAxis(categories = append("All ages and both gender", paste(scYllReductionData$gender[-1], scYllReductionData$age.band[-1],  sep = " ")), 
+               title = list(text = 'Reduction in Years of Life Lost (YLL)'))
       h1$series(data = scYllReductionData$scenario, name = "Reduction in YLL(%)")
       h1$yAxis(title = list(text = 'Percentage (%)'))
     }else{
@@ -629,13 +707,13 @@ shinyServer(function(input, output, session){
                      series = list(dataLabels = list(crop = F))
       )
       
-      dhit <- hist(scFilteredTripTimeTraveldata$diff)
+      dhist <- hist(scFilteredTripTimeTraveldata$diff)
       
-      data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
+      data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
       data <- subset(data, freq >= 0.1)
       data <- subset(data, breaks != 0)
-      h1$title(text = "Trip Duration Difference of a Scenario with the Baseline")
+      h1$title(text = "Histogram of Relative Changes in Trip Durations for Trips now Cycled")
       h1$series(data =  data$freq, name = "Time Difference from Baseline (%)")
       
       if (nrow(data) == 1){
@@ -1074,6 +1152,53 @@ shinyServer(function(input, output, session){
       h1$exporting(enabled = T)
       return (h1)
     }
+  })
+  
+  output$plotCarTripsCycled <- renderChart ({
+    filterCarMilesData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    
+    if (!is.null(scCarMilesData) && !is.null(scCarMilesFileredData)){
+      h1$plotOptions(column=list(animation=FALSE))
+      
+      h1$title(text = "Car Miles:  Histogram of Car Miles in the Selected Scenario")
+      
+      #       data.decile <- cut2(scCarMilesFileredData$scenario, g = 10)
+      #       h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Car Trips (Miles)")
+      #       h1$xAxis(categories = c(1:10), title = "Decile")
+      #       h1$yAxis(title = list(text = 'Miles'))
+      
+      #       dhit <- hist(scCarMilesFileredData$scenario)
+      #       
+      #       data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
+      #       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+      #       #       data <- subset(data, freq >= 0.1)
+      #       data <- subset(data, breaks != 0)
+      #       
+      #       h1$series(data =  data$freq, name = "Car Miles")
+      #       
+      #       h1$xAxis(categories = data$breaks)
+      #       
+      #       h1$yAxis(title = list(text = 'Percentage %'))
+      #       h1$tooltip(valueSuffix= '%')
+      
+      bc <- as.data.frame(table (cut (scCarMilesFileredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFileredData$scenario)))))
+      bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      bc1max <- max(bc$Freq, na.rm = T)
+      
+      h1$xAxis(categories = as.list(append(c(seq(0,300, 50))[-1], "300+")), title = list(text = 'Car Miles'))
+      h1$yAxis(title = list(text = 'Percentage %'))
+      
+      h1$series(data = bc$Freq, name = "Car Miles")
+      h1$tooltip(valueSuffix= '%')
+      
+      
+    }
+    h1$set(dom = 'plotCarTripsCycled')
+    h1$exporting(enabled = T)
+    return (h1)
+    
   })
   
   

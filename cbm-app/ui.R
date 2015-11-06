@@ -31,6 +31,8 @@ phyGLRButton <- c("On" = "on",
 ag <- "All"
 ag <- append(ag, sort(unique(as.character(tdata$age_group))))
 
+healthAG <- c("All", "20 - 39", "40 - 59", "60+")
+
 ses <- c("All" = "All",
          "Managerial and professional occupations" = 1,
          "Intermediate occupations and small employers" = 2,
@@ -49,7 +51,7 @@ genderForHealthCalculations <- c("All",
                                  "Female")
 
 shinyUI(fluidPage(width="100%", height="100%",
-                  headerPanel("Co-Benefit Model"),
+                  headerPanel("Co-Benefit Model (Prototype)"),
                   sidebarPanel(
                     conditionalPanel(condition="input.conditionedPanels == 1",
                                      selectInput(inputId = "inEQ", label = h4("Select Equity (EQ):"), choices =  uEQ),
@@ -96,15 +98,17 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      selectInput(inputId = "inHealthTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uBDTDR, selected = uTDR[length(uTDR)]),
                                      selectInput(inputId = "inHealthEB", label = "Select Ebike (EB):", choices =  uBDEB),
                                      HTML("<hr>"),
-                                     selectizeInput("inHealthAG", "Age Group:", ag[-length(ag)], selected = ag[1], multiple = F),
+                                     selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
+                                     
+                                     
                                      radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE)
                                      
                     ),
                     conditionalPanel(condition="input.conditionedPanels == 6",
                                      selectInput(inputId = "inTTMS", label = "Select Cycling Multiplier:", choices =  uBDMS),
-                                     selectInput(inputId = "inTTEB", label = "Select Ebike (EB):", choices =  uBDEB),
-                                     selectInput(inputId = "inTTTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uTDR[length(uTDR)], selected = uTDR[length(uTDR)]),
                                      selectInput(inputId = "inTTEQ", label = "Select Equity (EQ):", choices =  uBDEQ),
+                                     selectInput(inputId = "inTTTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uTDR[length(uTDR)], selected = uTDR[length(uTDR)]),
+                                     selectInput(inputId = "inTTEB", label = "Select Ebike (EB):", choices =  uBDEB),
                                      HTML("<hr>"),
                                      selectizeInput("inTTag", "Age Group:", ag, selected = ag[1], multiple = F),
                                      radioButtons("inTTgender", "Gender: ", gender, inline = TRUE),
@@ -116,6 +120,17 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      selectInput(inputId = "inFTEQ", label = "Select Equity (EQ):", choices =  uBDEQ),
                                      selectInput(inputId = "inFTTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uBDTDR, selected = uTDR[length(uTDR)]),
                                      selectInput(inputId = "inFTEB", label = "Select Ebike (EB):", choices =  uBDEB)
+                    ),
+                    conditionalPanel(condition="input.conditionedPanels == 8",
+                                     selectInput(inputId = "inCMMS", label = "Select Cycling Multiplier:", choices =  uBDMS),
+                                     selectInput(inputId = "inCMEQ", label = "Select Equity (EQ):", choices =  uBDEQ),
+                                     selectInput(inputId = "inCMTDR", label = "Select Travel Distance Reduction (TDR):", choices =  uTDR[length(uTDR)], selected = uTDR[length(uTDR)]),
+                                     selectInput(inputId = "inCMEB", label = "Select Ebike (EB):", choices =  uBDEB),
+                                     HTML("<hr>"),
+                                     selectizeInput("inCMAG", "Age Group:", ag, selected = ag[1], multiple = F),
+                                     radioButtons("inCMGender", "Gender: ", gender, inline = TRUE),
+                                     selectizeInput("inCMSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                                     selectizeInput("inCMEthnicity", "Ethnic Group:", ethnicity, selected = ethnicity[1], multiple = F)
                     )
                     
                     
@@ -141,9 +156,10 @@ shinyUI(fluidPage(width="100%", height="100%",
                                showOutput('plotMET', "highcharts"),
                                showOutput('plotScenarioMET', "highcharts")
                       ),
-                      tabPanel("Health Calculations", value = 5,
+                      tabPanel("Health", value = 5,
                                showOutput('plotYLL', "highcharts"),
                                showOutput('plotYLLReduction', "highcharts")
+                               
                       ),
                       tabPanel("Trip Duration", value = 6,
                                #showOutput('plotTripTime', "highcharts"),
@@ -153,6 +169,9 @@ shinyUI(fluidPage(width="100%", height="100%",
                       tabPanel("Trip Faster/Slower", value = 7,
                                showOutput('plotBDFasterTrips', "highcharts"),
                                showOutput('plotBDSlowerTrips', "highcharts")
+                      ),
+                      tabPanel("Car Miles", value = 8,
+                               showOutput('plotCarTripsCycled', "highcharts")
                       ),
                       id = "conditionedPanels"
                     )
