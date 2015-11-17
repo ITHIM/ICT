@@ -64,7 +64,12 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      selectInput(inputId = "inBDMS", label = h4("Select Cycling Multiplier:"), choices =  uBDMS),
                                      selectInput(inputId = "inBDEQ", label = h4("Select Equity (EQ):"), choices =  uBDEQ),
                                      selectInput(inputId = "inBDTDR", label = h4("Select Travel Distance Reduction (TDR):"), choices =  uBDTDR, selected = uTDR[length(uTDR)]),
-                                     selectInput(inputId = "inBDEB", label = h4("Select Ebike (EB):"), choices =  uBDEB)
+                                     selectInput(inputId = "inBDEB", label = h4("Select Ebike (EB):"), choices =  uBDEB),
+                                     
+                                     selectizeInput("inBDAG", "Age Group:", ag, selected = ag[1], multiple = F),
+                                     radioButtons("inBDGender", "Gender: ", gender, inline = TRUE),
+                                     selectizeInput("inBDSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                                     selectizeInput("inBDEthnicity", "Ethnic Group:", ethnicity, selected = ethnicity[1], multiple = F)
                     ),
                     
                     conditionalPanel(condition="input.conditionedPanels == 3",
@@ -146,7 +151,8 @@ shinyUI(fluidPage(width="100%", height="100%",
                                HTML('<style>iframe.rChart{ width: 100%; height: 400px;}</style>')
                       ),
                       tabPanel("Scenarios - Mode Share", value = 2,
-                               showOutput('plotBDMode', "highcharts")
+                               showOutput('plotBDMode', "highcharts"),
+                               showOutput('plotBDSCMode', "highcharts")
                       ),
                       
                       tabPanel("Mode of Travel", value = 3,

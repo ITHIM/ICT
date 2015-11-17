@@ -41,4 +41,5 @@ carMiles <- read.csv("data/carMilesSubset.csv", header = T, as.is = T)
 # Remove all rows where baseline rows don't have any car miles
 carMiles <- subset(carMiles, !is.na(baseline))
 
-
+#Read Trip data
+tripData <- read.csv("data/bl_ag_sc_modes.csv", header = T, as.is = T)

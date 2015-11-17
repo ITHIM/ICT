@@ -578,7 +578,14 @@ shinyServer(function(input, output, session){
       #       }]
       #     }
       
+      
+      
+      val <- as.numeric(as.factor(scYllData$gender[-1]))
       h1$series(data = scYllData$scenario, name = "YLL")
+      #       h1$series(data = list(
+      #         list(subset(scYllData, gender %in% "Male")$scenario, color = "lightblue"),
+      #         list(subset(scYllData, gender %in% "Female")$scenario, color = "lightgreen")
+      #       ))
       h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band, sep = " "), 
                title = list(text = 'Years of Life Lost (YLL)'))
       
@@ -588,7 +595,17 @@ shinyServer(function(input, output, session){
     }
     
     
-    
+    #     h1 <- rCharts::Highcharts$new()
+    #     h1$series(data = list(
+    #       list(y = 8, url = "https://github.com/metagraf/rHighcharts", color = "lightblue"),
+    #       list(y = 14, url = "https://github.com/metagraf/rVega", color = "lightpink"),
+    #       list(y = 71, url = "https://github.com/ramnathv/rCharts", color = "lightgreen")
+    #     ), type = "column", name = "Number of Stars")
+    #     h1$plotOptions(column = list(cursor = 'pointer', point = list(events = list(click = "#! function() { location.href = this.options.url; } !#"))))
+    #     h1$xAxis(categories = c("rHighcharts", "rVega", "rCharts"), title = list(text = ""))
+    #     h1$yAxis(title = list(text = ""))
+    #     h1$legend(enabled = F)
+    #     h1$show('inline', include_assets = TRUE, cdn = TRUE)
     
     h1$title(text = "Years of Life Lost (YLL)")
     h1$set(dom = 'plotYLL')
@@ -843,12 +860,38 @@ shinyServer(function(input, output, session){
     lEB <- input$inBDEB
     lEQ <- input$inBDEQ
     
-    data <- msharedtata
-    data <- subset(data, MS == (as.numeric(lMS) + 1) & TDR == lTDR & equity == lEQ & ebike == lEB)
+    data1 <- msharedtata
+    data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & TDR == lTDR & equity == lEQ & ebike == lEB)
     
-    data[is.na(data)] <- 0
-    data <- arrange(data, MS)
-    bd <<- data
+    data1[is.na(data1)] <- 0
+    data1 <- arrange(data1, MS)
+    bd <<- data1
+    
+    
+    # Filter data of trips
+    columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("TDR", input$inBDTDR,sep = ""),
+                        paste("ebik", input$inBDEB,sep = ""), paste("eq", input$inBDEQ,sep = ""), "mode", sep="_")
+    cat(columnName, "\n")
+    colList <- c("IndividualID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", columnName)
+    data2 <- tripData[,colList]
+    
+    if (input$inBDAG != 'All'){
+      data2 <- subset(data2, age_group == input$inBDAG)
+    }
+    if (input$inBDGender != 3)
+      data2 <- subset(data2, Sex_B01ID %in% input$inBDGender)
+    
+    if (input$inBDSES != "All"){
+      data2 <- subset(data2, NSSec_B03ID %in% input$inBDSES)
+    }
+    
+    if (input$inBDEthnicity != "All"){
+      data2 <- subset(data2, EthGroupTS_B02ID %in% input$inBDEthnicity)
+    }
+    
+    
+    
+    
   })
   
   
@@ -1101,6 +1144,34 @@ shinyServer(function(input, output, session){
   })
   
   
+  output$plotBDSCMode <- renderChart({
+    generateBDScenarioTable()
+    if (!is.null(bd)){
+      h1 <- Highcharts$new()
+      h1$chart(type = "column")
+      h1$plotOptions(column=list(animation=FALSE))
+      
+      filtered_title <- getFilteredBDTitle("BD")
+      extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
+      h1$title(text = extended_title)
+      baseline <- subset(msharedtata, MS == 1)
+      h1$series(data = baseline$case, name = "Baseline (Total Population)")
+      h1$series(data = bd$case, name = "Scenario (Total Population)")
+      
+      h1$xAxis(categories = c("Walk", "Car Driver", "Car Passenger", "Bus", "Train", "Other", "Bicycle", "Ebike"))
+      h1$yAxis(title = list(text = 'Percentage %'))
+      
+      h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      
+      h1$tooltip(valueSuffix= '%')
+      
+      h1$set(dom = 'plotBDSCMode')
+      h1$exporting(enabled = T)
+      return (h1)
+    }
+  })
+  
+  
   output$plotBDFasterTrips <- renderChart({
     generateFasterTripsTable()
     if (!is.null(ftdata)){
@@ -1200,6 +1271,5 @@ shinyServer(function(input, output, session){
     return (h1)
     
   })
-  
   
 })
