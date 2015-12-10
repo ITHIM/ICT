@@ -1,14 +1,14 @@
-# CBM-Interface
+# ICT-Interface
 
-## Welcome to the Co-Benefits Model (CBM) Prototype
+## Welcome to the Integrated Cycling Tool (ICT) Prototype
 
-The CBM is designed to do two things
+The ICT is designed to do two things
 
 1. As a data visualisation tool to look at how people travel in England and how active they are
 2. To look at how things would change under different scenarios in which the probability of being a cyclist increases
 
 
-The starting point for the CBM is the National Travel Survey for England 2012. This allows us to look at how different groups in the population travel. To estimate physical activity we use both travel activity, and by combining the data with data on similar people from the Health Survey for England 2012, and non-travel physical activity.
+The starting point for the ICT is the National Travel Survey for England 2012. This allows us to look at how different groups in the population travel. To estimate physical activity we use both travel activity, and by combining the data with data on similar people from the Health Survey for England 2012, and non-travel physical activity.
 The scenarios are based around:
   1. Assuming that non-cyclists start cycling for some of their trips 
   2. Assuming that people travel less far as land use patterns change and so are more likely to cycle
