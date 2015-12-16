@@ -76,7 +76,7 @@ shinyServer(function(input, output, session){
     }
     data[is.na(data)] <- 0
     
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  
                         paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
     
     
@@ -111,8 +111,8 @@ shinyServer(function(input, output, session){
     data[is.na(data)] <- 0
     
     
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
-                        paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+                        paste("eq", input$inTTEQ,sep = ""), sep="_")
     
     tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
     tripData <- data[,c("baseline", columnName)]
@@ -142,8 +142,8 @@ shinyServer(function(input, output, session){
       data2 <- subset(data2, gender %in% input$inHealthG | gender == "Both Gender")
     }
     
-    columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("TDR", input$inHealthTDR,sep = ""),
-                        paste("ebik", input$inHealthEB,sep = ""), paste("eq", input$inHealthEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("ebik", input$inHealthEB,sep = ""), 
+                        paste("eq", input$inHealthEQ,sep = ""), sep="_")
     
     data1 <- data1[,c("age.band", "gender",columnName)]
     colnames(data1) <- c("age.band", "gender", "scenario")
@@ -177,8 +177,8 @@ shinyServer(function(input, output, session){
     #     cat(input$inCMAG, "\n")
     #     cat(nrow(data), ":", nrow(carMiles), "\n")
     
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("TDR", input$inTTTDR,sep = ""),
-                        paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+                        paste("eq", input$inTTEQ,sep = ""), sep="_")
     
     
     data1 <- carMiles[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
@@ -219,8 +219,8 @@ shinyServer(function(input, output, session){
     
     data <- scenariosIdata
     
-    columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("TDR", input$inMETTDR,sep = ""),
-                        paste("ebik", input$inMETEB,sep = ""), paste("eq", input$inMETEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMETEB,sep = ""), 
+                        paste("eq", input$inMETEQ,sep = ""), sep="_")
     
     data["total_mmet"] <- scenariosIdata[columnName]
     
@@ -763,9 +763,9 @@ shinyServer(function(input, output, session){
   getFilteredBDTitle <- function (src){
     filtered_title <- ""
     if (src == "BD")
-      filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", Equity: ", input$inBDEQ, ", TDR: ", input$inBDTDR, " and Ebike: ", input$inBDEB , sep = "" )
+      filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", Equity: ", input$inBDEQ, " and Ebike: ", input$inBDEB , sep = "" )
     else if (src == "FT")
-      filtered_title <- paste("Cycling Multiplier: ", input$inFTMS, ", Equity: ", input$inFTEQ, ", TDR: ", input$inFTTDR, " and Ebike: ", input$inFTEB, sep = "" )
+      filtered_title <- paste("Cycling Multiplier: ", input$inFTMS, ", Equity: ", input$inFTEQ, " and Ebike: ", input$inFTEB, sep = "" )
     
     filtered_title
   }
@@ -856,12 +856,11 @@ shinyServer(function(input, output, session){
   generateBDScenarioTable<- reactive({
     
     lMS <- input$inBDMS
-    lTDR <- input$inBDTDR
     lEB <- input$inBDEB
     lEQ <- input$inBDEQ
     
     data1 <- msharedtata
-    data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & TDR == lTDR & equity == lEQ & ebike == lEB)
+    data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & equity == lEQ & ebike == lEB)
     
     data1[is.na(data1)] <- 0
     data1 <- arrange(data1, MS)
@@ -869,8 +868,8 @@ shinyServer(function(input, output, session){
     
     
     # Filter data of trips
-    columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("TDR", input$inBDTDR,sep = ""),
-                        paste("ebik", input$inBDEB,sep = ""), paste("eq", input$inBDEQ,sep = ""), "mode", sep="_")
+    columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
+                        paste("eq", input$inBDEQ,sep = ""), "mode", sep="_")
     cat(columnName, "\n")
     colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", columnName)
     data2 <- tripData[,colList]
@@ -898,12 +897,11 @@ shinyServer(function(input, output, session){
   generateFasterTripsTable <- reactive({
     
     lMS <- input$inFTMS
-    lTDR <- input$inFTTDR
     lEB <- input$inFTEB
     lEQ <- input$inFTEQ
     
     data <- fasterTripData
-    data <- subset(data, MS == lMS & TDR == lTDR & equity == lEQ & ebike == lEB)
+    data <- subset(data, MS == lMS & equity == lEQ & ebike == lEB)
     
     data[is.na(data)] <- 0
     data <- arrange(data, MS)
@@ -914,12 +912,11 @@ shinyServer(function(input, output, session){
   generateSlowerTripsTable <- reactive({
     
     lMS <- input$inFTMS
-    lTDR <- input$inFTTDR
     lEB <- input$inFTEB
     lEQ <- input$inFTEQ
     
     data <- slowerTripData
-    data <- subset(data, MS == lMS & TDR == lTDR & equity == lEQ & ebike == lEB)
+    data <- subset(data, MS == lMS & equity == lEQ & ebike == lEB)
     
     data[is.na(data)] <- 0
     data <- arrange(data, MS)
@@ -931,13 +928,10 @@ shinyServer(function(input, output, session){
   generateScenarioTable<- reactive({
     
     #     lMS <- input$inMS
-    lTDR <- input$inTDR
     lEB <- input$inEB
     lEQ <- input$inEQ
     
     data <- sdata
-    if (lTDR != "All")
-      data <- subset(data, TDR == lTDR)
     if (lEQ != "All")
       data <- subset(data, equity == lEQ)
     if (lEB != "All")
@@ -951,7 +945,6 @@ shinyServer(function(input, output, session){
   
   reactiveFunction <- reactive({
     
-    lTDR <- input$inTDR
     lEB <- input$inEB
     lEQ <- input$inEQ
     
@@ -966,132 +959,40 @@ shinyServer(function(input, output, session){
     
     h1$xAxis(categories = append("Baseline", sort(unique(sdata$MS), decreasing = F)), title = list(text = 'Cycling Increase'))
     
-    if (input$inTDR == "All"){
-      if (input$inEB != "All" & input$inEQ != "All"){
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.7, input$inEB ))
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.8, input$inEB ))#paste("TDR 0.8 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.9, input$inEB ))#paste("TDR 0.9 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1, input$inEB ))#paste("TDR 1.0 (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
-      }
+    
+    if (input$inEB != "All" & input$inEQ != "All"){
+      sub1 <- subset(scdata, ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inEB ))
       
-      if (input$inEB == "All" & input$inEQ != "All"){
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.7, input$inEB ))#paste("TDR 0.7 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.7, input$inEB ))#paste("TDR 0.7 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.8, input$inEB ))#paste("TDR 0.8 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.8, input$inEB ))#paste("TDR 0.8 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.9, input$inEB ))#paste("TDR 0.9 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0.9, input$inEB ))#paste("TDR 0.9 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1, input$inEB ))#paste("TDR 1.0 (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1, input$inEB ))#paste("TDR 1.0 (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
-      }
+    }
+    
+    if (input$inEB == "All" & input$inEQ != "All"){
+      sub1 <- subset(scdata, ebike == 0 & equity == as.numeric(input$inEQ))
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0 ))
+      sub1 <- subset(scdata, ebike == 1 & equity == as.numeric(input$inEQ))
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1 ))
       
+    }
+    
+    
+    if (input$inEB != "All" & input$inEQ == "All"){
+      sub1 <- subset(scdata, equity == 0 & ebike == as.numeric(input$inEB))
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0,  input$inEB ))
+      sub1 <- subset(scdata, equity == 1 & ebike == as.numeric(input$inEB))
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inEB ))
       
-      if (input$inEB != "All" & input$inEQ == "All"){
-        sub1 <- subset(scdata, TDR == 0.7 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.7, input$inEB ))#paste("TDR 0.7 (EB ", input$inEB, " and EQ 0)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.7 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.7, input$inEB ))#paste("TDR 0.7 (EB ", input$inEB, " and EQ 1)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.8 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.8, input$inEB ))#paste("TDR 0.8 (EB", input$inEB, " and EQ 0)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.8 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.8, input$inEB ))#paste("TDR 0.8 (EB ", input$inEB, " and EQ 1)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.9 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.9, input$inEB ))#paste("TDR 0.9 (EB ", input$inEB, " and EQ 0)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 0.9 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.9, input$inEB ))#paste("TDR 0.9 (EB ", input$inEB, " and EQ 1)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 1.0 & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1, input$inEB ))#paste("TDR 1.0 (EB ", input$inEB, "and EQ 0)" , sep = ""))
-        sub1 <- subset(scdata, TDR == 1.0 & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1, input$inEB ))#paste("TDR 1.0 (EB ", input$inEB, "and EQ 1)" , sep = ""))
-      }
+    }
+    
+    if (input$inEB == "All" & input$inEQ == "All"){
+      sub1 <- subset(scdata, ebike == 0 & equity == 0)
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0 ))
+      sub1 <- subset(scdata, ebike == 0 & equity == 1)
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0 ))
+      sub1 <- subset(scdata, ebike == 1 & equity == 0)
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1 ))
+      sub1 <- subset(scdata, ebike == 1 & equity == 1)
+      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1 ))
       
-      if (input$inEB == "All" & input$inEQ == "All"){
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == 0 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.7, 0))#"TDR 0.7 (EB 0 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == 0 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.7, 0))#"TDR 0.7 (EB 0 and EQ 1)")
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == 1 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.7, 1 ))#"TDR 0.7 (EB 1 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 0.7 & ebike == 1 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.7, 1))#"TDR 0.7 (EB 1 and EQ 1)")
-        
-        
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == 0 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.8, 0))#"TDR 0.8 (EB 0 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == 0 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.8, 0 ))#"TDR 0.8 (EB 0 and EQ 1)")
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == 1 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.8, 1 ))#"TDR 0.8 (EB 1 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 0.8 & ebike == 1 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.8, 1))#"TDR 0.8 (EB 1 and EQ 1)")
-        
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == 0 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.9, 0))#"TDR 0.9 (EB 0 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == 0 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.9, 0))#"TDR 0.9 (EB 0 and EQ 1)")
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == 1 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0.9, 1 ))#"TDR 0.9 (EB 1 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 0.9 & ebike == 1 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0.9, 1 ))#"TDR 0.9 (EB 1 and EQ 1)")
-        
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == 0 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1, 0 ))#"TDR 1.0 (EB 0 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == 0 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1, 0))#"TDR 1.0 (EB 0 and EQ 1)")
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == 1 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1, 1))#"TDR 1.0 (EB 1 and EQ 0)")
-        sub1 <- subset(scdata, TDR == 1.0 & ebike == 1 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1, 1))#"TDR 1.0 (EB 1 and EQ 1)")
-      }
-      
-    }else{
-      
-      if (input$inEB != "All" & input$inEQ != "All"){
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inTDR, input$inEB ))#paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ ", input$inEQ, ")" , sep = ""))
-        
-      }
-      
-      if (input$inEB == "All" & input$inEQ != "All"){
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == 0 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inTDR, 0 ))#paste("TDR ", input$inTDR, " (EB 0 and EQ ", input$inEQ, ")" , sep = ""))
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == 1 & equity == as.numeric(input$inEQ))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inTDR, 1 ))#paste("TDR ", input$inTDR, " (EB 1 and EQ ", input$inEQ, ")" , sep = ""))
-        
-      }
-      
-      
-      if (input$inEB != "All" & input$inEQ == "All"){
-        sub1 <- subset(scdata, TDR == input$inTDR & equity == 0 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, input$inTDR, input$inEB ))#paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ 0)" , sep = ""))
-        sub1 <- subset(scdata, TDR == input$inTDR & equity == 1 & ebike == as.numeric(input$inEB))
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inTDR, input$inEB ))#paste("TDR ", input$inTDR, " (EB ", input$inEB, " and EQ 1)" , sep = ""))
-        
-      }
-      
-      if (input$inEB == "All" & input$inEQ == "All"){
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == 0 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, input$inTDR, 0 ))#paste("TDR ", input$inTDR, " (EB 0 and EQ 0)"))
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == 0 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inTDR, 0 ))#paste("TDR ", input$inTDR, " (EB 0 and EQ 1)"))
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == 1 & equity == 0)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, input$inTDR, 1 ))#paste("TDR ", input$inTDR, " (EB 1 and EQ 0)"))
-        sub1 <- subset(scdata, TDR == input$inTDR & ebike == 1 & equity == 1)
-        h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inTDR, 1 ))#paste("TDR ", input$inTDR, " (EB 1 and EQ 1)"))
-        
-      }
     }
     
     h1$exporting(enabled = T)
