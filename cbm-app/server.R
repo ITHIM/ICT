@@ -157,7 +157,7 @@ shinyServer(function(input, output, session){
   })
   
   filterCarMilesData <- reactive ({
-    # IndividualID  age	Sex_B01ID	NSSec_B03ID	EthGroupTS_B02ID
+    # ID  age	Sex_B01ID	NSSec_B03ID	EthGroupTS_B02ID
     data <- carMiles
     
     if (input$inCMAG != 'All'){
@@ -181,13 +181,13 @@ shinyServer(function(input, output, session){
                         paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
     
     
-    data1 <- carMiles[,c("IndividualID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
+    data1 <- carMiles[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
     
     names(data1)[names(data1) == columnName] <- 'scenario'
     
     data1 <- arrange(data1, scenario)
     
-    data2 <- data[,c("IndividualID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
+    data2 <- data[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
     
     names(data2)[names(data2) == columnName] <- 'scenario'
     
@@ -872,7 +872,7 @@ shinyServer(function(input, output, session){
     columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("TDR", input$inBDTDR,sep = ""),
                         paste("ebik", input$inBDEB,sep = ""), paste("eq", input$inBDEQ,sep = ""), "mode", sep="_")
     cat(columnName, "\n")
-    colList <- c("IndividualID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", columnName)
+    colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", columnName)
     data2 <- tripData[,colList]
     
     if (input$inBDAG != 'All'){
