@@ -15,7 +15,11 @@ msharedtata <- read.csv("data/BD_share1split.csv", as.is = T)
 fasterTripData <- read.csv("data/BreakDowns/BD_mode-fastertrips.csv")
 slowerTripData <- read.csv("data/BreakDowns/BD_mode-slowertrips.csv")
 
-sdata <- read.csv("data/CBM_aggr_II.csv", header = T, check.names=FALSE)
+# sdata <- read.csv("data/CBM_aggr_II.csv", header = T, check.names=FALSE)
+# sdata <- subset(sdata, TDR == 1 | TDR == -1)
+
+sdata <- read.csv("data/CBM_aggr.csv", header = T, check.names=FALSE)
+
 baselineSummary <- sdata[1,]
 # Temporarily remove baseline summary
 sdata <- sdata[-1,]
@@ -32,9 +36,13 @@ scenariosTripTimeTravelIdata <- read.csv("data/bd_triptime_changed.csv", as.is =
 # Create a lookup table for mode of transport
 tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Car Driver", "Car Passenger", "Bus", "Train", "Other"), code = c(1:7))
 
+# # Read Health Calculations
+# yll <- read.csv("data/yll_eng_agg.csv", header = T, as.is = T)
+# yll_red <- read.csv("data/yll_red_eng_agg.csv", header = T, as.is = T)
+
 # Read Health Calculations
-yll <- read.csv("data/yll_eng_agg.csv", header = T, as.is = T)
-yll_red <- read.csv("data/yll_red_eng_agg.csv", header = T, as.is = T)
+yll <- read.csv("data/health/yll_agg.csv", header = T, as.is = T)
+yll_red <- read.csv("data/health/yll_red_agg.csv", header = T, as.is = T)
 
 #Read Car Miles data
 carMiles <- read.csv("data/carMilesSubset.csv", header = T, as.is = T)

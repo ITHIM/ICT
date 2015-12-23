@@ -32,7 +32,7 @@ format_function <- "#! function() {
         }
       }!#"
 
-getSeriesName <- function( EQ, TDR , EB){
-  paste("EQ:", EQ, "& TDR:", TDR, "& EB:", EB, sep = " ")
+getSeriesName <- function( EQ, EB){
+  paste("EQ:", EQ, "& EB:", EB, sep = " ")
   
 }
