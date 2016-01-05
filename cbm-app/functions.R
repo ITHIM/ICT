@@ -36,3 +36,11 @@ getSeriesName <- function( EQ, EB){
   paste("EQ:", EQ, "& EB:", EB, sep = " ")
   
 }
+
+appendMissingFrequencies <- function( df1, df2){
+  missingModes <- setdiff(df1[,2], df2[,1])
+  for (i in (1:length(missingModes))){
+    df2 = rbind(df2,c(missingModes[i], 0))
+  }
+  df2
+}
