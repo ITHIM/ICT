@@ -28,6 +28,11 @@ bldata <- NULL
 scYllData <- NULL
 scYllReductionData <- NULL
 
+msBaseline <- NULL
+msScenario <- NULL
+tdBaseline <- NULL
+tdScenario <- NULL
+
 # Functions
 source("functions.R")
 
@@ -93,36 +98,36 @@ shinyServer(function(input, output, session){
   })
   
   tripTimeData <- reactive({
-    data <- scenariosTripTimeTravelIdata
-    
-    if (input$inTTag != 'All'){
-      data <- subset(data, age_group == input$inTTag)
-    }
-    if (input$inTTgender != 3)
-      data <- subset(data, Sex_B01ID %in% input$inTTgender)
-    
-    if (input$inTTses != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inTTses)
-    }
-    
-    if (input$inTTethnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
-    }
-    data[is.na(data)] <- 0
-    
-    
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
-                        paste("eq", input$inTTEQ,sep = ""), sep="_")
-    
-    tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
-    tripData <- data[,c("baseline", columnName)]
-    
-    tripData <- as.data.frame(((tripData[[columnName]] - tripData$baseline) / tripData$baseline ) * 100)
-    
-    colnames(tripData) <- c("diff")
-    tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
-    tripDataSubset <- subset(tripDataSubset, diff != 0 )
-    scFilteredTripTimeTraveldata <<- tripDataSubset
+#     data <- scenariosTripTimeTravelIdata
+#     
+#     if (input$inTTag != 'All'){
+#       data <- subset(data, age_group == input$inTTag)
+#     }
+#     if (input$inTTgender != 3)
+#       data <- subset(data, Sex_B01ID %in% input$inTTgender)
+#     
+#     if (input$inTTses != "All"){
+#       data <- subset(data, NSSec_B03ID %in% input$inTTses)
+#     }
+#     
+#     if (input$inTTethnicity != "All"){
+#       data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
+#     }
+#     data[is.na(data)] <- 0
+#     
+#     
+#     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+#                         paste("eq", input$inTTEQ,sep = ""), sep="_")
+#     
+#     #tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
+#     tripData <- data[,c("MainMode_Reduced", columnName)]
+#     
+#     tripData <- as.data.frame(((tripData[[columnName]] - tripData$MainMode_Reduced) / tripData$MainMode_Reduced ) * 100)
+#     
+#     colnames(tripData) <- c("diff")
+#     tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
+#     tripDataSubset <- subset(tripDataSubset, diff != 0 )
+#     scFilteredTripTimeTraveldata <<- tripDataSubset
   })
   
   filterHealthData <- reactive({
@@ -853,44 +858,92 @@ shinyServer(function(input, output, session){
   }
   
   
-  generateBDScenarioTable<- reactive({
+  generateBDScenarioTable <- reactive({
     
     lMS <- input$inBDMS
     lEB <- input$inBDEB
     lEQ <- input$inBDEQ
     
-    data1 <- msharedtata
-    data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & equity == lEQ & ebike == lEB)
-    
-    data1[is.na(data1)] <- 0
-    data1 <- arrange(data1, MS)
-    bd <<- data1
+#     data1 <- msharedtata
+#     data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & equity == lEQ & ebike == lEB)
+#     
+#     data1[is.na(data1)] <- 0
+#     data1 <- arrange(data1, MS)
+#     bd <<- data1
     
     
     # Filter data of trips
+#     cat(paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
+#               paste("eq", input$inBDEQ,sep = ""), sep="_"), "\n")
     columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
-                        paste("eq", input$inBDEQ,sep = ""), "mode", sep="_")
+                        paste("eq", input$inBDEQ,sep = ""), sep="_")
     cat(columnName, "\n")
-    colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", columnName)
-    data2 <- tripData[,colList]
+    colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "MainMode_Reduced", columnName)
+    data <- tripData[,colList]
     
+    msbl <- subset(tripData, select = MainMode_Reduced)
+    msbl <- count(msbl, "MainMode_Reduced")
+    names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
+    
+    msbl$freq <- round(msbl$freq / sum(msbl$freq) * 100, digit = 1)
+    
+    msbl <- appendMissingFrequencies(tp_mode, msbl)
+    
+    msbl <- arrange(msbl, msbl[,1])
+    
+    msBaseline <<- msbl
+      
+    mssc <- subset(tripData, select = columnName)
+    mssc <- count(mssc, columnName)
+    names(mssc)[names(mssc)== columnName] <- "scenario"
+    
+    mssc$freq <- round(mssc$freq / sum(mssc$freq) * 100, digit = 1)
+    
+    mssc <- appendMissingFrequencies(tp_mode, mssc)
+    
+    mssc <- arrange(mssc, mssc[,1])
+    
+    msScenario <<- mssc
+    #tdBaseline
     if (input$inBDAG != 'All'){
-      data2 <- subset(data2, age_group == input$inBDAG)
+      data <- subset(data, age_group == input$inBDAG)
     }
     if (input$inBDGender != 3)
-      data2 <- subset(data2, Sex_B01ID %in% input$inBDGender)
+      data <- subset(data, Sex_B01ID %in% input$inBDGender)
     
     if (input$inBDSES != "All"){
-      data2 <- subset(data2, NSSec_B03ID %in% input$inBDSES)
+      data <- subset(data, NSSec_B03ID %in% input$inBDSES)
     }
     
     if (input$inBDEthnicity != "All"){
-      data2 <- subset(data2, EthGroupTS_B02ID %in% input$inBDEthnicity)
+      data <- subset(data, EthGroupTS_B02ID %in% input$inBDEthnicity)
     }
     
+    data1 <- count(data, columnName)
+    names(data1)[names(data1)== columnName] <- "scenario"
+    
+    data1$freq <- round(data1$freq / sum(data1$freq) * 100, digit = 1)
+    
+    data1 <- appendMissingFrequencies(tp_mode, data1)
+    
+    data1 <- arrange(data1, data1[,1])
+    
+    tdScenario <<- data1
+    
+    data2 <- count(data, "MainMode_Reduced")
+    names(data2)[names(data2)== columnName] <- "baseline"
+    
+    data2$freq <- round(data2$freq / sum(data2$freq) * 100, digit = 1)
+    
+    data2 <- appendMissingFrequencies(tp_mode, data2)
+    
+    data2 <- arrange(data2, data2[,1])
+    
+    tdBaseline <<- data2
     
     
-    
+
+    bd <<- data2
   })
   
   
@@ -1052,17 +1105,17 @@ shinyServer(function(input, output, session){
       h1$chart(type = "column")
       h1$plotOptions(column=list(animation=FALSE))
       
-      filtered_title <- getFilteredBDTitle("BD")
+      #filtered_title <- getFilteredBDTitle("BD")
       extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
       h1$title(text = extended_title)
-      baseline <- subset(msharedtata, MS == 1)
-      h1$series(data = baseline$case, name = "Baseline (Total Population)")
-      h1$series(data = bd$case, name = "Scenario (Total Population)")
+      #baseline <- subset(msharedtata, MS == 1)
+      h1$series(data = tdBaseline$freq, name = "Baseline (Filtered Population)")
+      h1$series(data = tdScenario$freq, name = "Scenario (Filtered Population)")
       
-      h1$xAxis(categories = c("Walk", "Car Driver", "Car Passenger", "Bus", "Train", "Other", "Bicycle", "Ebike"))
+      h1$xAxis(categories = tp_mode$mode)
       h1$yAxis(title = list(text = 'Percentage %'))
       
-      h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
       
       h1$tooltip(valueSuffix= '%')
       
