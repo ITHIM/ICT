@@ -98,36 +98,36 @@ shinyServer(function(input, output, session){
   })
   
   tripTimeData <- reactive({
-#     data <- scenariosTripTimeTravelIdata
-#     
-#     if (input$inTTag != 'All'){
-#       data <- subset(data, age_group == input$inTTag)
-#     }
-#     if (input$inTTgender != 3)
-#       data <- subset(data, Sex_B01ID %in% input$inTTgender)
-#     
-#     if (input$inTTses != "All"){
-#       data <- subset(data, NSSec_B03ID %in% input$inTTses)
-#     }
-#     
-#     if (input$inTTethnicity != "All"){
-#       data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
-#     }
-#     data[is.na(data)] <- 0
-#     
-#     
-#     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
-#                         paste("eq", input$inTTEQ,sep = ""), sep="_")
-#     
-#     #tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
-#     tripData <- data[,c("MainMode_Reduced", columnName)]
-#     
-#     tripData <- as.data.frame(((tripData[[columnName]] - tripData$MainMode_Reduced) / tripData$MainMode_Reduced ) * 100)
-#     
-#     colnames(tripData) <- c("diff")
-#     tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
-#     tripDataSubset <- subset(tripDataSubset, diff != 0 )
-#     scFilteredTripTimeTraveldata <<- tripDataSubset
+    #     data <- scenariosTripTimeTravelIdata
+    #     
+    #     if (input$inTTag != 'All'){
+    #       data <- subset(data, age_group == input$inTTag)
+    #     }
+    #     if (input$inTTgender != 3)
+    #       data <- subset(data, Sex_B01ID %in% input$inTTgender)
+    #     
+    #     if (input$inTTses != "All"){
+    #       data <- subset(data, NSSec_B03ID %in% input$inTTses)
+    #     }
+    #     
+    #     if (input$inTTethnicity != "All"){
+    #       data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
+    #     }
+    #     data[is.na(data)] <- 0
+    #     
+    #     
+    #     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+    #                         paste("eq", input$inTTEQ,sep = ""), sep="_")
+    #     
+    #     #tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
+    #     tripData <- data[,c("MainMode_Reduced", columnName)]
+    #     
+    #     tripData <- as.data.frame(((tripData[[columnName]] - tripData$MainMode_Reduced) / tripData$MainMode_Reduced ) * 100)
+    #     
+    #     colnames(tripData) <- c("diff")
+    #     tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
+    #     tripDataSubset <- subset(tripDataSubset, diff != 0 )
+    #     scFilteredTripTimeTraveldata <<- tripDataSubset
   })
   
   filterHealthData <- reactive({
@@ -864,20 +864,20 @@ shinyServer(function(input, output, session){
     lEB <- input$inBDEB
     lEQ <- input$inBDEQ
     
-#     data1 <- msharedtata
-#     data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & equity == lEQ & ebike == lEB)
-#     
-#     data1[is.na(data1)] <- 0
-#     data1 <- arrange(data1, MS)
-#     bd <<- data1
+    #     data1 <- msharedtata
+    #     data1 <- subset(data1, MS == (as.numeric(lMS) + 1) & equity == lEQ & ebike == lEB)
+    #     
+    #     data1[is.na(data1)] <- 0
+    #     data1 <- arrange(data1, MS)
+    #     bd <<- data1
     
     
     # Filter data of trips
-#     cat(paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
-#               paste("eq", input$inBDEQ,sep = ""), sep="_"), "\n")
+    #     cat(paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
+    #               paste("eq", input$inBDEQ,sep = ""), sep="_"), "\n")
     columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
                         paste("eq", input$inBDEQ,sep = ""), sep="_")
-    cat(columnName, "\n")
+    # cat(columnName, "\n")
     colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "MainMode_Reduced", columnName)
     data <- tripData[,colList]
     
@@ -892,7 +892,7 @@ shinyServer(function(input, output, session){
     msbl <- arrange(msbl, msbl[,1])
     
     msBaseline <<- msbl
-      
+    
     mssc <- subset(tripData, select = columnName)
     mssc <- count(mssc, columnName)
     names(mssc)[names(mssc)== columnName] <- "scenario"
@@ -942,7 +942,7 @@ shinyServer(function(input, output, session){
     tdBaseline <<- data2
     
     
-
+    
     bd <<- data2
   })
   
@@ -1072,57 +1072,115 @@ shinyServer(function(input, output, session){
   
   output$plotBDMode <- renderChart({
     generateBDScenarioTable()
-    if (!is.null(bd)){
-      h1 <- Highcharts$new()
-      h1$chart(type = "column")
-      h1$plotOptions(column=list(animation=FALSE))
+    if (input$flipMS == 'sep'){
+      # Keep the data separated
+      # scMETdata and scFilteredMETdata
+      firstColData = msBaseline # msScenario
+      secondColData = tdBaseline
       
-      filtered_title <- getFilteredBDTitle("BD")
-      extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
-      h1$title(text = extended_title)
-      baseline <- subset(msharedtata, MS == 1)
-      h1$series(data = baseline$case, name = "Baseline (Total Population)")
-      h1$series(data = bd$case, name = "Scenario (Total Population)")
+      firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
+      secondColName <- "Baseline (Sub-Population)"
       
-      h1$xAxis(categories = c("Walk", "Car Driver", "Car Passenger", "Bus", "Train", "Other", "Bicycle", "Ebike"))
-      h1$yAxis(title = list(text = 'Percentage %'))
+      #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
+      #         
+      #         firstColName <- "Baseline (Total Population)"
+      #         secondColName <- "Baseline (Sub-Population)"
+      #         if (nrow(idata) == nrow(pd))
+      #           secondColName <- "Baseline (Total Population)"
+      #         
+    }else{
+      # Keep the data mixed
+      firstColData = tdBaseline
+      secondColData = tdScenario
       
-      h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
+      secondColName <- "Scenario (Sub-Population)"
       
-      h1$tooltip(valueSuffix= '%')
-      
-      h1$set(dom = 'plotBDMode')
-      h1$exporting(enabled = T)
-      return (h1)
+      #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
+      #         
+      #         firstColName <- "Baseline (Total Population)"
+      #         secondColName <- "Scenario (Sub-Population)"
+      #         if (nrow(idata) == nrow(scMETdata))
+      #           secondColName <- "Scenario (Total Population)"
     }
+    
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    h1$plotOptions(column=list(animation=FALSE))
+    
+    #filtered_title <- getFilteredBDTitle("BD")
+    extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
+    h1$title(text = extended_title)
+    #baseline <- subset(msharedtata, MS == 1)
+    h1$series(data = firstColData$freq, name = firstColName)
+    h1$series(data = secondColData$freq, name = secondColName)
+    
+    h1$xAxis(categories = tp_mode$mode)
+    h1$yAxis(title = list(text = 'Percentage %'))
+    
+    #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    
+    h1$tooltip(valueSuffix= '%')
+    
+    h1$set(dom = 'plotBDMode')
+    h1$exporting(enabled = T)
+    return (h1)
   })
   
   
   output$plotBDSCMode <- renderChart({
     generateBDScenarioTable()
-    if (!is.null(bd)){
-      h1 <- Highcharts$new()
-      h1$chart(type = "column")
-      h1$plotOptions(column=list(animation=FALSE))
+    if (input$flipMS == 'sep'){
+      # Keep the data separated
+      # scMETdata and scFilteredMETdata
       
-      #filtered_title <- getFilteredBDTitle("BD")
-      extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
-      h1$title(text = extended_title)
-      #baseline <- subset(msharedtata, MS == 1)
-      h1$series(data = tdBaseline$freq, name = "Baseline (Filtered Population)")
-      h1$series(data = tdScenario$freq, name = "Scenario (Filtered Population)")
+      firstColData = msScenario
+      secondColData = tdScenario
       
-      h1$xAxis(categories = tp_mode$mode)
-      h1$yAxis(title = list(text = 'Percentage %'))
+      firstColName <- "Scenario (Total Population)" # "Scenario (Total Population)"
+      secondColName <- "Scenario (Sub-Population)"
       
-      #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
+      #         
+
+      #         if (nrow(idata) == nrow(pd))
+      #           secondColName <- "Baseline (Total Population)"
+      #         
+    }else{
+      # Keep the data mixed
+      firstColData = msBaseline
+      secondColData = msScenario
+      firstColName <- "Baseline (Total Population)"
+      secondColName <- "Scenario (Total Population)"
+      #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
+      #         
       
-      h1$tooltip(valueSuffix= '%')
-      
-      h1$set(dom = 'plotBDSCMode')
-      h1$exporting(enabled = T)
-      return (h1)
+      #         if (nrow(idata) == nrow(scMETdata))
+      #           secondColName <- "Scenario (Total Population)"
     }
+    
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    h1$plotOptions(column=list(animation=FALSE))
+    
+    #filtered_title <- getFilteredBDTitle("BD")
+    extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
+    h1$title(text = extended_title)
+    #baseline <- subset(msharedtata, MS == 1)
+    h1$series(data = firstColData$freq, name = firstColName)
+    h1$series(data = secondColData$freq, name = secondColName)
+    
+    h1$xAxis(categories = tp_mode$mode)
+    h1$yAxis(title = list(text = 'Percentage %'))
+    
+    #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    
+    h1$tooltip(valueSuffix= '%')
+    
+    h1$set(dom = 'plotBDSCMode')
+    h1$exporting(enabled = T)
+    return (h1)
+    
   })
   
   
