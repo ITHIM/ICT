@@ -26,8 +26,11 @@ phyGLRButton <- c("On" = "on",
                   "Off" =    "off")
 
 
+# ag <- "All"
+# ag <- append(ag, sort(unique(as.character(tdata$age_group))))
+
 ag <- "All"
-ag <- append(ag, sort(unique(as.character(tdata$age_group))))
+ag <- append(ag, sort(unique(as.character(tripData$age_group))))
 
 healthAG <- c("All", "18 - 39", "40 - 59", "60 - 84")
 
@@ -49,7 +52,7 @@ genderForHealthCalculations <- c("All",
                                  "Female")
 
 shinyUI(fluidPage(width="100%", height="100%",
-                  headerPanel("Co-Benefit Model (Prototype)"),
+                  headerPanel("Integrated Cycling Model (Prototype)"),
                   sidebarPanel(
                     conditionalPanel(condition="input.conditionedPanels == 1",
                                      selectInput(inputId = "inEQ", label = h4("Select Equity (EQ):"), choices =  uEQ),
@@ -157,7 +160,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                                HTML('<style>iframe.rChart{ width: 100%; height: 400px;}</style>')
                       ),
                       tabPanel("Scenarios - Mode Share", value = 2,
-                               showOutput('plotBDMode', "highcharts"),
+                               # showOutput('plotBDMode', "highcharts"),
                                showOutput('plotBDSCMode', "highcharts")
                       ),
                       tabPanel("Health", value = 3,
