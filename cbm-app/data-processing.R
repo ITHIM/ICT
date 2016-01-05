@@ -34,7 +34,7 @@ scenariosTimeTravelIdata <- read.csv("data/triptim_filtered.csv", as.is = T)
 scenariosTripTimeTravelIdata <- read.csv("data/bd_triptime_changed.csv", as.is = T)
 
 # Create a lookup table for mode of transport
-tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Car Driver", "Car Passenger", "Bus", "Train", "Other"), code = c(1:7))
+tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"), code = c(1, 2, 2.5, c(3:7)))
 
 # # Read Health Calculations
 # yll <- read.csv("data/yll_eng_agg.csv", header = T, as.is = T)
@@ -49,5 +49,6 @@ carMiles <- read.csv("data/carMilesSubset.csv", header = T, as.is = T)
 # Remove all rows where baseline rows don't have any car miles
 carMiles <- subset(carMiles, !is.na(baseline))
 
-#Read Trip data
-tripData <- read.csv("data/bl_ag_sc_modes.csv", header = T, as.is = T)
+# #Read Trip data
+# tripData <- read.csv("data/bl_ag_sc_modes.csv", header = T, as.is = T)
+tripData <- read.csv("data/tripsdf.csv", header = T, as.is = T)
