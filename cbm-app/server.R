@@ -13,6 +13,7 @@ library(stringr)
 library(Hmisc)
 
 pd <- idata$total_mmet
+bMETdata <- NULL
 scMETdata <- NULL
 scFilteredMETdata <- NULL
 scTimeTraveldata <- NULL
@@ -204,7 +205,15 @@ shinyServer(function(input, output, session){
   })
   
   plotMETDataTable<- reactive({
-    data <- idata
+    data <- subset(idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline_mmet))
+    data["total_mmet"] <- data$baseline_mmet
+    
+    data1 <- subset(data, select = baseline_mmet)
+    data1["total_mmet"] <- data1$baseline_mmet
+
+    bMETdata <<- data1
+    
+    
     if (input$mag != 'All'){
       data <- subset(data, age_group == input$mag)
     }
@@ -222,17 +231,17 @@ shinyServer(function(input, output, session){
     
     pd <<- data
     
-    data <- scenariosIdata
-    
     columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMETEB,sep = ""), 
                         paste("eq", input$inMETEQ,sep = ""), sep="_")
     
-    data["total_mmet"] <- scenariosIdata[columnName]
+    data <- subset(idata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID",columnName))
+    
+    data["total_mmet"] <- data[columnName]
     
     scMETdata <<- data
     
     if (input$mag != 'All'){
-      data <- subset(data, age == input$mag)
+      data <- subset(data, age_group == input$mag)
     }
     if (input$mgender != 3)
       data <- subset(data, Sex_B01ID %in% input$mgender)
@@ -314,7 +323,7 @@ shinyServer(function(input, output, session){
       if (input$flipMETHG == 'sep'){
         # Keep the data separated
         # scMETdata and scFilteredMETdata
-        firstColData = idata
+        firstColData = bMETdata
         secondColData = pd
         
         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
@@ -326,7 +335,7 @@ shinyServer(function(input, output, session){
         
       }else{
         # Keep the data mixed
-        firstColData = idata
+        firstColData = bMETdata
         secondColData = scMETdata
         
         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
@@ -346,8 +355,8 @@ shinyServer(function(input, output, session){
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
-        h1$xAxis(categories = c("Lower the guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
-                                "Meeting the guidelines (METh > 17.5)"), 
+        h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
+                                "Meeting the higher guidelines (METh > 17.5)"), 
                  title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         
@@ -440,7 +449,7 @@ shinyServer(function(input, output, session){
         # scMETdata and scFilteredMETdata
         firstColData = scMETdata
         secondColData = scFilteredMETdata
-        extended_title <- paste("Marginal MET hours of Scenario")
+        extended_title <- paste("Scenario - Marginal MET Hours")
         
         firstColName <- "Scenario (Total Population)"
         secondColName <- "Scenario (Sub-population)"
@@ -468,8 +477,8 @@ shinyServer(function(input, output, session){
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
-        h1$xAxis(categories = c("Lower the guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
-                                "Meeting the guidelines (METh > 17.5)"), 
+        h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
+                                "Meeting the higher guidelines (METh > 17.5)"),
                  title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         
@@ -1072,6 +1081,7 @@ shinyServer(function(input, output, session){
   
   output$plotBDMode <- renderChart({
     generateBDScenarioTable()
+    extended_title <- ""
     if (input$flipMS == 'sep'){
       # Keep the data separated
       # scMETdata and scFilteredMETdata
@@ -1080,6 +1090,8 @@ shinyServer(function(input, output, session){
       
       firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
       secondColName <- "Baseline (Sub-Population)"
+      
+      extended_title <- "Baseline - Mode Share"
       
       #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
       #         
@@ -1096,6 +1108,8 @@ shinyServer(function(input, output, session){
       firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
       
+      extended_title <- "Baseline versus Scenario - Mode Share (Sub-Population)"
+      
       #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
       #         
       #         firstColName <- "Baseline (Total Population)"
@@ -1109,7 +1123,7 @@ shinyServer(function(input, output, session){
     h1$plotOptions(column=list(animation=FALSE))
     
     #filtered_title <- getFilteredBDTitle("BD")
-    extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
+    #extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
     h1$title(text = extended_title)
     #baseline <- subset(msharedtata, MS == 1)
     h1$series(data = firstColData$freq, name = firstColName)
@@ -1140,6 +1154,8 @@ shinyServer(function(input, output, session){
       firstColName <- "Scenario (Total Population)" # "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
       
+      extended_title <- "Scenario - Mode Share"
+      
       #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
       #         
 
@@ -1152,6 +1168,8 @@ shinyServer(function(input, output, session){
       secondColData = msScenario
       firstColName <- "Baseline (Total Population)"
       secondColName <- "Scenario (Total Population)"
+      
+      extended_title <- "Baseline versus Scenario - Mode Share"
       #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
       #         
       
@@ -1164,7 +1182,7 @@ shinyServer(function(input, output, session){
     h1$plotOptions(column=list(animation=FALSE))
     
     #filtered_title <- getFilteredBDTitle("BD")
-    extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
+    #extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
     h1$title(text = extended_title)
     #baseline <- subset(msharedtata, MS == 1)
     h1$series(data = firstColData$freq, name = firstColName)
