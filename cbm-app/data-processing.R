@@ -4,12 +4,16 @@ tdata <- read.csv("data/baseline_filtered.csv", as.is = T)
 # Turning off this line of code
 #idata <- read.csv("data/bl_with_people_no_trip_filtered.csv", as.is = T)
 
-idata <- read.csv("data/idataSubset.csv", as.is = T)
+# idata <- read.csv("data/idataSubset.csv", as.is = T)
+# 
+# tdata$age_group <- as.character(tdata$age_group)
+# tdata$age_group <- str_trim(tdata$age_group)
+# idata$age_group <- as.character(idata$age_group)
+# idata$age_group <- str_trim(idata$age_group)
 
-tdata$age_group <- as.character(tdata$age_group)
-tdata$age_group <- str_trim(tdata$age_group)
-idata$age_group <- as.character(idata$age_group)
-idata$age_group <- str_trim(idata$age_group)
+idata <- read.csv("data/PADf.csv", as.is = T)
+
+
 msharedtata <- read.csv("data/BD_share1split.csv", as.is = T)
 
 fasterTripData <- read.csv("data/BreakDowns/BD_mode-fastertrips.csv")
@@ -25,7 +29,7 @@ baselineSummary <- sdata[1,]
 sdata <- sdata[-1,]
 sdata[is.na(sdata)] <- 0
 
-scenariosIdata <- read.csv("data/b_eng_mmet.csv", as.is = T)
+#scenariosIdata <- read.csv("data/b_eng_mmet.csv", as.is = T)
 
 scenariosTimeTravelIdata <- read.csv("data/triptim_filtered.csv", as.is = T)
 
