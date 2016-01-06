@@ -83,7 +83,23 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      
                                      radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE)
                                      
+                    ),
+                    conditionalPanel(condition="input.conditionedPanels == 4",
+                                     selectInput(inputId = "inMETMS", label = "Select Cycling Multiplier:", choices =  uBDMS),
+                                     selectInput(inputId = "inMETEQ", label = "Select Equity (EQ):", choices =  uBDEQ),
+                                     selectInput(inputId = "inMETEB", label = "Select Ebike (EB):", choices =  uBDEB),
+                                     
+                                     HTML("<hr>"),
+                                     selectizeInput("mag", "Age Group:", ag, selected = ag[1], multiple = F),
+                                     radioButtons("mgender", "Gender: ", gender, inline = TRUE),
+                                     selectizeInput("mses", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                                     selectizeInput("methnicity", "Ethnic Group:", ethnicity, selected = ethnicity[1], multiple = F),
+                                     HTML("<hr>"),
+                                     radioButtons("flipMETHG", label = "Flip Histogram:", METSwitchRButton, inline = TRUE),
+                                     HTML("<hr>"),
+                                     radioButtons("phyGuideline", label = "% Meeting WHO Physical Guideline", phyGLRButton, selected = phyGLRButton[2], inline = TRUE)
                     )
+                    
                     
                     
                     #,
@@ -170,6 +186,10 @@ shinyUI(fluidPage(width="100%", height="100%",
                                showOutput('plotYLL', "highcharts"),
                                showOutput('plotYLLReduction', "highcharts")
                                
+                      ),
+                      tabPanel("Physical Activity", value = 4,
+                               showOutput('plotMET', "highcharts"),
+                               showOutput('plotScenarioMET', "highcharts")
                       )
                       
                       
