@@ -34,6 +34,9 @@ msScenario <- NULL
 tdBaseline <- NULL
 tdScenario <- NULL
 
+scMilesCycledData <- NULL
+scMilesCycledFileredData <- NULL
+
 # Functions
 source("functions.R")
 
@@ -391,7 +394,7 @@ shinyServer(function(input, output, session){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
         bc1max <- max(bc$Freq, na.rm = T)
         
-        h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "52.7+")), title = list(text = 'Marginal MET Hours'))
+        h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "> 52.8")), title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         max_val <- 0
         if (nrow(secondColData) > 1)
@@ -512,7 +515,7 @@ shinyServer(function(input, output, session){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
         bc1max <- max(bc$Freq, na.rm = T)
         
-        h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "52.7+")), title = list(text = 'Marginal MET Hours'))
+        h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "> 52.8")), title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         max_val <- 0
         if (nrow(secondColData) > 1)
@@ -866,7 +869,52 @@ shinyServer(function(input, output, session){
     
   }
   
-  
+  getTripsFilteredTitle <- function(){
+    filtered_title <- "Total Population"
+    
+#     firstColData = msBaseline # msScenario
+#     secondColData = tdBaseline
+    
+#     if (src == "baseline")
+#       dataSource = tdBaseline
+#     else
+#       dataSource = tdScenario
+    
+    if (input$inBDAG != "All" || input$inBDGender != 3 || input$inBDEthnicity != "All" || input$inBDSES != "All" ){
+      
+      displayGender <- "All"
+      if (input$inBDGender == 1){
+        displayGender <- "Male"
+      }else if (input$inBDGender == 2){
+        displayGender <- "Female"
+      }
+      
+      displayEthnicity <- "All"
+      if (input$inBDEthnicity == 1){
+        displayEthnicity <- "White"
+      }else if (input$inBDEthnicity == 2){
+        displayEthnicity <- "Non-White"
+      }
+      
+      displaySES <- "All"
+      if (input$inBDSES == 1){
+        displaySES <- "Managerial and professional occupations"
+      }else if (input$inBDSES == 2){
+        displaySES <- "Intermediate occupations and small employers"
+      }else if (input$inBDSES == 3){
+        displaySES <- "Routine and manual occupations"
+      }else if (input$inBDSES == 4){
+        displaySES <- "Never worked and long-term unemployed"
+      }else if (input$inBDSES == 5){
+        displaySES <- "Not classified (including students)"
+      }
+      
+      filtered_title <- paste("Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title
+    }else
+      filtered_title
+  }
+
   generateBDScenarioTable <- reactive({
     
     lMS <- input$inBDMS
@@ -1019,7 +1067,7 @@ shinyServer(function(input, output, session){
     # types of charts: http://api.highcharts.com/highcharts#plotOptions
     h1$yAxis(title = list(text = var))
     
-    h1$xAxis(categories = append("Baseline", sort(unique(sdata$MS), decreasing = F)), title = list(text = 'Cycling Increase'))
+    h1$xAxis(categories = append("Baseline", sort(unique(sdata$MS), decreasing = F)), title = list(text = 'Cycling Multiplier'))
     
     
     if (input$inEB != "All" & input$inEQ != "All"){
@@ -1082,6 +1130,9 @@ shinyServer(function(input, output, session){
   output$plotBDMode <- renderChart({
     generateBDScenarioTable()
     extended_title <- ""
+    firstColData = NULL
+    secondColData = NULL
+    filtered_title <- getTripsFilteredTitle()
     if (input$flipMS == 'sep'){
       # Keep the data separated
       # scMETdata and scFilteredMETdata
@@ -1101,14 +1152,14 @@ shinyServer(function(input, output, session){
       #           secondColName <- "Baseline (Total Population)"
       #         
     }else{
-      # Keep the data mixed
-      firstColData = tdBaseline
-      secondColData = tdScenario
       
-      firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      firstColData = msBaseline
+      secondColData = msScenario
+      firstColName <- "Baseline (Total Population)"
+      secondColName <- "Scenario (Total Population)"
       
-      extended_title <- "Baseline versus Scenario - Mode Share (Sub-Population)"
+      extended_title <- "Total Population - Mode Share"
+      filtered_title <- ""
       
       #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
       #         
@@ -1122,17 +1173,24 @@ shinyServer(function(input, output, session){
     h1$chart(type = "column")
     h1$plotOptions(column=list(animation=FALSE))
     
-    #filtered_title <- getFilteredBDTitle("BD")
+    
     #extended_title <- paste("Mode Share: Total Population versus Selected Scenario")
+    
     h1$title(text = extended_title)
     #baseline <- subset(msharedtata, MS == 1)
     h1$series(data = firstColData$freq, name = firstColName)
     h1$series(data = secondColData$freq, name = secondColName)
     
     h1$xAxis(categories = tp_mode$mode)
-    h1$yAxis(title = list(text = 'Percentage %'))
+    h1$yAxis(title = list(text = 'Percentage % of Trips'))
     
     #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    
+    if (sum(firstColData$freq, na.rm = T) <= 10){
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }else{
+      h1$subtitle(text= filtered_title)
+    }
     
     h1$tooltip(valueSuffix= '%')
     
@@ -1164,12 +1222,14 @@ shinyServer(function(input, output, session){
       #         
     }else{
       # Keep the data mixed
-      firstColData = msBaseline
-      secondColData = msScenario
-      firstColName <- "Baseline (Total Population)"
-      secondColName <- "Scenario (Total Population)"
+      firstColData = tdBaseline
+      secondColData = tdScenario
       
-      extended_title <- "Baseline versus Scenario - Mode Share"
+      firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
+      secondColName <- "Scenario (Sub-Population)"
+      
+      extended_title <- "Sub-population - Mode Share"
+      
       #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
       #         
       
@@ -1189,9 +1249,16 @@ shinyServer(function(input, output, session){
     h1$series(data = secondColData$freq, name = secondColName)
     
     h1$xAxis(categories = tp_mode$mode)
-    h1$yAxis(title = list(text = 'Percentage %'))
+    h1$yAxis(title = list(text = 'Percentage % of Trips'))
     
     #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    filtered_title <- getTripsFilteredTitle()
+    
+    if (sum(firstColData$freq, na.rm = T) <= 10){
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }else{
+      h1$subtitle(text= filtered_title)
+    }
     
     h1$tooltip(valueSuffix= '%')
     
@@ -1299,6 +1366,106 @@ shinyServer(function(input, output, session){
     h1$set(dom = 'plotCarTripsCycled')
     h1$exporting(enabled = T)
     return (h1)
+    
+  })
+  
+  
+  output$plotMilesCycled <- renderChart ({
+    filterMilesCycledData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    
+    if (input$inMSflip == 'sep'){
+      # Keep the data separated
+      firstColData = scMilesCycledData
+
+      firstColName <- "Scenario (Total Population)"
+      #secondColName <- "Scenario (Sub-Population)"
+      
+      #extended_title <- "Scenario - Mode Share"
+      
+    }else{
+      # Keep the data mixed
+      firstColData = scMilesCycledFileredData
+      #secondColData = tdScenario
+      
+      firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
+      #secondColName <- "Scenario (Sub-Population)"
+      
+      #extended_title <- "Sub-population - Mode Share"
+    }
+    
+#     data <- count(firstColData, "scenario")
+#     data$freq <- data$freq / sum(data$freq) * 100
+#     data$freq <- round(data$freq, digits = 1)
+    
+    data <- subset(firstColData, scenario != 0)
+    
+    dhist <- hist(subset(firstColData, scenario != 0))
+    
+    data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
+    data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+    data <- subset(data, freq >= 0.1)
+    #data <- subset(data, breaks != 0)
+    #h1$title(text = "Histogram of Relative Changes in Trip Durations for Trips now Cycled")
+    h1$series(data =  data$freq, name = "Miles Cycled")
+    
+    # h1$series(data = data$freq, name = "Miles Cycled")
+
+    #scenario
+    
+    h1$set(dom = 'plotMilesCycled')
+    h1$exporting(enabled = T)
+    return (h1)
+  })
+  
+  filterMilesCycledData <- reactive ({
+    data <- milesCycled
+    
+    if (input$inMSAG != 'All'){
+      data <- subset(data, age_group == input$inMSAG)
+    }
+    if (input$inMSG != 3)
+      data <- subset(data, Sex_B01ID %in% input$inMSG)
+    
+    if (input$inMSSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inMSSES)
+    }
+    
+    if (input$inMSEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inMSEthnicity)
+    }
+    data[is.na(data)] <- 0
+
+    columnName <- paste(paste("MS", input$inMSMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
+                        paste("eq", input$inMSEQ,sep = ""), sep="_")
+    
+    cat("column Name: ", columnName, "\n")
+    
+    
+    #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
+    
+    data1 <- data.frame(milesCycled[,columnName])
+    
+    #names(data1)[names(data1) == columnName] <- 'scenario'
+    
+    data1$scenario <- data1[,1]
+    data1[,1] <- NULL
+
+    data1 <- arrange(data1, scenario)
+    
+    #data2 <- data[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
+    data2 <- data.frame(data[,columnName])
+    
+    # names(data2)[names(data2) == columnName] <- 'scenario'
+    
+    data2$scenario <- data2[,1]
+    data2[,1] <- NULL
+    
+    data2 <- arrange(data2, scenario)
+    
+    scMilesCycledData <<- data1
+    scMilesCycledFileredData <<- data2
     
   })
   
