@@ -213,7 +213,7 @@ shinyServer(function(input, output, session){
     
     data1 <- subset(data, select = baseline_mmet)
     data1["total_mmet"] <- data1$baseline_mmet
-
+    
     bMETdata <<- data1
     
     
@@ -788,7 +788,7 @@ shinyServer(function(input, output, session){
   }
   
   getBaselineFilteredTitle <- function(data){
-    filtered_title <- "Total Population (Baseline)"
+    filtered_title <- ""
     if (nrow(data) != nrow (bldata)){
       
       displayGender <- "All"
@@ -825,7 +825,7 @@ shinyServer(function(input, output, session){
   }
   
   getMETFilteredTitle <- function(data, src){
-    filtered_title <- "Baseline (Total Population)"
+    filtered_title <- ""
     if (src == "baseline")
       dataSource = idata
     else
@@ -864,21 +864,10 @@ shinyServer(function(input, output, session){
       filtered_title
     }else
       filtered_title
-    
-    
-    
   }
   
   getTripsFilteredTitle <- function(){
-    filtered_title <- "Total Population"
-    
-#     firstColData = msBaseline # msScenario
-#     secondColData = tdBaseline
-    
-#     if (src == "baseline")
-#       dataSource = tdBaseline
-#     else
-#       dataSource = tdScenario
+    filtered_title <- ""
     
     if (input$inBDAG != "All" || input$inBDGender != 3 || input$inBDEthnicity != "All" || input$inBDSES != "All" ){
       
@@ -914,7 +903,7 @@ shinyServer(function(input, output, session){
     }else
       filtered_title
   }
-
+  
   generateBDScenarioTable <- reactive({
     
     lMS <- input$inBDMS
@@ -1216,7 +1205,7 @@ shinyServer(function(input, output, session){
       
       #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
       #         
-
+      
       #         if (nrow(idata) == nrow(pd))
       #           secondColName <- "Baseline (Total Population)"
       #         
@@ -1374,11 +1363,11 @@ shinyServer(function(input, output, session){
     filterMilesCycledData()
     h1 <- Highcharts$new()
     h1$chart(type = "column")
-    
+    firstColData <- NULL
     if (input$inMSflip == 'sep'){
       # Keep the data separated
       firstColData = scMilesCycledData
-
+      
       firstColName <- "Scenario (Total Population)"
       #secondColName <- "Scenario (Sub-Population)"
       
@@ -1395,23 +1384,32 @@ shinyServer(function(input, output, session){
       #extended_title <- "Sub-population - Mode Share"
     }
     
-#     data <- count(firstColData, "scenario")
-#     data$freq <- data$freq / sum(data$freq) * 100
-#     data$freq <- round(data$freq, digits = 1)
+    #     data <- count(firstColData, "scenario")
+    #     data$freq <- data$freq / sum(data$freq) * 100
+    #     data$freq <- round(data$freq, digits = 1)
     
-    data <- subset(firstColData, scenario != 0)
+    # data <- subset(firstColData, scenario != 0)
     
-    dhist <- hist(subset(firstColData, scenario != 0))
+    # dhist <- hist(subset(firstColData, scenario != 0)$scenario)
     
-    data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
+    #cat("Summary: ", summary(firstColData))
+    
+    # td <<- firstColData
+    
+    dhist <- hist(firstColData$scenario)
+    
+    # cat("class : ", class(dhist), "\n")
+    
+    data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts)
     data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-    data <- subset(data, freq >= 0.1)
-    #data <- subset(data, breaks != 0)
+    data <- subset(data, freq > 0)
+    data <- subset(data, breaks != dhist$breaks[2])
     #h1$title(text = "Histogram of Relative Changes in Trip Durations for Trips now Cycled")
     h1$series(data =  data$freq, name = "Miles Cycled")
+    h1$xAxis(categories = data$breaks)#, style = list(font = 'bold 14px')))
     
     # h1$series(data = data$freq, name = "Miles Cycled")
-
+    
     #scenario
     
     h1$set(dom = 'plotMilesCycled')
@@ -1435,38 +1433,26 @@ shinyServer(function(input, output, session){
     if (input$inMSEthnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID %in% input$inMSEthnicity)
     }
-    data[is.na(data)] <- 0
+    #data[is.na(data)] <- 0
+    
 
-    columnName <- paste(paste("MS", input$inMSMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
+    columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
                         paste("eq", input$inMSEQ,sep = ""), sep="_")
-    
-    cat("column Name: ", columnName, "\n")
-    
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
     data1 <- data.frame(milesCycled[,columnName])
     
-    #names(data1)[names(data1) == columnName] <- 'scenario'
-    
     data1$scenario <- data1[,1]
     data1[,1] <- NULL
-
-    data1 <- arrange(data1, scenario)
     
-    #data2 <- data[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     data2 <- data.frame(data[,columnName])
-    
-    # names(data2)[names(data2) == columnName] <- 'scenario'
     
     data2$scenario <- data2[,1]
     data2[,1] <- NULL
     
-    data2 <- arrange(data2, scenario)
-    
     scMilesCycledData <<- data1
     scMilesCycledFileredData <<- data2
-    
   })
   
 })
