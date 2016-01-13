@@ -23,3 +23,7 @@ The effects of people switching their trips to cycling are assessed across multi
 *	equity (uptake rate of cycling by women, elderly or ethnic minorities)
 
 The impact on mortality risk of increasing activity is estimated based on this study <a href="http://www.thelancet.com/journals/lancet/article/PIIS0140-6736%2811%2960749-6/abstract" target="_blank">here</a>.
+
+## License
+
+ICT is licensed under AGPL V3, see LICENSE for more information.
