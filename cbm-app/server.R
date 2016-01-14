@@ -20,7 +20,7 @@ scTimeTraveldata <- NULL
 scFilteredTimeTraveldata <- NULL
 scFilteredTripTimeTraveldata <- NULL
 scCarMilesData <- NULL
-scCarMilesFileredData <- NULL
+scCarMilesFilteredData <- NULL
 ftdata <- NULL
 swdata <- NULL
 bd <- NULL
@@ -35,7 +35,10 @@ tdBaseline <- NULL
 tdScenario <- NULL
 
 scMilesCycledData <- NULL
-scMilesCycledFileredData <- NULL
+scMilesCycledFilteredData <- NULL
+
+blMilesCycledData <- NULL
+blMilesCycledFilteredData <- NULL
 
 # Functions
 source("functions.R")
@@ -153,7 +156,7 @@ shinyServer(function(input, output, session){
     
     columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("ebik", input$inHealthEB,sep = ""), 
                         paste("eq", input$inHealthEQ,sep = ""), sep="_")
-    
+    # cat(columnName, "\n")
     data1 <- data1[,c("age.band", "gender",columnName)]
     colnames(data1) <- c("age.band", "gender", "scenario")
     
@@ -203,7 +206,7 @@ shinyServer(function(input, output, session){
     data2 <- arrange(data2, scenario)
     
     scCarMilesData <<- data1
-    scCarMilesFileredData <<- data2
+    scCarMilesFilteredData <<- data2
     
   })
   
@@ -597,14 +600,24 @@ shinyServer(function(input, output, session){
       
       
       
-      val <- as.numeric(as.factor(scYllData$gender[-1]))
-      h1$series(data = scYllData$scenario, name = "YLL")
+      # scYllData$case <- c(1:2)
+      # For both gender, create new series
+      ugender <- unique(scYllData$gender)
+      for (i in 1:length(ugender)){
+        data <- subset(scYllData, gender == ugender[i])
+        h1$series(data = data$scenario, name = ugender[i])
+      }
+    
+      # h1$series(data = scYllData$scenario, name = "YLL")
       #       h1$series(data = list(
       #         list(subset(scYllData, gender %in% "Male")$scenario, color = "lightblue"),
       #         list(subset(scYllData, gender %in% "Female")$scenario, color = "lightgreen")
       #       ))
-      h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band, sep = " "), 
-               title = list(text = 'Years of Life Lost (YLL)'))
+      # paste(scYllData$gender, scYllData$age.band, sep = " ")
+      h1$xAxis(categories = scYllData$age.band, title = list(text = 'Years of Life Lost (YLL)'))
+      if (length(unique(scYllData$age.band)) > 1)
+        h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Years of Life Lost (YLL)'))
+      
       
       h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
     }else{
@@ -637,9 +650,23 @@ shinyServer(function(input, output, session){
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     if (nrow(scYllReductionData) > 0){
-      h1$xAxis(categories = append("All ages and both gender", paste(scYllReductionData$gender[-1], scYllReductionData$age.band[-1],  sep = " ")), 
-               title = list(text = 'Reduction in Years of Life Lost (YLL)'))
-      h1$series(data = scYllReductionData$scenario, name = "Reduction in YLL(%)")
+      
+      # For both gender, create new series
+      ugender <- unique(scYllReductionData$gender[-1])
+      
+      for (i in 1:length(ugender)){
+        data <- subset(scYllReductionData, gender == ugender[i])
+        h1$series(data = data$scenario, name = ugender[i])
+      }
+      
+      # cat("scYllReductionData$age.band[1] ", scYllReductionData$age.band[2] , "\n")
+      h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Reduction in Years of Years of Life Lost (YLL)'))
+      if (length(unique(scYllReductionData$age.band)) > 2)
+        h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Reduction in Years of Years of Life Lost (YLL)'))
+      
+      
+      # h1$xAxis(categories = scYllReductionData$age.band, title = list(text = 'Reduction in Years of Life Lost (YLL)'))
+      #h1$series(data = scYllReductionData$scenario, name = "Reduction in YLL(%)")
       h1$yAxis(title = list(text = 'Percentage (%)'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
@@ -1316,17 +1343,17 @@ shinyServer(function(input, output, session){
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     
-    if (!is.null(scCarMilesData) && !is.null(scCarMilesFileredData)){
+    if (!is.null(scCarMilesData) && !is.null(scCarMilesFilteredData)){
       h1$plotOptions(column=list(animation=FALSE))
       
       h1$title(text = "Car Miles:  Histogram of Car Miles in the Selected Scenario")
       
-      #       data.decile <- cut2(scCarMilesFileredData$scenario, g = 10)
+      #       data.decile <- cut2(scCarMilesFilteredData$scenario, g = 10)
       #       h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Car Trips (Miles)")
       #       h1$xAxis(categories = c(1:10), title = "Decile")
       #       h1$yAxis(title = list(text = 'Miles'))
       
-      #       dhit <- hist(scCarMilesFileredData$scenario)
+      #       dhit <- hist(scCarMilesFilteredData$scenario)
       #       
       #       data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
       #       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
@@ -1340,7 +1367,7 @@ shinyServer(function(input, output, session){
       #       h1$yAxis(title = list(text = 'Percentage %'))
       #       h1$tooltip(valueSuffix= '%')
       
-      bc <- as.data.frame(table (cut (scCarMilesFileredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFileredData$scenario)))))
+      bc <- as.data.frame(table (cut (scCarMilesFilteredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFilteredData$scenario)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
       bc1max <- max(bc$Freq, na.rm = T)
       
@@ -1364,9 +1391,11 @@ shinyServer(function(input, output, session){
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     firstColData <- NULL
+    secondColData <- NULL
     if (input$inMSflip == 'sep'){
       # Keep the data separated
-      firstColData = scMilesCycledData
+      firstColData = blMilesCycledData
+      secondColData = scMilesCycledData
       
       firstColName <- "Scenario (Total Population)"
       #secondColName <- "Scenario (Sub-Population)"
@@ -1375,8 +1404,8 @@ shinyServer(function(input, output, session){
       
     }else{
       # Keep the data mixed
-      firstColData = scMilesCycledFileredData
-      #secondColData = tdScenario
+      firstColData = blMilesCycledFilteredData
+      secondColData = scMilesCycledFilteredData
       
       firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
       #secondColName <- "Scenario (Sub-Population)"
@@ -1396,22 +1425,31 @@ shinyServer(function(input, output, session){
     
     # td <<- firstColData
     
-    dhist <- hist(firstColData$scenario)
+#     dhist <- hist(firstColData$scenario)
+#     data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts)
+#     data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+#     data <- subset(data, freq > 0)
+#     data <- subset(data, breaks != dhist$breaks[2])
+#     #h1$title(text = "Histogram of Relative Changes in Trip Durations for Trips now Cycled")
+#     h1$series(data =  data$freq, name = "Scenario")
+#     h1$xAxis(categories = data$breaks)
     
-    # cat("class : ", class(dhist), "\n")
+    #MS2_ebik0_eq0
     
-    data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts)
-    data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-    data <- subset(data, freq > 0)
-    data <- subset(data, breaks != dhist$breaks[2])
-    #h1$title(text = "Histogram of Relative Changes in Trip Durations for Trips now Cycled")
-    h1$series(data =  data$freq, name = "Miles Cycled")
-    h1$xAxis(categories = data$breaks)#, style = list(font = 'bold 14px')))
+    h1$title(text = "Total Miles Cycled by Cyclists per week")
+    bc <- as.data.frame(table (cut (firstColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$baseline_milesCycled)))))
     
-    # h1$series(data = data$freq, name = "Miles Cycled")
+    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+    # bc1max <- max(bc$Freq, na.rm = T)
     
-    #scenario
+    #h1$xAxis(categories = as.list(append(c(seq(seq(-5,60, 5))[-1], "> 60"))), title = list(text = 'Scenario'))
+    h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
+    h1$series(data = bc$Freq[-1], name = "Baseline")
     
+    bc <- as.data.frame(table (cut (secondColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$scenario)))))
+    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+    h1$series(data = bc$Freq[-1], name = "Scenario")
+
     h1$set(dom = 'plotMilesCycled')
     h1$exporting(enabled = T)
     return (h1)
@@ -1436,7 +1474,7 @@ shinyServer(function(input, output, session){
     #data[is.na(data)] <- 0
     
 
-    columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
+    columnName <- paste(paste("MS", input$inMSMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
                         paste("eq", input$inMSEQ,sep = ""), sep="_")
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
@@ -1452,7 +1490,24 @@ shinyServer(function(input, output, session){
     data2[,1] <- NULL
     
     scMilesCycledData <<- data1
-    scMilesCycledFileredData <<- data2
+    scMilesCycledFilteredData <<- data2
+
+    blMilesCycledData <<- data.frame(baseline_milesCycled = milesCycled[,"baseline_milesCycled"])
+    blMilesCycledFilteredData <<- data.frame(baseline_milesCycled = data[,"baseline_milesCycled"])
   })
+  
+  
+  observeEvent(input$inMETMS, function(){
+    updateTextInput(session, "inMSMS", NULL, input$inMETMS)
+  })
+  
+  observeEvent(input$inMSMS, function(){
+    updateTextInput(session, "inMETMS", NULL, input$inMSMS)
+    updateTextInput(session, "inBDMS", NULL, input$inBDMS)
+    updateTextInput(session, "inCMMS", NULL, input$inCMMS)
+  })
+
+  
+  
   
 })
