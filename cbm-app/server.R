@@ -1386,71 +1386,108 @@ shinyServer(function(input, output, session){
   })
   
   
+  output$plotFilteredMilesCycled <- renderChart ({
+    filterMilesCycledData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    firstColData <- NULL
+    secondColData <- NULL
+    subtitle <- getMilesCycledFilteredTitle()
+    if (input$inMSflip == 'sep'){
+      # Keep the data separated
+      firstColData = blMilesCycledData
+      secondColData = blMilesCycledFilteredData
+
+      firstColName <- "Baseline (Total Population)"
+      secondColName <- "Baseline (Sub-Population)"
+      #extended_title <- "Scenario - Mode Share"
+      
+    }else{
+      # Keep the data mixed
+      firstColData = blMilesCycledData
+      secondColData = scMilesCycledData
+      
+      firstColName <- "Baseline (Total Population)"
+      secondColName <- "Scenario (Total Population)"
+      
+      subtitle <- ""
+      
+      #extended_title <- "Sub-population - Mode Share"
+    }
+    
+    h1$title(text = "Total Miles Cycled by Cyclists per week")
+    bc <- as.data.frame(table (cut (firstColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$baseline_milesCycled)))))
+    
+    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+    
+    h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
+    h1$series(data = bc$Freq[-1], name = firstColName)
+    bc <- NULL
+    if (input$inMSflip == 'sep')
+      bc <- as.data.frame(table (cut (secondColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$baseline_milesCycled)))))
+    else
+      bc <- as.data.frame(table (cut (secondColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$scenario)))))
+    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+    h1$series(data = bc$Freq[-1], name = secondColName)
+    
+    h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    
+    h1$set(dom = 'plotFilteredMilesCycled')
+    h1$yAxis(title = list(text = 'Percentage %'))
+    h1$tooltip(valueSuffix= '%')
+    h1$exporting(enabled = T)
+    return (h1)
+  })
+  
+  
   output$plotMilesCycled <- renderChart ({
     filterMilesCycledData()
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     firstColData <- NULL
     secondColData <- NULL
+    subtitle <- ""
     if (input$inMSflip == 'sep'){
       # Keep the data separated
-      firstColData = blMilesCycledData
-      secondColData = scMilesCycledData
+      firstColData = scMilesCycledData
+      secondColData = scMilesCycledFilteredData
       
       firstColName <- "Scenario (Total Population)"
-      #secondColName <- "Scenario (Sub-Population)"
-      
-      #extended_title <- "Scenario - Mode Share"
+      secondColName <- "Scenario (Sub-Population)"
       
     }else{
       # Keep the data mixed
       firstColData = blMilesCycledFilteredData
       secondColData = scMilesCycledFilteredData
-      
-      firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
-      #secondColName <- "Scenario (Sub-Population)"
+
+      firstColName <- "Baseline (Sub-Population)"
+      secondColName <- "Scenario (Sub-Population)"
       
       #extended_title <- "Sub-population - Mode Share"
     }
-    
-    #     data <- count(firstColData, "scenario")
-    #     data$freq <- data$freq / sum(data$freq) * 100
-    #     data$freq <- round(data$freq, digits = 1)
-    
-    # data <- subset(firstColData, scenario != 0)
-    
-    # dhist <- hist(subset(firstColData, scenario != 0)$scenario)
-    
-    #cat("Summary: ", summary(firstColData))
-    
-    # td <<- firstColData
-    
-#     dhist <- hist(firstColData$scenario)
-#     data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts)
-#     data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-#     data <- subset(data, freq > 0)
-#     data <- subset(data, breaks != dhist$breaks[2])
-#     #h1$title(text = "Histogram of Relative Changes in Trip Durations for Trips now Cycled")
-#     h1$series(data =  data$freq, name = "Scenario")
-#     h1$xAxis(categories = data$breaks)
-    
-    #MS2_ebik0_eq0
-    
+    subtitle <- getMilesCycledFilteredTitle()
     h1$title(text = "Total Miles Cycled by Cyclists per week")
-    bc <- as.data.frame(table (cut (firstColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$baseline_milesCycled)))))
+    bc <- NULL
+    if (input$inMSflip != 'sep')
+      bc <- as.data.frame(table (cut (firstColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$baseline_milesCycled)))))
+    else
+      bc <- as.data.frame(table (cut (firstColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$scenario)))))
     
     bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-    # bc1max <- max(bc$Freq, na.rm = T)
-    
-    #h1$xAxis(categories = as.list(append(c(seq(seq(-5,60, 5))[-1], "> 60"))), title = list(text = 'Scenario'))
+
     h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
-    h1$series(data = bc$Freq[-1], name = "Baseline")
+    h1$series(data = bc$Freq[-1], name = firstColName)
     
     bc <- as.data.frame(table (cut (secondColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$scenario)))))
     bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-    h1$series(data = bc$Freq[-1], name = "Scenario")
+    h1$series(data = bc$Freq[-1], name = secondColName)
+    
+    h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
 
     h1$set(dom = 'plotMilesCycled')
+    h1$yAxis(title = list(text = 'Percentage %'))
+    h1$tooltip(valueSuffix= '%')
+    
     h1$exporting(enabled = T)
     return (h1)
   })
@@ -1495,6 +1532,41 @@ shinyServer(function(input, output, session){
     blMilesCycledData <<- data.frame(baseline_milesCycled = milesCycled[,"baseline_milesCycled"])
     blMilesCycledFilteredData <<- data.frame(baseline_milesCycled = data[,"baseline_milesCycled"])
   })
+  
+  getMilesCycledFilteredTitle <- function(){
+    filtered_title <- ""
+    if (input$inMSAG != "All" || input$inMSG != 3 || input$inMSEthnicity != "All" || input$inMSSES != "All" ){
+      displayGender <- "All"
+      if (input$inMSG == 1){
+        displayGender <- "Male"
+      }else if (input$inMSG == 2){
+        displayGender <- "Female"
+      }
+      
+      displayEthnicity <- "All"
+      if (input$inMSEthnicity == 1){
+        displayEthnicity <- "White"
+      }else if (input$inMSEthnicity == 2){
+        displayEthnicity <- "Non-White"
+      }
+      
+      displaySES <- "All"
+      if (input$inMSSES == 1){
+        displaySES <- "Managerial and professional occupations"
+      }else if (input$inMSSES == 2){
+        displaySES <- "Intermediate occupations and small employers"
+      }else if (input$inMSSES == 3){
+        displaySES <- "Routine and manual occupations"
+      }else if (input$inMSSES == 4){
+        displaySES <- "Never worked and long-term unemployed"
+      }else if (input$inMSSES == 5){
+        displaySES <- "Not classified (including students)"
+      }
+      filtered_title <- paste("Age Group: ", str_trim(input$inMSAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title
+    }else
+      filtered_title
+  }
   
   
   observeEvent(input$inMETMS, function(){

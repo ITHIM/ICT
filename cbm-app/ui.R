@@ -243,7 +243,8 @@ shinyUI(fluidPage(width="100%", height="100%",
                       )
                       ,
                       tabPanel("Miles Cycled", value = 5,
-                               showOutput('plotMilesCycled', 'highCharts')
+                               showOutput('plotMilesCycled', 'highCharts'),
+                               showOutput('plotFilteredMilesCycled', 'highCharts')
                       ),
                       tabPanel("Car Miles", value = 6
                                #showOutput('plotMilesCycled', 'highCharts')
