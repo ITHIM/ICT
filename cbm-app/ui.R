@@ -125,7 +125,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                     )
                     ,
                     conditionalPanel(condition="input.conditionedPanels == 5",
-                                     selectInput(inputId = "inMETMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                                     selectInput(inputId = "inMSMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                                      radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                                      radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                                      HTML("<hr>"),
