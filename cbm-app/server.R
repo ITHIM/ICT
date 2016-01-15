@@ -575,48 +575,16 @@ shinyServer(function(input, output, session){
     
     if (nrow(scYllReductionData) > 0){
       
-      #       a <- hPlot(freq ~ Exer, data = plyr::count(MASS::survey, c('Sex', 'Exer')), type = 'bar', group = 'Sex', group.na = 'NA\'s')
-      #       a$show('inline', include_assets = TRUE, cdn = TRUE)
-      #       
-      #       
-      #       h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band, sep = " "), 
-      #                title = list(text = 'Years of Life Lost (YLL)'))
-      #       
-      #       h1$xAxis(categories = list(name = c('20 - 29','40 - 49','60+'),
-      #                                  categories = c("Male", "Female")),
-      #                title = list(text = 'Years of Life Lost (YLL)'))
-      #     xAxis: {
-      #       categories: [{
-      #         name: "Fruit",
-      #         categories: ["Apple", "Banana", "Orange"]
-      #       }, {
-      #         name: "Vegetable",
-      #         categories: ["Carrot", "Potato", "Tomato"]
-      #       }, {
-      #         name: "Fish",
-      #         categories: ["Cod", "Salmon", "Tuna"]
-      #       }]
-      #     }
-      
-      
-      
-      # scYllData$case <- c(1:2)
       # For both gender, create new series
       ugender <- unique(scYllData$gender)
       for (i in 1:length(ugender)){
         data <- subset(scYllData, gender == ugender[i])
         h1$series(data = data$scenario, name = ugender[i])
       }
-    
-      # h1$series(data = scYllData$scenario, name = "YLL")
-      #       h1$series(data = list(
-      #         list(subset(scYllData, gender %in% "Male")$scenario, color = "lightblue"),
-      #         list(subset(scYllData, gender %in% "Female")$scenario, color = "lightgreen")
-      #       ))
-      # paste(scYllData$gender, scYllData$age.band, sep = " ")
-      h1$xAxis(categories = scYllData$age.band, title = list(text = 'Years of Life Lost (YLL)'))
+      
+      h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
       if (length(unique(scYllData$age.band)) > 1)
-        h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Years of Life Lost (YLL)'))
+        h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Age and Gender Groups'))
       
       
       h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
@@ -624,20 +592,7 @@ shinyServer(function(input, output, session){
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
-    
-    #     h1 <- rCharts::Highcharts$new()
-    #     h1$series(data = list(
-    #       list(y = 8, url = "https://github.com/metagraf/rHighcharts", color = "lightblue"),
-    #       list(y = 14, url = "https://github.com/metagraf/rVega", color = "lightpink"),
-    #       list(y = 71, url = "https://github.com/ramnathv/rCharts", color = "lightgreen")
-    #     ), type = "column", name = "Number of Stars")
-    #     h1$plotOptions(column = list(cursor = 'pointer', point = list(events = list(click = "#! function() { location.href = this.options.url; } !#"))))
-    #     h1$xAxis(categories = c("rHighcharts", "rVega", "rCharts"), title = list(text = ""))
-    #     h1$yAxis(title = list(text = ""))
-    #     h1$legend(enabled = F)
-    #     h1$show('inline', include_assets = TRUE, cdn = TRUE)
-    
-    h1$title(text = "Years of Life Lost (YLL)")
+    h1$title(text = "Years of Life Lost (YLL) for the English Population")
     h1$set(dom = 'plotYLL')
     h1$exporting(enabled = T)
     return(h1)
@@ -659,20 +614,16 @@ shinyServer(function(input, output, session){
         h1$series(data = data$scenario, name = ugender[i])
       }
       
-      # cat("scYllReductionData$age.band[1] ", scYllReductionData$age.band[2] , "\n")
-      h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Reduction in Years of Years of Life Lost (YLL)'))
+      h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
       if (length(unique(scYllReductionData$age.band)) > 2)
-        h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Reduction in Years of Years of Life Lost (YLL)'))
+        h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Age and Gender Groups'))
       
-      
-      # h1$xAxis(categories = scYllReductionData$age.band, title = list(text = 'Reduction in Years of Life Lost (YLL)'))
-      #h1$series(data = scYllReductionData$scenario, name = "Reduction in YLL(%)")
       h1$yAxis(title = list(text = 'Percentage (%)'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
-    h1$title(text = "Reduction in Years of Life Lost (YLL)")
+    h1$title(text = "Reduction in Years of Life Lost (YLL) for the English Population")
     h1$tooltip(valueSuffix= '%')
     h1$set(dom = 'plotYLLReduction')
     h1$exporting(enabled = T)
@@ -1397,7 +1348,7 @@ shinyServer(function(input, output, session){
       # Keep the data separated
       firstColData = blMilesCycledData
       secondColData = blMilesCycledFilteredData
-
+      
       firstColName <- "Baseline (Total Population)"
       secondColName <- "Baseline (Sub-Population)"
       #extended_title <- "Scenario - Mode Share"
@@ -1416,20 +1367,30 @@ shinyServer(function(input, output, session){
     }
     
     h1$title(text = "Total Miles Cycled by Cyclists per week")
-    bc <- as.data.frame(table (cut (firstColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$baseline_milesCycled)))))
     
-    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-    
-    h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
-    h1$series(data = bc$Freq[-1], name = firstColName)
-    bc <- NULL
-    if (input$inMSflip == 'sep')
-      bc <- as.data.frame(table (cut (secondColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$baseline_milesCycled)))))
-    else
-      bc <- as.data.frame(table (cut (secondColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$scenario)))))
-    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-    h1$series(data = bc$Freq[-1], name = secondColName)
-    
+    cat(" first : ", max(firstColData$data), "\n")
+    if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
+      
+      if (input$inMSTotOrCyc == 'cyc')
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
+      else
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      
+      #h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
+      
+      h1$series(data = bc$Freq[-1], name = firstColName)
+      bc <- NULL
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
+      if (input$inMSTotOrCyc == 'cyc')
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
+      else
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      h1$series(data = bc$Freq[-1], name = secondColName)
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = 'plotFilteredMilesCycled')
@@ -1459,7 +1420,7 @@ shinyServer(function(input, output, session){
       # Keep the data mixed
       firstColData = blMilesCycledFilteredData
       secondColData = scMilesCycledFilteredData
-
+      
       firstColName <- "Baseline (Sub-Population)"
       secondColName <- "Scenario (Sub-Population)"
       
@@ -1467,23 +1428,30 @@ shinyServer(function(input, output, session){
     }
     subtitle <- getMilesCycledFilteredTitle()
     h1$title(text = "Total Miles Cycled by Cyclists per week")
+    
+    cat(" second : ", max(firstColData$data), "\n")
     bc <- NULL
-    if (input$inMSflip != 'sep')
-      bc <- as.data.frame(table (cut (firstColData$baseline_milesCycled, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$baseline_milesCycled)))))
-    else
-      bc <- as.data.frame(table (cut (firstColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$scenario)))))
+    if (max(firstColData$data) > 0 && max(firstColData$data) > 0){
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
+      if (input$inMSTotOrCyc == 'cyc')
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
+      else
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      
+      h1$series(data = bc$Freq[-1], name = firstColName)
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
+      if (input$inMSTotOrCyc == 'cyc')
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
+      else
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      
+      h1$series(data = bc$Freq[-1], name = secondColName)
+      h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
     
-    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-
-    h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
-    h1$series(data = bc$Freq[-1], name = firstColName)
-    
-    bc <- as.data.frame(table (cut (secondColData$scenario, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$scenario)))))
-    bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-    h1$series(data = bc$Freq[-1], name = secondColName)
-    
-    h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
-
+    h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
     h1$set(dom = 'plotMilesCycled')
     h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
@@ -1510,7 +1478,7 @@ shinyServer(function(input, output, session){
     }
     #data[is.na(data)] <- 0
     
-
+    
     columnName <- paste(paste("MS", input$inMSMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
                         paste("eq", input$inMSEQ,sep = ""), sep="_")
     
@@ -1518,19 +1486,19 @@ shinyServer(function(input, output, session){
     
     data1 <- data.frame(milesCycled[,columnName])
     
-    data1$scenario <- data1[,1]
+    data1$data <- data1[,1]
     data1[,1] <- NULL
     
     data2 <- data.frame(data[,columnName])
     
-    data2$scenario <- data2[,1]
+    data2$data <- data2[,1]
     data2[,1] <- NULL
     
     scMilesCycledData <<- data1
     scMilesCycledFilteredData <<- data2
-
-    blMilesCycledData <<- data.frame(baseline_milesCycled = milesCycled[,"baseline_milesCycled"])
-    blMilesCycledFilteredData <<- data.frame(baseline_milesCycled = data[,"baseline_milesCycled"])
+    
+    blMilesCycledData <<- data.frame(data = milesCycled[,"baseline_milesCycled"])
+    blMilesCycledFilteredData <<- data.frame(data = data[,"baseline_milesCycled"])
   })
   
   getMilesCycledFilteredTitle <- function(){
@@ -1567,18 +1535,267 @@ shinyServer(function(input, output, session){
     }else
       filtered_title
   }
+
+  # EQ
   
+  observeEvent(input$inBDEQ, function(){
+    updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
+  })
+  
+  observeEvent(input$inHealthEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
+  })
+  
+  observeEvent(input$inMETEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
+  })
+  
+  observeEvent(input$inMSEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
+  })
+  
+  observeEvent(input$inCMEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
+  })
+  
+  # inBDEQ
+  # inHealthEQ
+  # inMETEQ
+  # inMSEQ
+  # inCMEQ
+  
+  # EB
+  
+  observeEvent(input$inBDEB, function(){
+    updateTextInput(session, "inHealthEB", NULL, input$inBDEB)
+    updateTextInput(session, "inMETEB", NULL, input$inBDEB)
+    updateTextInput(session, "inMSEB", NULL, input$inBDEB)
+    updateTextInput(session, "inCMEB", NULL, input$inBDEB)
+  })
+  
+  observeEvent(input$inHealthEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inMETEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inMSEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inCMEB", NULL, input$inHealthEB)
+  })
+  
+  observeEvent(input$inMETEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inMETEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inMETEB)
+    updateTextInput(session, "inMSEB", NULL, input$inMETEB)
+    updateTextInput(session, "inCMEB", NULL, input$inMETEB)
+  })
+  
+  observeEvent(input$inMSEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inMSEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inMSEB)
+    updateTextInput(session, "inMETEB", NULL, input$inMSEB)
+    updateTextInput(session, "inCMEB", NULL, input$inMSEB)
+  })
+  
+  observeEvent(input$inCMEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inCMEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inCMEB)
+    updateTextInput(session, "inMETEB", NULL, input$inCMEB)
+    updateTextInput(session, "inMSEB", NULL, input$inCMEB)
+  })
+  
+  # inBDEB
+  # inHealthEB
+  # inMETEB
+  # inMSEB
+  # inCMEB
+  observeEvent(input$inBDMS, function(){
+    updateTextInput(session, "inHealthMS", NULL, input$inBDMS)
+    updateTextInput(session, "inMETMS", NULL, input$inBDMS)
+    updateTextInput(session, "inMSMS", NULL, input$inBDMS)
+    updateTextInput(session, "inCMMS", NULL, input$inBDMS)
+  })
+  
+  observeEvent(input$inHealthMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inMETMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inMSMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inCMMS", NULL, input$inHealthMS)
+  })
   
   observeEvent(input$inMETMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inMETMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inMETMS)
     updateTextInput(session, "inMSMS", NULL, input$inMETMS)
+    updateTextInput(session, "inCMMS", NULL, input$inMETMS)
   })
   
   observeEvent(input$inMSMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inMSMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inMSMS)
     updateTextInput(session, "inMETMS", NULL, input$inMSMS)
-    updateTextInput(session, "inBDMS", NULL, input$inBDMS)
-    updateTextInput(session, "inCMMS", NULL, input$inCMMS)
+    updateTextInput(session, "inCMMS", NULL, input$inMSMS)
+  })
+  
+  observeEvent(input$inCMMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inCMMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inCMMS)
+    updateTextInput(session, "inMETMS", NULL, input$inCMMS)
+    updateTextInput(session, "inMSMS", NULL, input$inCMMS)
+  })
+  
+  # age
+  
+  observeEvent(input$inBDAG, function(){
+    updateTextInput(session, "mag", NULL, input$inBDAG)
+    updateTextInput(session, "inMSAG", NULL, input$inBDAG)
+    updateTextInput(session, "inCMAG", NULL, input$inBDAG)
+    
+  })
+  
+  observeEvent(input$mag, function(){
+    updateTextInput(session, "inBDAG", NULL, input$mag)
+    updateTextInput(session, "inMSAG", NULL, input$mag)
+    updateTextInput(session, "inCMAG", NULL, input$mag)
+  })
+  
+  observeEvent(input$inMSAG, function(){
+    updateTextInput(session, "inBDAG", NULL, input$inMSAG)
+    updateTextInput(session, "mag", NULL, input$inMSAG)
+    updateTextInput(session, "inCMAG", NULL, input$inMSAG)
+  })
+  
+  observeEvent(input$inCMAG, function(){
+    updateTextInput(session, "inBDAG", NULL, input$inCMAG)
+    updateTextInput(session, "mag", NULL, input$inCMAG)
+    updateTextInput(session, "inMSAG", NULL, input$inCMAG)
+  })
+  
+#   inBDAG
+#   mag
+#   inMSAG
+#   inCMAG
+
+  
+  # gender
+  
+  observeEvent(input$inBDGender, function(){
+    updateTextInput(session, "inHealthG", NULL, input$inBDGender)
+    updateTextInput(session, "mgender", NULL, input$inBDGender)
+    updateTextInput(session, "inMSG", NULL, input$inBDGender)
+    updateTextInput(session, "inCMG", NULL, input$inBDGender)
+  })
+  
+  observeEvent(input$inHealthG, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inHealthG)
+    updateTextInput(session, "mgender", NULL, input$inHealthG)
+    updateTextInput(session, "inMSG", NULL, input$inHealthG)
+    updateTextInput(session, "inCMG", NULL, input$inHealthG)
+  })
+  
+  observeEvent(input$mgender, function(){
+    updateTextInput(session, "inBDGender", NULL, input$mgender)
+    updateTextInput(session, "inHealthG", NULL, input$mgender)
+    updateTextInput(session, "inMSG", NULL, input$mgender)
+    updateTextInput(session, "inCMG", NULL, input$mgender)
+  })
+  
+  observeEvent(input$inMSG, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inMSG)
+    updateTextInput(session, "inHealthG", NULL, input$inMSG)
+    updateTextInput(session, "mgender", NULL, input$inMSG)
+    updateTextInput(session, "inCMG", NULL, input$inMSG)
+  })
+  
+  observeEvent(input$inCMG, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inCMG)
+    updateTextInput(session, "inHealthG", NULL, input$inCMG)
+    updateTextInput(session, "mgender", NULL, input$inCMG)
+    updateTextInput(session, "inMSG", NULL, input$inCMG)
   })
 
+#   inBDGender
+#   inHealthG
+#   mgender
+#   inMSG
+#   inCMG
+  
+  
+  # SES
+  
+  observeEvent(input$inBDSES, function(){
+    updateTextInput(session, "mses", NULL, input$inBDSES)
+    updateTextInput(session, "inMSSES", NULL, input$inBDSES)
+    updateTextInput(session, "inCMSES", NULL, input$inBDSES)
+  })
+  
+  observeEvent(input$mses, function(){
+    updateTextInput(session, "inBDSES", NULL, input$mses)
+    updateTextInput(session, "inMSSES", NULL, input$mses)
+    updateTextInput(session, "inCMSES", NULL, input$mses)
+  })
+  
+  observeEvent(input$inMSSES, function(){
+    updateTextInput(session, "inBDSES", NULL, input$inMSSES)
+    updateTextInput(session, "mses", NULL, input$inMSSES)
+    updateTextInput(session, "inCMSES", NULL, input$inMSSES)
+  })
+  
+  observeEvent(input$inCMSES, function(){
+    updateTextInput(session, "inBDSES", NULL, input$inCMSES)
+    updateTextInput(session, "mses", NULL, input$inCMSES)
+    updateTextInput(session, "inMSSES", NULL, input$inCMSES)
+  })
+  
+  
+#   inBDSES
+#   mses
+#   inMSSES
+#   inCMSES
+  
+  #Ethnicity
+  
+  
+  observeEvent(input$inBDEthnicity, function(){
+    updateTextInput(session, "methnicity", NULL, input$inBDEthnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$inBDEthnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inBDEthnicity)
+  })
+  
+  observeEvent(input$methnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$methnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$methnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$methnicity)
+  })
+  
+  observeEvent(input$inMSEthnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$inMSEthnicity)
+    updateTextInput(session, "methnicity", NULL, input$inMSEthnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inMSEthnicity)
+  })
+  
+  observeEvent(input$inCMEthnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$inCMEthnicity)
+    updateTextInput(session, "methnicity", NULL, input$inCMEthnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$inCMEthnicity)
+  })
+  
+#   inBDEthnicity
+#   methnicity
+#   inMSEthnicity
+#   inCMEthnicity
   
   
   
