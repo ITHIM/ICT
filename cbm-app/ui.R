@@ -27,6 +27,9 @@ METSwitchRButton <- c("Baseline and Scenario" = "sep",
 switchRButton <- c("Scenario versus Baseline" =    "comp",
                    "Sub-population versus total population" = "sep")
 
+denominatorRButton <- c("Total Population" = "pop",
+                        "Total Cyclists" = "cyc")
+
 phyGLRButton <- c("On" = "on",
                   "Off" =    "off")
 
@@ -102,7 +105,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                                      HTML("<hr>"),
                                      selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
-                                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE)
+                                     radioButtons("inHealthG", "Gender: ", gender, inline = TRUE)
                                      
                     ),
                     conditionalPanel(condition="input.conditionedPanels == 4",
@@ -134,7 +137,10 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
                                      radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
                                      HTML("<hr>"),
-                                     radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                                     radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
+                                     HTML("<hr>"),
+                                     radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
+                                     
                                      
                     ),
                     conditionalPanel(condition="input.conditionedPanels == 6",
