@@ -1,6 +1,7 @@
 ## Welcome to the Impacts of Cycling Tool (ICT) Prototype
 
 The ICT is designed to do two things:
+
 1. As a data visualisation tool to look at how people travel in England and how active they are
 2. To look at how things would change under different scenarios in which the probability of being a cyclist increases
 
