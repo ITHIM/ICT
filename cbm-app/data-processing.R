@@ -76,3 +76,6 @@ milesCycled[is.na(milesCycled)] <- 0
 # #Read Trip data
 # tripData <- read.csv("data/bl_ag_sc_modes.csv", header = T, as.is = T)
 tripData <- read.csv("data/csv/tripsdf.csv", header = T, as.is = T)
+
+#Read CO2 data
+co2data <- read.csv("data/csv/co2.csv", header = T, as.is = T)
