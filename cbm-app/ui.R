@@ -155,6 +155,19 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      HTML("<hr>"),
                                      radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
                                      
+                    ),
+                    conditionalPanel(condition="input.conditionedPanels == 7",
+                                     selectInput(inputId = "inCO2MS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                                     radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                                     radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                                     HTML("<hr>"),
+                                     selectizeInput("inCO2AG", "Age Group:", ag, multiple = F),
+                                     radioButtons("inCO2G", "Gender: ", gender, inline = TRUE),
+                                     selectizeInput("inCO2SES", "Socio Economic Classification :", ses),
+                                     radioButtons("inCO2Ethnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                                     HTML("<hr>"),
+                                     radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                                     
                     )
                     
                     
@@ -257,6 +270,10 @@ shinyUI(fluidPage(width="100%", height="100%",
                       tabPanel("Car Miles", value = 6,
                                showOutput('plotFilteredCarMiles', 'highCharts'),
                                showOutput('plotCarMiles', 'highCharts')
+                      ),
+                      tabPanel("CO2", value = 7,
+                               showOutput('plotFilteredCO2', 'highCharts'),
+                               showOutput('plotCO2', 'highCharts')
                       )
                       
                       
