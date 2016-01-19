@@ -322,7 +322,7 @@ shinyServer(function(input, output, session){
         h1$yAxis(min = 0, max = max(80, max(bcounts[["Total Population"]], na.rm=TRUE)), tickInterval = 20, title = list(text = 'Percentage %'))
       }
       
-      h1$set(dom = 'plotMode')
+      h1$set(dom = "plotMode")
       h1$exporting(enabled = T)
       return (h1)
     }
@@ -455,7 +455,7 @@ shinyServer(function(input, output, session){
     
     h1$title(text = extended_title)
     h1$tooltip(valueSuffix= '%')
-    h1$set(dom = 'plotMET')
+    h1$set(dom = "plotMET")
     h1$exporting(enabled = T)
     return(h1)
   })
@@ -577,7 +577,7 @@ shinyServer(function(input, output, session){
     
     h1$title(text = extended_title)
     h1$tooltip(valueSuffix= '%')
-    h1$set(dom = 'plotScenarioMET')
+    h1$set(dom = "plotScenarioMET")
     h1$exporting(enabled = T)
     return(h1)
     
@@ -608,7 +608,7 @@ shinyServer(function(input, output, session){
     }
     
     h1$title(text = "Years of Life Lost (YLL) for the English Population")
-    h1$set(dom = 'plotYLL')
+    h1$set(dom = "plotYLL")
     h1$exporting(enabled = T)
     return(h1)
   })
@@ -640,7 +640,7 @@ shinyServer(function(input, output, session){
     
     h1$title(text = "Reduction in Years of Life Lost (YLL) for the English Population")
     h1$tooltip(valueSuffix= '%')
-    h1$set(dom = 'plotYLLReduction')
+    h1$set(dom = "plotYLLReduction")
     h1$exporting(enabled = T)
     return(h1)
   })
@@ -666,12 +666,12 @@ shinyServer(function(input, output, session){
         h1$chart(type = "column")
         h1$plotOptions(column=list(animation=FALSE))
         h1$series(data = bc$Freq, name = "Total Population")
-        h1$set(dom = 'plotBaseline')
+        h1$set(dom = "plotBaseline")
         h1$exporting(enabled = T)
         return(h1)
       }else{
         h1 <- Highcharts$new()
-        h1$set(dom = 'plotBaseline')
+        h1$set(dom = "plotBaseline")
         h1$exporting(enabled = T)
         return(h1)
       }
@@ -703,7 +703,7 @@ shinyServer(function(input, output, session){
         
       }
       
-      h1$set(dom = 'plotTripTime')
+      h1$set(dom = "plotTripTime")
       h1$exporting(enabled = T)
       return(h1)
     }
@@ -764,7 +764,7 @@ shinyServer(function(input, output, session){
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
-    h1$set(dom = 'plotTripTimeDifference')
+    h1$set(dom = "plotTripTimeDifference")
     h1$exporting(enabled = T)
     return(h1)
     
@@ -1095,7 +1095,7 @@ shinyServer(function(input, output, session){
     generateScenarioTable()
     h <- genericPlot("% Cyclists in the Total Population")
     h$title(text = "% Cyclists in the Total Population")
-    h$set(dom = 'plotCycPercent')
+    h$set(dom = "plotCycPercent")
     return (h)
   })
   
@@ -1104,7 +1104,7 @@ shinyServer(function(input, output, session){
     #retrieveVariableName()
     h <- genericPlot(input$varname)
     h$title(text = input$varname)
-    h$set(dom = 'plotGenericVariable')
+    h$set(dom = "plotGenericVariable")
     return (h)
   })
   
@@ -1176,7 +1176,7 @@ shinyServer(function(input, output, session){
     
     h1$tooltip(valueSuffix= '%')
     
-    h1$set(dom = 'plotBDMode')
+    h1$set(dom = "plotBDMode")
     h1$exporting(enabled = T)
     return (h1)
   })
@@ -1244,7 +1244,7 @@ shinyServer(function(input, output, session){
     
     h1$tooltip(valueSuffix= '%')
     
-    h1$set(dom = 'plotBDSCMode')
+    h1$set(dom = "plotBDSCMode")
     h1$exporting(enabled = T)
     return (h1)
     
@@ -1272,7 +1272,7 @@ shinyServer(function(input, output, session){
       
       h1$tooltip(valueSuffix= '%')
       
-      h1$set(dom = 'plotBDFasterTrips')
+      h1$set(dom = "plotBDFasterTrips")
       h1$exporting(enabled = T)
       return (h1)
     }
@@ -1298,7 +1298,7 @@ shinyServer(function(input, output, session){
       
       h1$tooltip(valueSuffix= '%')
       
-      h1$set(dom = 'plotBDSlowerTrips')
+      h1$set(dom = "plotBDSlowerTrips")
       h1$exporting(enabled = T)
       return (h1)
     }
@@ -1345,7 +1345,7 @@ shinyServer(function(input, output, session){
       
       
     }
-    h1$set(dom = 'plotCarTripsCycled')
+    h1$set(dom = "plotCarTripsCycled")
     h1$exporting(enabled = T)
     return (h1)
     
@@ -1418,7 +1418,7 @@ shinyServer(function(input, output, session){
     h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
-    h1$set(dom = 'plotFilteredMilesCycled')
+    h1$set(dom = "plotFilteredMilesCycled")
     # h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
@@ -1487,7 +1487,7 @@ shinyServer(function(input, output, session){
     }
     
     h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
-    h1$set(dom = 'plotMilesCycled')
+    h1$set(dom = "plotMilesCycled")
     # h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     
@@ -1590,7 +1590,7 @@ shinyServer(function(input, output, session){
     h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
-    h1$set(dom = 'plotFilteredCarMiles')
+    h1$set(dom = "plotFilteredCarMiles")
     h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
@@ -1643,7 +1643,7 @@ shinyServer(function(input, output, session){
     }
     
     h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
-    h1$set(dom = 'plotCarMiles')
+    h1$set(dom = "plotCarMiles")
     h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     
@@ -1747,7 +1747,7 @@ shinyServer(function(input, output, session){
     h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
-    h1$set(dom = 'plotFilteredCO2')
+    h1$set(dom = "plotFilteredCO2")
     h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
@@ -1800,7 +1800,7 @@ shinyServer(function(input, output, session){
     }
     
     h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
-    h1$set(dom = 'plotCO2')
+    h1$set(dom = "plotCO2")
     h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     
