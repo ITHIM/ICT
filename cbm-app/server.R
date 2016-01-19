@@ -2021,5 +2021,35 @@ shinyServer(function(input, output, session){
 #   inCMEthnicity
   
   
+  observeEvent(input$flipMS, function(){
+    updateTextInput(session, "flipMETHG", NULL, input$flipMS)
+    updateTextInput(session, "inMSflip", NULL, input$flipMS)
+    updateTextInput(session, "inCMflip", NULL, input$flipMS)
+  })
+  
+  observeEvent(input$flipMETHG, function(){
+    updateTextInput(session, "flipMS", NULL, input$flipMETHG)
+    updateTextInput(session, "inMSflip", NULL, input$flipMETHG)
+    updateTextInput(session, "inCMflip", NULL, input$flipMETHG)
+  })
+  
+  observeEvent(input$inMSflip, function(){
+    updateTextInput(session, "flipMS", NULL, input$inMSflip)
+    updateTextInput(session, "flipMETHG", NULL, input$inMSflip)
+    updateTextInput(session, "inCMflip", NULL, input$inMSflip)
+  })
+  
+  observeEvent(input$inCMflip, function(){
+    updateTextInput(session, "flipMS", NULL, input$inCMflip)
+    updateTextInput(session, "flipMETHG", NULL, input$inCMflip)
+    updateTextInput(session, "inMSflip", NULL, input$inCMflip)
+  })
+  
+  
+  
+  #flipMS
+  #flipMETHG
+  #inMSflip
+  #inCMflip
   
 })
