@@ -257,24 +257,26 @@ shinyUI(fluidPage(width="100%", height="100%",
                                showOutput('plotYLL', "highcharts"),
                                showOutput('plotYLLReduction', "highcharts")
                                
-                      ),
-                      tabPanel("Physical Activity", value = 4,
-                               showOutput('plotMET', "highcharts"),
-                               showOutput('plotScenarioMET', "highcharts")
                       )
-                      ,
-                      tabPanel("Miles Cycled", value = 5,
-                               showOutput('plotMilesCycled', 'highCharts'),
-                               showOutput('plotFilteredMilesCycled', 'highCharts')
-                      ),
-                      tabPanel("Car Miles", value = 6,
-                               showOutput('plotFilteredCarMiles', 'highCharts'),
-                               showOutput('plotCarMiles', 'highCharts')
-                      ),
-                      tabPanel("CO2", value = 7,
-                               showOutput('plotFilteredCO2', 'highCharts'),
-                               showOutput('plotCO2', 'highCharts')
-                      )
+                      
+#                       ,
+#                       tabPanel("Physical Activity", value = 4,
+#                                showOutput('plotMET', "highcharts"),
+#                                showOutput('plotScenarioMET', "highcharts")
+#                       )
+#                       ,
+#                       tabPanel("Miles Cycled", value = 5,
+#                                showOutput('plotMilesCycled', 'highCharts'),
+#                                showOutput('plotFilteredMilesCycled', 'highCharts')
+#                       ),
+#                       tabPanel("Car Miles", value = 6,
+#                                showOutput('plotFilteredCarMiles', 'highCharts'),
+#                                showOutput('plotCarMiles', 'highCharts')
+#                       ),
+#                       tabPanel("CO2", value = 7,
+#                                showOutput('plotFilteredCO2', 'highCharts'),
+#                                showOutput('plotCO2', 'highCharts')
+#                       )
                       
                       
                       
