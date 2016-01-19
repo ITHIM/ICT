@@ -2,7 +2,7 @@ library(shiny)
 library(DT)
 library(devtools)
 if (!require(rCharts)) {
-  install_github('rCharts', 'ramnathv')
+  install_github("rCharts", "ramnathv")
   library(rCharts)
 }
 library(reshape2)

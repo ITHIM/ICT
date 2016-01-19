@@ -1,7 +1,7 @@
 library(DT)
 library(devtools)
 if (!require(rCharts)) {
-  install_github('rCharts', 'ramnathv')
+  install_github("rCharts", "ramnathv")
   library(rCharts)
 }
 library(shinyBS)
@@ -78,7 +78,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      #selectInput(inputId = "inEQ", label = "Select Equity (EQ):", choices =  uEQ),
                                      #selectInput(inputId = "inEB", label = "Select Ebike (EB):", choices =  uEB),
                                      radioButtons(inputId = "inEB", label = "Select Ebike (EB):", allOnOffRButton, inline = TRUE),
-                                     selectInput('varname', label = 'Plot Variable:', variableList)
+                                     selectInput("varname", label = "Plot Variable:", variableList)
                     ),
                     
                     conditionalPanel(condition="input.conditionedPanels == 2",
@@ -247,7 +247,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                                h6("(Click on the legend to enable/disable a line)", align="center"),
                                showOutput("plotGenericVariable", "highcharts"),
                                h6("(Click on the legend to enable/disable a line)", align="center"),
-                               HTML('<style>iframe.rChart{ width: 100%; height: 400px;}</style>')
+                               HTML("<style>iframe.rChart{ width: 100%; height: 400px;}</style>")
                       ),
                       tabPanel("Mode Share", value = 2,
                                showOutput("plotBDMode", "highcharts"),
