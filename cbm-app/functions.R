@@ -33,7 +33,15 @@ format_function <- "#! function() {
       }!#"
 
 getSeriesName <- function( EQ, EB){
-  paste("EQ:", EQ, "& EB:", EB, sep = " ")
+  nEQ <- "Off"
+  if (EQ == 1)
+    nEQ <- "On"
+  
+  nEB <- "Off"
+  if (EB == 1)
+    nEB <- "On"
+  # cat(EQ, " : ", EB, "\n")
+  paste("EQ:", nEQ, "& EB:", nEB, sep = " ")
   
 }
 
