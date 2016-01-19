@@ -19,8 +19,7 @@ scFilteredMETdata <- NULL
 scTimeTraveldata <- NULL
 scFilteredTimeTraveldata <- NULL
 scFilteredTripTimeTraveldata <- NULL
-scCarMilesData <- NULL
-scCarMilesFilteredData <- NULL
+
 ftdata <- NULL
 swdata <- NULL
 bd <- NULL
@@ -39,6 +38,12 @@ scMilesCycledFilteredData <- NULL
 
 blMilesCycledData <- NULL
 blMilesCycledFilteredData <- NULL
+
+scCarMilesData <- NULL
+scCarMilesFilteredData <- NULL
+
+blCarMilesData <- NULL
+blCarMilesFilteredData <- NULL
 
 # Functions
 source("functions.R")
@@ -148,7 +153,7 @@ shinyServer(function(input, output, session){
       data1 <- subset(data1, age.band == input$inHealthAG)
       data2 <- subset(data2, age.band == input$inHealthAG | age.band == "All Ages")
     }
-    if (input$inHealthG != 'All'){
+    if (input$inHealthG !='All'){
       # Temporarily removing YLL total values
       data1 <- subset(data1, gender %in% input$inHealthG)
       data2 <- subset(data2, gender %in% input$inHealthG | gender == "Both Gender")
@@ -168,47 +173,47 @@ shinyServer(function(input, output, session){
     
   })
   
-  filterCarMilesData <- reactive ({
-    # ID  age	Sex_B01ID	NSSec_B03ID	EthGroupTS_B02ID
-    data <- carMiles
-    
-    if (input$inCMAG != 'All'){
-      data <- subset(data, age == input$inCMAG)
-    }
-    if (input$inCMGender != 3)
-      data <- subset(data, Sex_B01ID %in% input$inCMGender)
-    
-    if (input$inCMSES != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inCMSES)
-    }
-    
-    if (input$inCMEthnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inCMEthnicity)
-    }
-    data[is.na(data)] <- 0
-    #     cat(input$inCMAG, "\n")
-    #     cat(nrow(data), ":", nrow(carMiles), "\n")
-    
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
-                        paste("eq", input$inTTEQ,sep = ""), sep="_")
-    
-    
-    data1 <- carMiles[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
-    
-    names(data1)[names(data1) == columnName] <- 'scenario'
-    
-    data1 <- arrange(data1, scenario)
-    
-    data2 <- data[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
-    
-    names(data2)[names(data2) == columnName] <- 'scenario'
-    
-    data2 <- arrange(data2, scenario)
-    
-    scCarMilesData <<- data1
-    scCarMilesFilteredData <<- data2
-    
-  })
+#   filterCarMilesData <- reactive ({
+#     # ID  age	Sex_B01ID	NSSec_B03ID	EthGroupTS_B02ID
+#     data <- carMiles
+#     
+#     if (input$inCMAG != 'All'){
+#       data <- subset(data, age == input$inCMAG)
+#     }
+#     if (input$inCMGender != 3)
+#       data <- subset(data, Sex_B01ID %in% input$inCMGender)
+#     
+#     if (input$inCMSES != "All"){
+#       data <- subset(data, NSSec_B03ID %in% input$inCMSES)
+#     }
+#     
+#     if (input$inCMEthnicity != "All"){
+#       data <- subset(data, EthGroupTS_B02ID %in% input$inCMEthnicity)
+#     }
+#     data[is.na(data)] <- 0
+#     #     cat(input$inCMAG, "\n")
+#     #     cat(nrow(data), ":", nrow(carMiles), "\n")
+#     
+#     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+#                         paste("eq", input$inTTEQ,sep = ""), sep="_")
+#     
+#     
+#     data1 <- carMiles[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
+#     
+#     names(data1)[names(data1) == columnName] <- 'scenario'
+#     
+#     data1 <- arrange(data1, scenario)
+#     
+#     data2 <- data[,c("ID", "age","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline", columnName)]
+#     
+#     names(data2)[names(data2) == columnName] <- 'scenario'
+#     
+#     data2 <- arrange(data2, scenario)
+#     
+#     scCarMilesData <<- data1
+#     scCarMilesFilteredData <<- data2
+#     
+#   })
   
   plotMETDataTable<- reactive({
     data <- subset(idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline_mmet))
@@ -325,6 +330,8 @@ shinyServer(function(input, output, session){
     
     plotMETDataTable()
     
+    extended_title <- ""
+    
     if (!is.null(idata) & !is.null(scMETdata)){
       if (input$flipMETHG == 'sep'){
         # Keep the data separated
@@ -339,12 +346,14 @@ shinyServer(function(input, output, session){
         if (nrow(idata) == nrow(pd))
           secondColName <- "Baseline (Total Population)"
         
+        #extended_title <- "Baseline - Marginal MET Hours"
+        
       }else{
         # Keep the data mixed
         firstColData = bMETdata
         secondColData = scMETdata
         
-        extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
+        extended_title <- paste("Total Population - Marginal MET Hours", sep = "")
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Scenario (Sub-Population)"
@@ -466,7 +475,7 @@ shinyServer(function(input, output, session){
         # Keep the data mixed
         firstColData = pd
         secondColData = scFilteredMETdata
-        extended_title <- paste("Baseline versus Scenario - Marginal MET hour of Filtered Population")
+        extended_title <- paste("Sub-Population - Marginal MET Hours")
         
         firstColName <- "Baseline (Sub-population)"
         secondColName <- "Scenario (Sub-population)"
@@ -1344,6 +1353,7 @@ shinyServer(function(input, output, session){
     firstColData <- NULL
     secondColData <- NULL
     subtitle <- getMilesCycledFilteredTitle()
+    extended_title <- ""
     if (input$inMSflip == 'sep'){
       # Keep the data separated
       firstColData = blMilesCycledData
@@ -1351,6 +1361,8 @@ shinyServer(function(input, output, session){
       
       firstColName <- "Baseline (Total Population)"
       secondColName <- "Baseline (Sub-Population)"
+      
+      extended_title <- "Baseline - Total Miles Cycled per Cyclist per week"
       #extended_title <- "Scenario - Mode Share"
       
     }else{
@@ -1363,29 +1375,36 @@ shinyServer(function(input, output, session){
       
       subtitle <- ""
       
-      #extended_title <- "Sub-population - Mode Share"
+      extended_title <- "Total population - Total Miles Cycled per Cyclist per week"
     }
     
-    h1$title(text = "Total Miles Cycled by Cyclists per week")
+    h1$title(text = extended_title)
     
-    cat(" first : ", max(firstColData$data), "\n")
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
       
-      if (input$inMSTotOrCyc == 'cyc')
+      if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
-      else
+        h1$yAxis(title = list(text = 'Percentage % of Cyclists'))
+      }
+      else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+        h1$yAxis(title = list(text = 'Percentage % in Total Population'))
+      }
       
       #h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
       
       h1$series(data = bc$Freq[-1], name = firstColName)
       bc <- NULL
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
-      if (input$inMSTotOrCyc == 'cyc')
+      if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
-      else
+        h1$yAxis(title = list(text = 'Percentage % of Cyclists'))
+      }
+      else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+        h1$yAxis(title = list(text = 'Percentage % in Total Population'))
+      }
       h1$series(data = bc$Freq[-1], name = secondColName)
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
@@ -1394,7 +1413,7 @@ shinyServer(function(input, output, session){
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = 'plotFilteredMilesCycled')
-    h1$yAxis(title = list(text = 'Percentage %'))
+    # h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
     return (h1)
@@ -1408,6 +1427,7 @@ shinyServer(function(input, output, session){
     firstColData <- NULL
     secondColData <- NULL
     subtitle <- ""
+    extended_title <- ""
     if (input$inMSflip == 'sep'){
       # Keep the data separated
       firstColData = scMilesCycledData
@@ -1415,6 +1435,8 @@ shinyServer(function(input, output, session){
       
       firstColName <- "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
+      
+      extended_title <- "Scenario - Total Miles Cycled per Cyclist per week"
       
     }else{
       # Keep the data mixed
@@ -1424,26 +1446,33 @@ shinyServer(function(input, output, session){
       firstColName <- "Baseline (Sub-Population)"
       secondColName <- "Scenario (Sub-Population)"
       
-      #extended_title <- "Sub-population - Mode Share"
+      extended_title <- "Sub-population - Total Miles Cycled per Cyclist per week"
     }
     subtitle <- getMilesCycledFilteredTitle()
-    h1$title(text = "Total Miles Cycled by Cyclists per week")
+    h1$title(text = extended_title)
     
-    cat(" second : ", max(firstColData$data), "\n")
     bc <- NULL
     if (max(firstColData$data) > 0 && max(firstColData$data) > 0){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
-      if (input$inMSTotOrCyc == 'cyc')
+      if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
-      else
+        h1$yAxis(title = list(text = 'Percentage % of Cyclists'))
+      }
+      else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+        h1$yAxis(title = list(text = 'Percentage % in Total Population'))
+      }
       
       h1$series(data = bc$Freq[-1], name = firstColName)
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
-      if (input$inMSTotOrCyc == 'cyc')
+      if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
-      else
+        h1$yAxis(title = list(text = 'Percentage % of Cyclists'))
+      }
+      else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+        h1$yAxis(title = list(text = 'Percentage % in Total Population'))
+      }
       
       h1$series(data = bc$Freq[-1], name = secondColName)
       h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
@@ -1453,7 +1482,7 @@ shinyServer(function(input, output, session){
     
     h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
     h1$set(dom = 'plotMilesCycled')
-    h1$yAxis(title = list(text = 'Percentage %'))
+    # h1$yAxis(title = list(text = 'Percentage %'))
     h1$tooltip(valueSuffix= '%')
     
     h1$exporting(enabled = T)
@@ -1501,6 +1530,165 @@ shinyServer(function(input, output, session){
     blMilesCycledFilteredData <<- data.frame(data = data[,"baseline_milesCycled"])
   })
   
+  
+  
+  output$plotFilteredCarMiles <- renderChart ({
+    filterCarMilesData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    firstColData <- NULL
+    secondColData <- NULL
+    subtitle <- getCarMilesFilteredTitle()
+    extended_title <- ""
+    if (input$inCMflip == 'sep'){
+      # Keep the data separated
+      firstColData = blCarMilesData
+      secondColData = blCarMilesFilteredData
+      
+      firstColName <- "Baseline (Total Population)"
+      secondColName <- "Baseline (Sub-Population)"
+      
+      extended_title <- "Baseline - Car Miles per week"
+      #extended_title <- "Scenario - Mode Share"
+      
+    }else{
+      # Keep the data mixed
+      firstColData = blCarMilesData
+      secondColData = scCarMilesData
+      
+      firstColName <- "Baseline (Total Population)"
+      secondColName <- "Scenario (Total Population)"
+      
+      subtitle <- ""
+      
+      extended_title <- "Total Population - Car Miles per week"
+    }
+    
+    h1$title(text = extended_title)
+    
+    # cat(" first : ", max(firstColData$data), "\n")
+    if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(firstColData$data)))))
+      bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      
+      #h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
+      
+      h1$series(data = bc$Freq[-1], name = firstColName)
+      bc <- NULL
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
+      bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      h1$series(data = bc$Freq[-1], name = secondColName)
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
+    h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    
+    h1$set(dom = 'plotFilteredCarMiles')
+    h1$yAxis(title = list(text = 'Percentage %'))
+    h1$tooltip(valueSuffix= '%')
+    h1$exporting(enabled = T)
+    return (h1)
+  })
+  
+  
+  output$plotCarMiles <- renderChart ({
+    filterCarMilesData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    firstColData <- NULL
+    secondColData <- NULL
+    extended_title <- ""
+    subtitle <- ""
+    if (input$inMSG == 'sep'){
+      # Keep the data separated
+      firstColData = scCarMilesData
+      secondColData = scCarMilesFilteredData
+      
+      firstColName <- "Scenario (Total Population)"
+      secondColName <- "Scenario (Sub-Population)"
+      
+      extended_title <- "Scenario - Car Miles per week"
+      
+    }else{
+      # Keep the data mixed
+      firstColData = blCarMilesFilteredData
+      secondColData = scCarMilesFilteredData
+      
+      firstColName <- "Baseline (Sub-Population)"
+      secondColName <- "Scenario (Sub-Population)"
+      
+      extended_title <- "Sub-Population - Car Miles per week"
+    }
+    subtitle <- getCarMilesFilteredTitle()
+    h1$title(text = extended_title)
+    bc <- NULL
+    if (max(firstColData$data) > 0 && max(firstColData$data) > 0){
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(firstColData$data)))))
+      bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      
+      h1$series(data = bc$Freq[-1], name = firstColName)
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
+      bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+      h1$series(data = bc$Freq[-1], name = secondColName)
+      h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    
+    h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
+    h1$set(dom = 'plotCarMiles')
+    h1$yAxis(title = list(text = 'Percentage %'))
+    h1$tooltip(valueSuffix= '%')
+    
+    h1$exporting(enabled = T)
+    return (h1)
+  })
+  
+  
+  filterCarMilesData <- reactive ({
+    data <- carMiles
+    
+    if (input$inMSAG != 'All'){
+      data <- subset(data, age_group == input$inMSAG)
+    }
+    if (input$inMSG != 3)
+      data <- subset(data, Sex_B01ID %in% input$inMSG)
+    
+    if (input$inMSSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inMSSES)
+    }
+    
+    if (input$inMSEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inMSEthnicity)
+    }
+    #data[is.na(data)] <- 0
+    
+    
+    columnName <- paste(paste("MS", input$inMSMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
+                        paste("eq", input$inMSEQ,sep = ""), sep="_")
+    
+    #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
+    
+    data1 <- data.frame(carMiles[,columnName])
+    
+    data1$data <- data1[,1]
+    data1[,1] <- NULL
+    
+    data2 <- data.frame(data[,columnName])
+    
+    data2$data <- data2[,1]
+    data2[,1] <- NULL
+    
+    scCarMilesData <<- data1
+    scCarMilesFilteredData <<- data2
+    
+    blCarMilesData <<- data.frame(data = carMiles[,"baseline_carMiles"])
+    blCarMilesFilteredData <<- data.frame(data = data[,"baseline_carMiles"])
+    
+  })
+  
+  
   getMilesCycledFilteredTitle <- function(){
     filtered_title <- ""
     if (input$inMSAG != "All" || input$inMSG != 3 || input$inMSEthnicity != "All" || input$inMSSES != "All" ){
@@ -1531,6 +1719,41 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       filtered_title <- paste("Age Group: ", str_trim(input$inMSAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title
+    }else
+      filtered_title
+  }
+  
+  getCarMilesFilteredTitle <- function(){
+    filtered_title <- ""
+    if (input$inCMAG != "All" || input$inCMG != 3 || input$inCMEthnicity != "All" || input$inCMSES != "All" ){
+      displayGender <- "All"
+      if (input$inCMG == 1){
+        displayGender <- "Male"
+      }else if (input$inCMG == 2){
+        displayGender <- "Female"
+      }
+      
+      displayEthnicity <- "All"
+      if (input$inCMEthnicity == 1){
+        displayEthnicity <- "White"
+      }else if (input$inCMEthnicity == 2){
+        displayEthnicity <- "Non-White"
+      }
+      
+      displaySES <- "All"
+      if (input$inCMSES == 1){
+        displaySES <- "Managerial and professional occupations"
+      }else if (input$inCMSES == 2){
+        displaySES <- "Intermediate occupations and small employers"
+      }else if (input$inCMSES == 3){
+        displaySES <- "Routine and manual occupations"
+      }else if (input$inCMSES == 4){
+        displaySES <- "Never worked and long-term unemployed"
+      }else if (input$inCMSES == 5){
+        displaySES <- "Not classified (including students)"
+      }
+      filtered_title <- paste("Age Group: ", str_trim(input$inCMAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title

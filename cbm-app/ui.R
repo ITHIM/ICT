@@ -105,7 +105,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                                      HTML("<hr>"),
                                      selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
-                                     radioButtons("inHealthG", "Gender: ", gender, inline = TRUE)
+                                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE) #gender
                                      
                     ),
                     conditionalPanel(condition="input.conditionedPanels == 4",
@@ -122,7 +122,7 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      #selectizeInput("methnicity", "Ethnic Group:", ethnicity, selected = ethnicity[1], multiple = F),
                                      radioButtons("methnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
                                      HTML("<hr>"),
-                                     radioButtons("flipMETHG", label = "Flip Histogram:", METSwitchRButton, inline = TRUE),
+                                     radioButtons("flipMETHG", label = "Flip Histogram:", switchRButton, inline = TRUE),
                                      HTML("<hr>"),
                                      radioButtons("phyGuideline", label = "% Meeting WHO Physical Guideline", phyGLRButton, selected = phyGLRButton[2], inline = TRUE)
                     )
@@ -151,7 +151,9 @@ shinyUI(fluidPage(width="100%", height="100%",
                                      selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
                                      radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
                                      selectizeInput("inCMSES", "Socio Economic Classification :", ses),
-                                     radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE)
+                                     radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                                     HTML("<hr>"),
+                                     radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
                                      
                     )
                     
@@ -252,8 +254,9 @@ shinyUI(fluidPage(width="100%", height="100%",
                                showOutput('plotMilesCycled', 'highCharts'),
                                showOutput('plotFilteredMilesCycled', 'highCharts')
                       ),
-                      tabPanel("Car Miles", value = 6
-                               #showOutput('plotMilesCycled', 'highCharts')
+                      tabPanel("Car Miles", value = 6,
+                               showOutput('plotFilteredCarMiles', 'highCharts'),
+                               showOutput('plotCarMiles', 'highCharts')
                       )
                       
                       
