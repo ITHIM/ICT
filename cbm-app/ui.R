@@ -243,19 +243,19 @@ shinyUI(fluidPage(width="100%", height="100%",
                     
                     tabsetPanel(
                       tabPanel("Scenarios", value = 1,
-                               showOutput('plotCycPercent', "highcharts"),
+                               showOutput("plotCycPercent", "highcharts"),
                                h6("(Click on the legend to enable/disable a line)", align="center"),
-                               showOutput('plotGenericVariable', "highcharts"),
+                               showOutput("plotGenericVariable", "highcharts"),
                                h6("(Click on the legend to enable/disable a line)", align="center"),
                                HTML('<style>iframe.rChart{ width: 100%; height: 400px;}</style>')
                       ),
                       tabPanel("Mode Share", value = 2,
-                               showOutput('plotBDMode', "highcharts"),
-                               showOutput('plotBDSCMode', "highcharts")
+                               showOutput("plotBDMode", "highcharts"),
+                               showOutput("plotBDSCMode", "highcharts")
                       ),
                       tabPanel("Health", value = 3,
-                               showOutput('plotYLL', "highcharts"),
-                               showOutput('plotYLLReduction', "highcharts")
+                               showOutput("plotYLL", "highcharts"),
+                               showOutput("plotYLLReduction", "highcharts")
                                
                       )
                       
