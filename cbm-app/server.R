@@ -1304,52 +1304,52 @@ shinyServer(function(input, output, session){
     }
   })
   
-  output$plotCarTripsCycled <- renderChart ({
-    filterCarMilesData()
-    h1 <- Highcharts$new()
-    h1$chart(type = "column")
-    
-    if (!is.null(scCarMilesData) && !is.null(scCarMilesFilteredData)){
-      h1$plotOptions(column=list(animation=FALSE))
-      
-      h1$title(text = "Car Miles:  Histogram of Car Miles in the Selected Scenario")
-      
-      #       data.decile <- cut2(scCarMilesFilteredData$scenario, g = 10)
-      #       h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Car Trips (Miles)")
-      #       h1$xAxis(categories = c(1:10), title = "Decile")
-      #       h1$yAxis(title = list(text = 'Miles'))
-      
-      #       dhit <- hist(scCarMilesFilteredData$scenario)
-      #       
-      #       data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
-      #       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-      #       #       data <- subset(data, freq >= 0.1)
-      #       data <- subset(data, breaks != 0)
-      #       
-      #       h1$series(data =  data$freq, name = "Car Miles")
-      #       
-      #       h1$xAxis(categories = data$breaks)
-      #       
-      #       h1$yAxis(title = list(text = 'Percentage %'))
-      #       h1$tooltip(valueSuffix= '%')
-      
-      bc <- as.data.frame(table (cut (scCarMilesFilteredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFilteredData$scenario)))))
-      bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-      bc1max <- max(bc$Freq, na.rm = T)
-      
-      h1$xAxis(categories = as.list(append(c(seq(0,300, 50))[-1], "300+")), title = list(text = 'Car Miles'))
-      h1$yAxis(title = list(text = 'Percentage %'))
-      
-      h1$series(data = bc$Freq, name = "Car Miles")
-      h1$tooltip(valueSuffix= '%')
-      
-      
-    }
-    h1$set(dom = "plotCarTripsCycled")
-    h1$exporting(enabled = T)
-    return (h1)
-    
-  })
+#   output$plotCarTripsCycled <- renderChart ({
+#     filterCarMilesData()
+#     h1 <- Highcharts$new()
+#     h1$chart(type = "column")
+#     
+#     if (!is.null(scCarMilesData) && !is.null(scCarMilesFilteredData)){
+#       h1$plotOptions(column=list(animation=FALSE))
+#       
+#       h1$title(text = "Car Miles:  Histogram of Car Miles in the Selected Scenario")
+#       
+#       #       data.decile <- cut2(scCarMilesFilteredData$scenario, g = 10)
+#       #       h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Car Trips (Miles)")
+#       #       h1$xAxis(categories = c(1:10), title = "Decile")
+#       #       h1$yAxis(title = list(text = 'Miles'))
+#       
+#       #       dhit <- hist(scCarMilesFilteredData$scenario)
+#       #       
+#       #       data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
+#       #       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+#       #       #       data <- subset(data, freq >= 0.1)
+#       #       data <- subset(data, breaks != 0)
+#       #       
+#       #       h1$series(data =  data$freq, name = "Car Miles")
+#       #       
+#       #       h1$xAxis(categories = data$breaks)
+#       #       
+#       #       h1$yAxis(title = list(text = 'Percentage %'))
+#       #       h1$tooltip(valueSuffix= '%')
+#       
+#       bc <- as.data.frame(table (cut (scCarMilesFilteredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFilteredData$scenario)))))
+#       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+#       bc1max <- max(bc$Freq, na.rm = T)
+#       
+#       h1$xAxis(categories = as.list(append(c(seq(0,300, 50))[-1], "300+")), title = list(text = 'Car Miles'))
+#       h1$yAxis(title = list(text = 'Percentage %'))
+#       
+#       h1$series(data = bc$Freq, name = "Car Miles")
+#       h1$tooltip(valueSuffix= '%')
+#       
+#       
+#     }
+#     h1$set(dom = "plotCarTripsCycled")
+#     h1$exporting(enabled = T)
+#     return (h1)
+#     
+#   })
   
   
   output$plotFilteredMilesCycled <- renderChart ({
@@ -1961,465 +1961,465 @@ shinyServer(function(input, output, session){
       filtered_title
   }
   
-  observe({
-    
-    if (input$inBDEQ != 3){
-      updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
-      updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
-      updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
-      updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
-      updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
-      
-    }
-    
-    if (input$inHealthEQ != 3){
-      updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
-      updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
-      updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
-      updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
-      updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
-    }
-    
-    
-    
-    if (input$inMETEQ != 3){
-      updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
-      updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
-      updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
-      updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
-      updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
-    }
-    
-    if (input$inMSEQ != 3){
-      updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
-      updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
-      updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
-      updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
-      updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
-    }
-    
-    if (input$inCMEQ != 3){
-      updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
-      updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
-      updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
-      updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
-      updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
-    }
-    
-    if (input$inCO2EQ != 3){
-      updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
-      updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
-      updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
-      updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
-      updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
-    }
-
+#   observe({
+#     
+#     if (input$inBDEQ != 3){
+#       updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
+#       updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
+#       updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
+#       updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
+#       updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
+#       
+#     }
+#     
+#     if (input$inHealthEQ != 3){
+#       updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
+#       updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
+#       updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
+#       updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
+#       updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
+#     }
+#     
+#     
+#     
+#     if (input$inMETEQ != 3){
+#       updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
+#       updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
+#       updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
+#       updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
+#       updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
+#     }
+#     
+#     if (input$inMSEQ != 3){
+#       updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
+#       updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
+#       updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
+#       updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
+#       updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
+#     }
+#     
+#     if (input$inCMEQ != 3){
+#       updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
+#       updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
+#       updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
+#       updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
+#       updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
+#     }
+#     
+#     if (input$inCO2EQ != 3){
+#       updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
+#       updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
+#       updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
+#       updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
+#       updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
+#     }
+# 
+#   })
+  
+  
+  
+  
+  
+  # EQ
+  
+  observeEvent(input$inBDEQ, function(){
+    updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
+    updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
+  })
+  
+  observeEvent(input$inHealthEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
+    updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
+  })
+  
+  observeEvent(input$inMETEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
+    updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
+  })
+  
+  observeEvent(input$inMSEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
+    updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
+  })
+  
+  observeEvent(input$inCMEQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
+    updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
+  })
+  
+  observeEvent(input$inCO2EQ, function(){
+    updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
+  })
+  
+  # inBDEQ
+  # inHealthEQ
+  # inMETEQ
+  # inMSEQ
+  # inCMEQ
+  # inCO2EB
+  
+  # EB
+  
+  observeEvent(input$inBDEB, function(){
+    updateTextInput(session, "inHealthEB", NULL, input$inBDEB)
+    updateTextInput(session, "inMETEB", NULL, input$inBDEB)
+    updateTextInput(session, "inMSEB", NULL, input$inBDEB)
+    updateTextInput(session, "inCMEB", NULL, input$inBDEB)
+    updateTextInput(session, "inCO2EB", NULL, input$inBDEB)
+  })
+  
+  observeEvent(input$inHealthEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inMETEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inMSEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inCMEB", NULL, input$inHealthEB)
+    updateTextInput(session, "inCO2EB", NULL, input$inHealthEB)
+  })
+  
+  observeEvent(input$inMETEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inMETEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inMETEB)
+    updateTextInput(session, "inMSEB", NULL, input$inMETEB)
+    updateTextInput(session, "inCMEB", NULL, input$inMETEB)
+    updateTextInput(session, "inCO2EB", NULL, input$inMETEB)
+  })
+  
+  observeEvent(input$inMSEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inMSEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inMSEB)
+    updateTextInput(session, "inMETEB", NULL, input$inMSEB)
+    updateTextInput(session, "inCMEB", NULL, input$inMSEB)
+    updateTextInput(session, "inCO2EB", NULL, input$inMSEB)
+  })
+  
+  observeEvent(input$inCMEB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inCMEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inCMEB)
+    updateTextInput(session, "inMETEB", NULL, input$inCMEB)
+    updateTextInput(session, "inMSEB", NULL, input$inCMEB)
+    updateTextInput(session, "inCO2EB", NULL, input$inCMEB)
+  })
+  
+  observeEvent(input$inCO2EB, function(){
+    updateTextInput(session, "inBDEB", NULL, input$inCO2EB)
+    updateTextInput(session, "inHealthEB", NULL, input$inCO2EB)
+    updateTextInput(session, "inMETEB", NULL, input$inCO2EB)
+    updateTextInput(session, "inMSEB", NULL, input$inCO2EB)
+    updateTextInput(session, "inCMEB", NULL, input$inCO2EB)
+  })
+  
+  # inBDEB
+  # inHealthEB
+  # inMETEB
+  # inMSEB
+  # inCMEB
+  # inCO2EB
+  
+  observeEvent(input$inBDMS, function(){
+    updateTextInput(session, "inHealthMS", NULL, input$inBDMS)
+    updateTextInput(session, "inMETMS", NULL, input$inBDMS)
+    updateTextInput(session, "inMSMS", NULL, input$inBDMS)
+    updateTextInput(session, "inCMMS", NULL, input$inBDMS)
+    updateTextInput(session, "inCO2MS", NULL, input$inBDMS)
+  })
+  
+  observeEvent(input$inHealthMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inMETMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inMSMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inCMMS", NULL, input$inHealthMS)
+    updateTextInput(session, "inCO2MS", NULL, input$inHealthMS)
+  })
+  
+  observeEvent(input$inMETMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inMETMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inMETMS)
+    updateTextInput(session, "inMSMS", NULL, input$inMETMS)
+    updateTextInput(session, "inCMMS", NULL, input$inMETMS)
+    updateTextInput(session, "inCO2MS", NULL, input$inMETMS)
+  })
+  
+  observeEvent(input$inMSMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inMSMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inMSMS)
+    updateTextInput(session, "inMETMS", NULL, input$inMSMS)
+    updateTextInput(session, "inCMMS", NULL, input$inMSMS)
+    updateTextInput(session, "inCO2MS", NULL, input$inMSMS)
+  })
+  
+  observeEvent(input$inCMMS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inCMMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inCMMS)
+    updateTextInput(session, "inMETMS", NULL, input$inCMMS)
+    updateTextInput(session, "inMSMS", NULL, input$inCMMS)
+    updateTextInput(session, "inCO2MS", NULL, input$inCMMS)
+  })
+  
+  observeEvent(input$inCO2MS, function(){
+    updateTextInput(session, "inBDMS", NULL, input$inCO2MS)
+    updateTextInput(session, "inHealthMS", NULL, input$inCO2MS)
+    updateTextInput(session, "inMETMS", NULL, input$inCO2MS)
+    updateTextInput(session, "inMSMS", NULL, input$inCO2MS)
+    updateTextInput(session, "inCMMS", NULL, input$inCO2MS)
   })
   
   
+  # age
+  
+  observeEvent(input$inBDAG, function(){
+    updateTextInput(session, "mag", NULL, input$inBDAG)
+    updateTextInput(session, "inMSAG", NULL, input$inBDAG)
+    updateTextInput(session, "inCMAG", NULL, input$inBDAG)
+    updateTextInput(session, "inCO2AG", NULL, input$inBDAG)
+    
+  })
+  
+  observeEvent(input$mag, function(){
+    updateTextInput(session, "inBDAG", NULL, input$mag)
+    updateTextInput(session, "inMSAG", NULL, input$mag)
+    updateTextInput(session, "inCMAG", NULL, input$mag)
+    updateTextInput(session, "inCO2AG", NULL, input$mag)
+  })
+  
+  observeEvent(input$inMSAG, function(){
+    updateTextInput(session, "inBDAG", NULL, input$inMSAG)
+    updateTextInput(session, "mag", NULL, input$inMSAG)
+    updateTextInput(session, "inCMAG", NULL, input$inMSAG)
+    updateTextInput(session, "inCO2AG", NULL, input$inMSAG)
+  })
+  
+  observeEvent(input$inCMAG, function(){
+    updateTextInput(session, "inBDAG", NULL, input$inCMAG)
+    updateTextInput(session, "mag", NULL, input$inCMAG)
+    updateTextInput(session, "inMSAG", NULL, input$inCMAG)
+    updateTextInput(session, "inCO2AG", NULL, input$inCMAG)
+  })
+  
+  observeEvent(input$inCO2AG, function(){
+    updateTextInput(session, "inBDAG", NULL, input$inCO2AG)
+    updateTextInput(session, "mag", NULL, input$inCO2AG)
+    updateTextInput(session, "inMSAG", NULL, input$inCO2AG)
+    updateTextInput(session, "inCMAG", NULL, input$inCO2AG)
+  })
+  
+  #   inBDAG
+  #   mag
+  #   inMSAG
+  #   inCMAG
+  #   inCO2AG
   
   
+  # gender
   
-#   # EQ
-#   
-#   observeEvent(input$inBDEQ, function(){
-#     updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
-#     updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
-#     updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
-#     updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
-#     updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
-#   })
-#   
-#   observeEvent(input$inHealthEQ, function(){
-#     updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
-#     updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
-#     updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
-#     updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
-#     updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
-#   })
-#   
-#   observeEvent(input$inMETEQ, function(){
-#     updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
-#     updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
-#     updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
-#     updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
-#     updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
-#   })
-#   
-#   observeEvent(input$inMSEQ, function(){
-#     updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
-#     updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
-#     updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
-#     updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
-#     updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
-#   })
-#   
-#   observeEvent(input$inCMEQ, function(){
-#     updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
-#     updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
-#     updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
-#     updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
-#     updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
-#   })
-#   
-#   observeEvent(input$inCO2EQ, function(){
-#     updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
-#     updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
-#     updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
-#     updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
-#     updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
-#   })
-#   
-#   # inBDEQ
-#   # inHealthEQ
-#   # inMETEQ
-#   # inMSEQ
-#   # inCMEQ
-#   # inCO2EB
-#   
-#   # EB
-#   
-#   observeEvent(input$inBDEB, function(){
-#     updateTextInput(session, "inHealthEB", NULL, input$inBDEB)
-#     updateTextInput(session, "inMETEB", NULL, input$inBDEB)
-#     updateTextInput(session, "inMSEB", NULL, input$inBDEB)
-#     updateTextInput(session, "inCMEB", NULL, input$inBDEB)
-#     updateTextInput(session, "inCO2EB", NULL, input$inBDEB)
-#   })
-#   
-#   observeEvent(input$inHealthEB, function(){
-#     updateTextInput(session, "inBDEB", NULL, input$inHealthEB)
-#     updateTextInput(session, "inMETEB", NULL, input$inHealthEB)
-#     updateTextInput(session, "inMSEB", NULL, input$inHealthEB)
-#     updateTextInput(session, "inCMEB", NULL, input$inHealthEB)
-#     updateTextInput(session, "inCO2EB", NULL, input$inHealthEB)
-#   })
-#   
-#   observeEvent(input$inMETEB, function(){
-#     updateTextInput(session, "inBDEB", NULL, input$inMETEB)
-#     updateTextInput(session, "inHealthEB", NULL, input$inMETEB)
-#     updateTextInput(session, "inMSEB", NULL, input$inMETEB)
-#     updateTextInput(session, "inCMEB", NULL, input$inMETEB)
-#     updateTextInput(session, "inCO2EB", NULL, input$inMETEB)
-#   })
-#   
-#   observeEvent(input$inMSEB, function(){
-#     updateTextInput(session, "inBDEB", NULL, input$inMSEB)
-#     updateTextInput(session, "inHealthEB", NULL, input$inMSEB)
-#     updateTextInput(session, "inMETEB", NULL, input$inMSEB)
-#     updateTextInput(session, "inCMEB", NULL, input$inMSEB)
-#     updateTextInput(session, "inCO2EB", NULL, input$inMSEB)
-#   })
-#   
-#   observeEvent(input$inCMEB, function(){
-#     updateTextInput(session, "inBDEB", NULL, input$inCMEB)
-#     updateTextInput(session, "inHealthEB", NULL, input$inCMEB)
-#     updateTextInput(session, "inMETEB", NULL, input$inCMEB)
-#     updateTextInput(session, "inMSEB", NULL, input$inCMEB)
-#     updateTextInput(session, "inCO2EB", NULL, input$inCMEB)
-#   })
-#   
-#   observeEvent(input$inCO2EB, function(){
-#     updateTextInput(session, "inBDEB", NULL, input$inCO2EB)
-#     updateTextInput(session, "inHealthEB", NULL, input$inCO2EB)
-#     updateTextInput(session, "inMETEB", NULL, input$inCO2EB)
-#     updateTextInput(session, "inMSEB", NULL, input$inCO2EB)
-#     updateTextInput(session, "inCMEB", NULL, input$inCO2EB)
-#   })
-#   
-#   # inBDEB
-#   # inHealthEB
-#   # inMETEB
-#   # inMSEB
-#   # inCMEB
-#   # inCO2EB
-#   
-#   observeEvent(input$inBDMS, function(){
-#     updateTextInput(session, "inHealthMS", NULL, input$inBDMS)
-#     updateTextInput(session, "inMETMS", NULL, input$inBDMS)
-#     updateTextInput(session, "inMSMS", NULL, input$inBDMS)
-#     updateTextInput(session, "inCMMS", NULL, input$inBDMS)
-#     updateTextInput(session, "inCO2MS", NULL, input$inBDMS)
-#   })
-#   
-#   observeEvent(input$inHealthMS, function(){
-#     updateTextInput(session, "inBDMS", NULL, input$inHealthMS)
-#     updateTextInput(session, "inMETMS", NULL, input$inHealthMS)
-#     updateTextInput(session, "inMSMS", NULL, input$inHealthMS)
-#     updateTextInput(session, "inCMMS", NULL, input$inHealthMS)
-#     updateTextInput(session, "inCO2MS", NULL, input$inHealthMS)
-#   })
-#   
-#   observeEvent(input$inMETMS, function(){
-#     updateTextInput(session, "inBDMS", NULL, input$inMETMS)
-#     updateTextInput(session, "inHealthMS", NULL, input$inMETMS)
-#     updateTextInput(session, "inMSMS", NULL, input$inMETMS)
-#     updateTextInput(session, "inCMMS", NULL, input$inMETMS)
-#     updateTextInput(session, "inCO2MS", NULL, input$inMETMS)
-#   })
-#   
-#   observeEvent(input$inMSMS, function(){
-#     updateTextInput(session, "inBDMS", NULL, input$inMSMS)
-#     updateTextInput(session, "inHealthMS", NULL, input$inMSMS)
-#     updateTextInput(session, "inMETMS", NULL, input$inMSMS)
-#     updateTextInput(session, "inCMMS", NULL, input$inMSMS)
-#     updateTextInput(session, "inCO2MS", NULL, input$inMSMS)
-#   })
-#   
-#   observeEvent(input$inCMMS, function(){
-#     updateTextInput(session, "inBDMS", NULL, input$inCMMS)
-#     updateTextInput(session, "inHealthMS", NULL, input$inCMMS)
-#     updateTextInput(session, "inMETMS", NULL, input$inCMMS)
-#     updateTextInput(session, "inMSMS", NULL, input$inCMMS)
-#     updateTextInput(session, "inCO2MS", NULL, input$inCMMS)
-#   })
-#   
-#   observeEvent(input$inCO2MS, function(){
-#     updateTextInput(session, "inBDMS", NULL, input$inCO2MS)
-#     updateTextInput(session, "inHealthMS", NULL, input$inCO2MS)
-#     updateTextInput(session, "inMETMS", NULL, input$inCO2MS)
-#     updateTextInput(session, "inMSMS", NULL, input$inCO2MS)
-#     updateTextInput(session, "inCMMS", NULL, input$inCO2MS)
-#   })
-#   
-#   
-#   # age
-#   
-#   observeEvent(input$inBDAG, function(){
-#     updateTextInput(session, "mag", NULL, input$inBDAG)
-#     updateTextInput(session, "inMSAG", NULL, input$inBDAG)
-#     updateTextInput(session, "inCMAG", NULL, input$inBDAG)
-#     updateTextInput(session, "inCO2AG", NULL, input$inBDAG)
-#     
-#   })
-#   
-#   observeEvent(input$mag, function(){
-#     updateTextInput(session, "inBDAG", NULL, input$mag)
-#     updateTextInput(session, "inMSAG", NULL, input$mag)
-#     updateTextInput(session, "inCMAG", NULL, input$mag)
-#     updateTextInput(session, "inCO2AG", NULL, input$mag)
-#   })
-#   
-#   observeEvent(input$inMSAG, function(){
-#     updateTextInput(session, "inBDAG", NULL, input$inMSAG)
-#     updateTextInput(session, "mag", NULL, input$inMSAG)
-#     updateTextInput(session, "inCMAG", NULL, input$inMSAG)
-#     updateTextInput(session, "inCO2AG", NULL, input$inMSAG)
-#   })
-#   
-#   observeEvent(input$inCMAG, function(){
-#     updateTextInput(session, "inBDAG", NULL, input$inCMAG)
-#     updateTextInput(session, "mag", NULL, input$inCMAG)
-#     updateTextInput(session, "inMSAG", NULL, input$inCMAG)
-#     updateTextInput(session, "inCO2AG", NULL, input$inCMAG)
-#   })
-#   
-#   observeEvent(input$inCO2AG, function(){
-#     updateTextInput(session, "inBDAG", NULL, input$inCO2AG)
-#     updateTextInput(session, "mag", NULL, input$inCO2AG)
-#     updateTextInput(session, "inMSAG", NULL, input$inCO2AG)
-#     updateTextInput(session, "inCMAG", NULL, input$inCO2AG)
-#   })
-#   
-#   #   inBDAG
-#   #   mag
-#   #   inMSAG
-#   #   inCMAG
-#   #   inCO2AG
-#   
-#   
-#   # gender
-#   
-#   observeEvent(input$inBDGender, function(){
-#     updateTextInput(session, "inHealthG", NULL, input$inBDGender)
-#     updateTextInput(session, "mgender", NULL, input$inBDGender)
-#     updateTextInput(session, "inMSG", NULL, input$inBDGender)
-#     updateTextInput(session, "inCMG", NULL, input$inBDGender)
-#     updateTextInput(session, "inCO2G", NULL, input$inBDGender)
-#   })
-#   
-#   observeEvent(input$inHealthG, function(){
-#     updateTextInput(session, "inBDGender", NULL, input$inHealthG)
-#     updateTextInput(session, "mgender", NULL, input$inHealthG)
-#     updateTextInput(session, "inMSG", NULL, input$inHealthG)
-#     updateTextInput(session, "inCMG", NULL, input$inHealthG)
-#     updateTextInput(session, "inCO2G", NULL, input$inHealthG)
-#   })
-#   
-#   observeEvent(input$mgender, function(){
-#     updateTextInput(session, "inBDGender", NULL, input$mgender)
-#     updateTextInput(session, "inHealthG", NULL, input$mgender)
-#     updateTextInput(session, "inMSG", NULL, input$mgender)
-#     updateTextInput(session, "inCMG", NULL, input$mgender)
-#     updateTextInput(session, "inCO2G", NULL, input$mgender)
-#     
-#   })
-#   
-#   observeEvent(input$inMSG, function(){
-#     updateTextInput(session, "inBDGender", NULL, input$inMSG)
-#     updateTextInput(session, "inHealthG", NULL, input$inMSG)
-#     updateTextInput(session, "mgender", NULL, input$inMSG)
-#     updateTextInput(session, "inCMG", NULL, input$inMSG)
-#     updateTextInput(session, "inCO2G", NULL, input$inMSG)
-#   })
-#   
-#   observeEvent(input$inCMG, function(){
-#     updateTextInput(session, "inBDGender", NULL, input$inCMG)
-#     updateTextInput(session, "inHealthG", NULL, input$inCMG)
-#     updateTextInput(session, "mgender", NULL, input$inCMG)
-#     updateTextInput(session, "inMSG", NULL, input$inCMG)
-#     updateTextInput(session, "inCO2G", NULL, input$inCMG)
-#   })
-#   
-#   observeEvent(input$inCO2G, function(){
-#     updateTextInput(session, "inBDGender", NULL, input$inCO2G)
-#     updateTextInput(session, "inHealthG", NULL, input$inCO2G)
-#     updateTextInput(session, "mgender", NULL, input$inCO2G)
-#     updateTextInput(session, "inMSG", NULL, input$inCO2G)
-#     updateTextInput(session, "inCMG", NULL, input$inCO2G)
-#   })
-#   
-#   #   inBDGender
-#   #   inHealthG
-#   #   mgender
-#   #   inMSG
-#   #   inCMG
-#   #   inCO2G
-#   
-#   
-#   # SES
-#   
-#   observeEvent(input$inBDSES, function(){
-#     updateTextInput(session, "mses", NULL, input$inBDSES)
-#     updateTextInput(session, "inMSSES", NULL, input$inBDSES)
-#     updateTextInput(session, "inCMSES", NULL, input$inBDSES)
-#     updateTextInput(session, "inCO2SES", NULL, input$inBDSES)
-#   })
-#   
-#   
-#   observeEvent(input$mses, function(){
-#     updateTextInput(session, "inBDSES", NULL, input$mses)
-#     updateTextInput(session, "inMSSES", NULL, input$mses)
-#     updateTextInput(session, "inCMSES", NULL, input$mses)
-#     updateTextInput(session, "inCO2SES", NULL, input$mses)
-#   })
-#   
-#   observeEvent(input$inMSSES, function(){
-#     updateTextInput(session, "inBDSES", NULL, input$inMSSES)
-#     updateTextInput(session, "mses", NULL, input$inMSSES)
-#     updateTextInput(session, "inCMSES", NULL, input$inMSSES)
-#     updateTextInput(session, "inCO2SES", NULL, input$inMSSES)
-#   })
-#   
-#   observeEvent(input$inCMSES, function(){
-#     updateTextInput(session, "inBDSES", NULL, input$inCMSES)
-#     updateTextInput(session, "mses", NULL, input$inCMSES)
-#     updateTextInput(session, "inMSSES", NULL, input$inCMSES)
-#     updateTextInput(session, "inCO2SES", NULL, input$inCMSES)
-#   })
-#   
-#   observeEvent(input$inCO2SES, function(){
-#     updateTextInput(session, "inBDSES", NULL, input$inCO2SES)
-#     updateTextInput(session, "mses", NULL, input$inCO2SES)
-#     updateTextInput(session, "inMSSES", NULL, input$inCO2SES)
-#     updateTextInput(session, "inCMSES", NULL, input$inCO2SES)
-#   })
-#   
-#   
-#   #   inBDSES
-#   #   mses
-#   #   inMSSES
-#   #   inCMSES
-#   #   inCO2SES
-#   
-#   #Ethnicity
-#   
-#   
-#   observeEvent(input$inBDEthnicity, function(){
-#     updateTextInput(session, "methnicity", NULL, input$inBDEthnicity)
-#     updateTextInput(session, "inMSEthnicity", NULL, input$inBDEthnicity)
-#     updateTextInput(session, "inCMEthnicity", NULL, input$inBDEthnicity)
-#     updateTextInput(session, "inCO2Ethnicity", NULL, input$inBDEthnicity)
-#   })
-#   
-#   observeEvent(input$methnicity, function(){
-#     updateTextInput(session, "inBDEthnicity", NULL, input$methnicity)
-#     updateTextInput(session, "inMSEthnicity", NULL, input$methnicity)
-#     updateTextInput(session, "inCMEthnicity", NULL, input$methnicity)
-#     updateTextInput(session, "inCO2Ethnicity", NULL, input$methnicity)
-#     
-#   })
-#   
-#   observeEvent(input$inMSEthnicity, function(){
-#     updateTextInput(session, "inBDEthnicity", NULL, input$inMSEthnicity)
-#     updateTextInput(session, "methnicity", NULL, input$inMSEthnicity)
-#     updateTextInput(session, "inCMEthnicity", NULL, input$inMSEthnicity)
-#     updateTextInput(session, "inCO2Ethnicity", NULL, input$inMSEthnicity)
-#   })
-#   
-#   observeEvent(input$inCMEthnicity, function(){
-#     updateTextInput(session, "inBDEthnicity", NULL, input$inCMEthnicity)
-#     updateTextInput(session, "methnicity", NULL, input$inCMEthnicity)
-#     updateTextInput(session, "inMSEthnicity", NULL, input$inCMEthnicity)
-#     updateTextInput(session, "inCO2Ethnicity", NULL, input$inCMEthnicity)
-#   })
-#   
-#   observeEvent(input$inCO2Ethnicity, function(){
-#     updateTextInput(session, "inBDEthnicity", NULL, input$inCO2Ethnicity)
-#     updateTextInput(session, "methnicity", NULL, input$inCO2Ethnicity)
-#     updateTextInput(session, "inMSEthnicity", NULL, input$inCO2Ethnicity)
-#     updateTextInput(session, "inCMEthnicity", NULL, input$inCO2Ethnicity)
-#   })
-#   
-#   #   inBDEthnicity
-#   #   methnicity
-#   #   inMSEthnicity
-#   #   inCMEthnicity
-#   #   inCO2Ethnicity
-#   
-#   
-#   observeEvent(input$flipMS, function(){
-#     updateTextInput(session, "flipMETHG", NULL, input$flipMS)
-#     updateTextInput(session, "inMSflip", NULL, input$flipMS)
-#     updateTextInput(session, "inCMflip", NULL, input$flipMS)
-#     updateTextInput(session, "inCO2flip", NULL, input$flipMS)
-#   })
-#   
-#   observeEvent(input$flipMETHG, function(){
-#     updateTextInput(session, "flipMS", NULL, input$flipMETHG)
-#     updateTextInput(session, "inMSflip", NULL, input$flipMETHG)
-#     updateTextInput(session, "inCMflip", NULL, input$flipMETHG)
-#     updateTextInput(session, "inCO2flip", NULL, input$flipMETHG)
-#     
-#   })
-#   
-#   observeEvent(input$inMSflip, function(){
-#     updateTextInput(session, "flipMS", NULL, input$inMSflip)
-#     updateTextInput(session, "flipMETHG", NULL, input$inMSflip)
-#     updateTextInput(session, "inCMflip", NULL, input$inMSflip)
-#     updateTextInput(session, "inCO2flip", NULL, input$flipMS)
-#     
-#   })
-#   
-#   observeEvent(input$inCMflip, function(){
-#     updateTextInput(session, "flipMS", NULL, input$inCMflip)
-#     updateTextInput(session, "flipMETHG", NULL, input$inCMflip)
-#     updateTextInput(session, "inMSflip", NULL, input$inCMflip)
-#     updateTextInput(session, "inCO2flip", NULL, input$inCMflip)
-#   })
-#   
-#   observeEvent(input$inCO2flip, function(){
-#     updateTextInput(session, "flipMS", NULL, input$inCO2flip)
-#     updateTextInput(session, "flipMETHG", NULL, input$inCO2flip)
-#     updateTextInput(session, "inMSflip", NULL, input$inCO2flip)
-#     updateTextInput(session, "inCMflip", NULL, input$inCO2flip)
-#   })
-#   
-#   
-#   #flipMS
-#   #flipMETHG
-#   #inMSflip
-#   #inCMflip
-#   #inCO2flip
+  observeEvent(input$inBDGender, function(){
+    updateTextInput(session, "inHealthG", NULL, input$inBDGender)
+    updateTextInput(session, "mgender", NULL, input$inBDGender)
+    updateTextInput(session, "inMSG", NULL, input$inBDGender)
+    updateTextInput(session, "inCMG", NULL, input$inBDGender)
+    updateTextInput(session, "inCO2G", NULL, input$inBDGender)
+  })
+  
+  observeEvent(input$inHealthG, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inHealthG)
+    updateTextInput(session, "mgender", NULL, input$inHealthG)
+    updateTextInput(session, "inMSG", NULL, input$inHealthG)
+    updateTextInput(session, "inCMG", NULL, input$inHealthG)
+    updateTextInput(session, "inCO2G", NULL, input$inHealthG)
+  })
+  
+  observeEvent(input$mgender, function(){
+    updateTextInput(session, "inBDGender", NULL, input$mgender)
+    updateTextInput(session, "inHealthG", NULL, input$mgender)
+    updateTextInput(session, "inMSG", NULL, input$mgender)
+    updateTextInput(session, "inCMG", NULL, input$mgender)
+    updateTextInput(session, "inCO2G", NULL, input$mgender)
+    
+  })
+  
+  observeEvent(input$inMSG, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inMSG)
+    updateTextInput(session, "inHealthG", NULL, input$inMSG)
+    updateTextInput(session, "mgender", NULL, input$inMSG)
+    updateTextInput(session, "inCMG", NULL, input$inMSG)
+    updateTextInput(session, "inCO2G", NULL, input$inMSG)
+  })
+  
+  observeEvent(input$inCMG, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inCMG)
+    updateTextInput(session, "inHealthG", NULL, input$inCMG)
+    updateTextInput(session, "mgender", NULL, input$inCMG)
+    updateTextInput(session, "inMSG", NULL, input$inCMG)
+    updateTextInput(session, "inCO2G", NULL, input$inCMG)
+  })
+  
+  observeEvent(input$inCO2G, function(){
+    updateTextInput(session, "inBDGender", NULL, input$inCO2G)
+    updateTextInput(session, "inHealthG", NULL, input$inCO2G)
+    updateTextInput(session, "mgender", NULL, input$inCO2G)
+    updateTextInput(session, "inMSG", NULL, input$inCO2G)
+    updateTextInput(session, "inCMG", NULL, input$inCO2G)
+  })
+  
+  #   inBDGender
+  #   inHealthG
+  #   mgender
+  #   inMSG
+  #   inCMG
+  #   inCO2G
+  
+  
+  # SES
+  
+  observeEvent(input$inBDSES, function(){
+    updateTextInput(session, "mses", NULL, input$inBDSES)
+    updateTextInput(session, "inMSSES", NULL, input$inBDSES)
+    updateTextInput(session, "inCMSES", NULL, input$inBDSES)
+    updateTextInput(session, "inCO2SES", NULL, input$inBDSES)
+  })
+  
+  
+  observeEvent(input$mses, function(){
+    updateTextInput(session, "inBDSES", NULL, input$mses)
+    updateTextInput(session, "inMSSES", NULL, input$mses)
+    updateTextInput(session, "inCMSES", NULL, input$mses)
+    updateTextInput(session, "inCO2SES", NULL, input$mses)
+  })
+  
+  observeEvent(input$inMSSES, function(){
+    updateTextInput(session, "inBDSES", NULL, input$inMSSES)
+    updateTextInput(session, "mses", NULL, input$inMSSES)
+    updateTextInput(session, "inCMSES", NULL, input$inMSSES)
+    updateTextInput(session, "inCO2SES", NULL, input$inMSSES)
+  })
+  
+  observeEvent(input$inCMSES, function(){
+    updateTextInput(session, "inBDSES", NULL, input$inCMSES)
+    updateTextInput(session, "mses", NULL, input$inCMSES)
+    updateTextInput(session, "inMSSES", NULL, input$inCMSES)
+    updateTextInput(session, "inCO2SES", NULL, input$inCMSES)
+  })
+  
+  observeEvent(input$inCO2SES, function(){
+    updateTextInput(session, "inBDSES", NULL, input$inCO2SES)
+    updateTextInput(session, "mses", NULL, input$inCO2SES)
+    updateTextInput(session, "inMSSES", NULL, input$inCO2SES)
+    updateTextInput(session, "inCMSES", NULL, input$inCO2SES)
+  })
+  
+  
+  #   inBDSES
+  #   mses
+  #   inMSSES
+  #   inCMSES
+  #   inCO2SES
+  
+  #Ethnicity
+  
+  
+  observeEvent(input$inBDEthnicity, function(){
+    updateTextInput(session, "methnicity", NULL, input$inBDEthnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$inBDEthnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inBDEthnicity)
+    updateTextInput(session, "inCO2Ethnicity", NULL, input$inBDEthnicity)
+  })
+  
+  observeEvent(input$methnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$methnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$methnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$methnicity)
+    updateTextInput(session, "inCO2Ethnicity", NULL, input$methnicity)
+    
+  })
+  
+  observeEvent(input$inMSEthnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$inMSEthnicity)
+    updateTextInput(session, "methnicity", NULL, input$inMSEthnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inMSEthnicity)
+    updateTextInput(session, "inCO2Ethnicity", NULL, input$inMSEthnicity)
+  })
+  
+  observeEvent(input$inCMEthnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$inCMEthnicity)
+    updateTextInput(session, "methnicity", NULL, input$inCMEthnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$inCMEthnicity)
+    updateTextInput(session, "inCO2Ethnicity", NULL, input$inCMEthnicity)
+  })
+  
+  observeEvent(input$inCO2Ethnicity, function(){
+    updateTextInput(session, "inBDEthnicity", NULL, input$inCO2Ethnicity)
+    updateTextInput(session, "methnicity", NULL, input$inCO2Ethnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$inCO2Ethnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inCO2Ethnicity)
+  })
+  
+  #   inBDEthnicity
+  #   methnicity
+  #   inMSEthnicity
+  #   inCMEthnicity
+  #   inCO2Ethnicity
+  
+  
+  observeEvent(input$flipMS, function(){
+    updateTextInput(session, "flipMETHG", NULL, input$flipMS)
+    updateTextInput(session, "inMSflip", NULL, input$flipMS)
+    updateTextInput(session, "inCMflip", NULL, input$flipMS)
+    updateTextInput(session, "inCO2flip", NULL, input$flipMS)
+  })
+  
+  observeEvent(input$flipMETHG, function(){
+    updateTextInput(session, "flipMS", NULL, input$flipMETHG)
+    updateTextInput(session, "inMSflip", NULL, input$flipMETHG)
+    updateTextInput(session, "inCMflip", NULL, input$flipMETHG)
+    updateTextInput(session, "inCO2flip", NULL, input$flipMETHG)
+    
+  })
+  
+  observeEvent(input$inMSflip, function(){
+    updateTextInput(session, "flipMS", NULL, input$inMSflip)
+    updateTextInput(session, "flipMETHG", NULL, input$inMSflip)
+    updateTextInput(session, "inCMflip", NULL, input$inMSflip)
+    updateTextInput(session, "inCO2flip", NULL, input$flipMS)
+    
+  })
+  
+  observeEvent(input$inCMflip, function(){
+    updateTextInput(session, "flipMS", NULL, input$inCMflip)
+    updateTextInput(session, "flipMETHG", NULL, input$inCMflip)
+    updateTextInput(session, "inMSflip", NULL, input$inCMflip)
+    updateTextInput(session, "inCO2flip", NULL, input$inCMflip)
+  })
+  
+  observeEvent(input$inCO2flip, function(){
+    updateTextInput(session, "flipMS", NULL, input$inCO2flip)
+    updateTextInput(session, "flipMETHG", NULL, input$inCO2flip)
+    updateTextInput(session, "inMSflip", NULL, input$inCO2flip)
+    updateTextInput(session, "inCMflip", NULL, input$inCO2flip)
+  })
+  
+  
+  #flipMS
+  #flipMETHG
+  #inMSflip
+  #inCMflip
+  #inCO2flip
   
 })
