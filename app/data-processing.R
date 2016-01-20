@@ -1,10 +1,6 @@
 library(stringr)
 
 idata <- read.csv("data/csv/mmets_var.csv", as.is = T)
-msharedtata <- read.csv("data/BD_share1split.csv", as.is = T)
-
-fasterTripData <- read.csv("data/BreakDowns/BD_mode-fastertrips.csv")
-slowerTripData <- read.csv("data/BreakDowns/BD_mode-slowertrips.csv")
 
 sdata <- read.csv("data/csv/ICT_aggr.csv", header = T, check.names=FALSE)
 
