@@ -11,9 +11,9 @@ uMS <- append("All", sort(unique(sdata$MS)))
 uEQ <- append("All",sort(unique(sdata$equity)))
 uEB <- append("All", sort(unique(sdata$ebike)))
 
-uBDMS <- (sort(unique(msharedtata$MS)[-1]) - 1)
-uBDEQ <- sort(unique(msharedtata$equity))
-uBDEB <- sort(unique(msharedtata$ebike))
+# uBDMS <- (sort(unique(msharedtata$MS)[-1]) - 1)
+# uBDEQ <- sort(unique(msharedtata$equity))
+# uBDEB <- sort(unique(msharedtata$ebike))
 
 variableList <- t(as.matrix(colnames(sdata)))
 variableList <- variableList[,6:length(colnames(sdata))]
