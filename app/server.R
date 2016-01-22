@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 library(DT)
 library(devtools)
 if (!require(rCharts)) {
@@ -556,6 +557,10 @@ shinyServer(function(input, output, session){
     h1$title(text = "Years of Life Lost (YLL) for the English Population")
     h1$set(dom = "plotYLL")
     h1$exporting(enabled = T)
+    # h1$data(c("this is very interesting"))
+    #h1$labels(items = HTML(bsCollapse(id = "intro", bsCollapsePanel("asdsadasd"))))
+    
+    # h1$annotations(xValue: 4, yValue: 125, title = list (text = "Annotated chart!"))
     return(h1)
   })
   
@@ -2276,4 +2281,10 @@ shinyServer(function(input, output, session){
   #inCMflip
   #inCO2flip
   
+  shinyjs::onclick("MSHelp", shinyjs::toggle(id = "MSHelpText", anim = FALSE))
+  shinyjs::onclick("HealthHelp", shinyjs::toggle(id = "HealthHelpText", anim = FALSE))
+  shinyjs::onclick("PAHelp", shinyjs::toggle(id = "PAHelpText", anim = FALSE))
+  shinyjs::onclick("MCHelp", shinyjs::toggle(id = "MCHelpText", anim = FALSE))
+  shinyjs::onclick("CMHelp", shinyjs::toggle(id = "CMHelpText", anim = FALSE))
+  shinyjs::onclick("CO2Help", shinyjs::toggle(id = "CO2HelpText", anim = FALSE))
 })

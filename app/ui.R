@@ -5,6 +5,7 @@ if (!require(rCharts)) {
   library(rCharts)
 }
 library(shinyBS)
+library(shinyjs)
 source("data-processing.R")
 uniqueMS <- sort(unique(sdata$MS))
 uMS <- append("All", sort(unique(sdata$MS)))
@@ -65,7 +66,8 @@ genderForHealthCalculations <- c("All",
                                  "Male",
                                  "Female")
 
-shinyUI(fluidPage(width="100%", height="100%",
+shinyUI(fluidPage(useShinyjs(),
+                  width="100%", height="100%",
                   bsCollapse(id = "intro", bsCollapsePanel(
                     tags$div(title = "Click here to open an introductory document", 
                              h4("Impacts of Cycling Tool (Prototype) (Click to expand)")), 
@@ -166,26 +168,53 @@ shinyUI(fluidPage(width="100%", height="100%",
                                HTML("<style>iframe.rChart{ width: 100%; height: 400px;}</style>")
                       ),
                       tabPanel("Mode Share", value = 2,
+                               a(id = "MSHelp", "Help", href = "#"),
+                               hidden (div(id = "MSHelpText",
+                                           helpText("Displays plots for trip mode share, where a selected scenario is compared with the baseline. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. 
+                                                    Users can compare total as well as sub-population of the scenario and baseline")
+                               )),
                                showOutput("plotBDMode", "highcharts"),
                                showOutput("plotBDSCMode", "highcharts")
                       ),
                       tabPanel("Health", value = 3,
+                               a(id = "HealthHelp", "Help", href = "#"),
+                               hidden (div(id = "HealthHelpText",
+                                           helpText("Displays two plots for health gains in terms of Years of Life Lost (YLL) and Reduction in YLLs. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike.
+                                            Sub-population filter is only applied for age and gender groups.")
+                               )),
                                showOutput("plotYLL", "highcharts"),
                                showOutput("plotYLLReduction", "highcharts")
                       ),
                       tabPanel("Physical Activity", value = 4,
+                               a(id = "PAHelp", "Help", href = "#"),
+                               hidden (div(id = "PAHelpText",
+                                           helpText("Displays histogram of total physical activity and also the fraction of the population meeting the WHO guidelines. Allows comparison of total and sub-population comparison of selected scenario and baseline.
+                                                    ")
+                               )),
                                showOutput("plotMET", "highcharts"),
                                showOutput("plotScenarioMET", "highcharts")
                       ),
                       tabPanel("Miles Cycled", value = 5,
+                               a(id = "MCHelp", "Help", href = "#"),
+                               hidden (div(id = "MCHelpText",
+                                           helpText("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can switch from total population to total cyclist by the Denomintor switch.")
+                               )),
                                showOutput("plotMilesCycled", "highcharts"),
                                showOutput("plotFilteredMilesCycled", "highcharts")
                       ),
                       tabPanel("Car Miles", value = 6,
+                               a(id = "CMHelp", "Help", href = "#"),
+                               hidden (div(id = "CMHelpText",
+                                           helpText("Displays two plots for the total Car Miles (Car driver, Car passenger, Motorcycle and Taxi) per week for the whole populatioin in the selected scenario and baseline. Users can compare total and sub-population of scenario and baseline with each other")
+                               )),
                                showOutput("plotFilteredCarMiles", "highcharts"),
                                showOutput("plotCarMiles", "highcharts")
                       ),
                       tabPanel("CO2", value = 7,
+                               a(id = "CO2Help", "Help", href = "#"),
+                               hidden (div(id = "CO2HelpText",
+                                           helpText("Displays two plots for CO2 produced by only car related trips (both driver and passenger). Users can compare a selected scenario against the baseline")
+                               )),
                                showOutput("plotFilteredCO2", "highcharts"),
                                showOutput("plotCO2", "highcharts")
                       ),
