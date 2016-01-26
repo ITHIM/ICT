@@ -60,10 +60,21 @@ genderForHealthCalculations <- c("All",
 
 shinyUI(fluidPage(useShinyjs(),
                   width="100%", height="100%",
-                  bsCollapse(id = "intro", bsCollapsePanel(
+                  a(bsCollapse(id = "intro", bsCollapsePanel(
                     tags$div(title = "Click here to open an introductory document", 
-                             h4("Impacts of Cycling Tool (Prototype) (Click to expand)")), 
-                    includeMarkdown("README.md"))),
+                             h4("Impacts of Cycling Tool (Prototype)"),
+                             tags$style(HTML("
+                              h4 {
+                                font-size: 20px;
+                                font-weight: 2000;
+                                line-height: 1.1;
+                                text-decoration:underline;
+                              }
+                        
+                            "))
+                             
+                    ), 
+                    includeMarkdown("README.md")))),
                   sidebarPanel(
                     conditionalPanel(condition="input.conditionedPanels == 1",
                                      radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
@@ -172,8 +183,15 @@ shinyUI(fluidPage(useShinyjs(),
                       ),
                       tabPanel("Mode Share", value = 2,
                                a(id = "MSHelp", "Help", href = "#"),
+                               # showOutput("myChart","Nvd3")
+#                                div(class='wrapper',
+#                                    tags$style(".Nvd3{ height: 400px;}"),
+#                                    showOutput("myChart","Nvd3")
+#                                )
+                               
                                hidden (div(id = "MSHelpText",
-                                           helpText("Displays plots for trip mode share, where a selected scenario is compared with the baseline. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. 
+                                           helpText("Displays plots for trip mode share, where a selected scenario is compared with the baseline. This involves only the main mode used in each trip. 
+                                                    A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. 
                                                     Users can compare total as well as sub-population of the scenario and baseline")
                                )),
                                showOutput("plotBDMode", "highcharts"),
@@ -182,7 +200,8 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Health", value = 3,
                                a(id = "HealthHelp", "Help", href = "#"),
                                hidden (div(id = "HealthHelpText",
-                                           helpText("Displays two plots for health gains in terms of Years of Life Lost (YLL) and Reduction in YLLs. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike.
+                                           helpText("Displays two plots for health gains in terms of Years of Life Lost (YLL) and Reduction in YLLs. YLL is an estimate of the average years a person would have lived if he or she had not died prematurely. 
+                                            A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike.
                                             Sub-population filter is only applied for age and gender groups.")
                                )),
                                showOutput("plotHealth", "highcharts"),
@@ -191,8 +210,11 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Physical Activity", value = 4,
                                a(id = "PAHelp", "Help", href = "#"),
                                hidden (div(id = "PAHelpText",
-                                           helpText("Displays histogram of total physical activity and also the fraction of the population meeting the WHO guidelines. Allows comparison of total and sub-population comparison of selected scenario and baseline.
-                                                    ")
+                                           helpText(p("Displays histogram of total physical activity and also the fraction of the population meeting the WHO guidelines. 
+                                                    For comparison with WHO guidelines, we have assumed that 150 minutes of walking per week (the mininum PA to meet the guidelines), roughly translates into 100 minutes of cycling per week. 
+                                                    In terms of Marginal MET (MMET) per week, it translates into 8.5 MMET. Higher PA guideline assumes 300 minutes of walking per week, or 200 minutes of cycling per week, which translates to 17.5 MMET per week. 
+                                                    Allows comparison of total and sub-population comparison of selected scenario and baseline.
+                                                    "))
                                )),
                                showOutput("plotMET", "highcharts"),
                                showOutput("plotScenarioMET", "highcharts")
