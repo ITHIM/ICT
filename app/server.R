@@ -1,18 +1,3 @@
-library(shiny)
-library(shinyjs)
-library(DT)
-library(devtools)
-if (!require(rCharts)) {
-  install_github("rCharts", "ramnathv")
-  library(rCharts)
-}
-library(reshape2)
-library(dplyr)
-library(plyr)
-library(ggplot2)
-library(stringr)
-library(Hmisc)
-
 pd <- idata$total_mmet
 bMETdata <- NULL
 scMETdata <- NULL
@@ -28,6 +13,9 @@ pdl <- NULL
 bldata <- NULL
 scYllData <- NULL
 scYllReductionData <- NULL
+
+scYllData1 <- NULL
+scYllReductionData1 <- NULL
 
 msBaseline <- NULL
 msScenario <- NULL
@@ -51,9 +39,6 @@ scCO2FilteredData <- NULL
 
 blCO2Data <- NULL
 blCO2FilteredData <- NULL
-
-# Functions
-source("functions.R")
 
 shinyServer(function(input, output, session){
   
@@ -81,76 +66,12 @@ shinyServer(function(input, output, session){
     bldata <<- data
   })
   
-  
-  filterTimeTravelData <- reactive({
-    data <- scenariosTimeTravelIdata
-    
-    if (input$inTTag != 'All'){
-      data <- subset(data, age == input$inTTag)
-    }
-    if (input$inTTgender != 3)
-      data <- subset(data, Sex_B01ID %in% input$inTTgender)
-    
-    if (input$inTTses != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inTTses)
-    }
-    
-    if (input$inTTethnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
-    }
-    data[is.na(data)] <- 0
-    
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  
-                        paste("ebik", input$inTTEB,sep = ""), paste("eq", input$inTTEQ,sep = ""), sep="_")
-    
-    
-    data["timetravel"] <- data[,columnName]
-    
-    data <- arrange(data, timetravel)
-    
-    #Convert data in minutes to hours
-    data["timetravel"] <- data["timetravel"]/60
-    
-    #     scTimeTraveldata["timetravel"] <<- scenariosTimeTravelIdata[,columnName]
-    scFilteredTimeTraveldata <<- data
-    #     scFilteredTripTimeTraveldata <<- tripData
-  })
-  
-  tripTimeData <- reactive({
-    #     data <- scenariosTripTimeTravelIdata
-    #     
-    #     if (input$inTTag != 'All'){
-    #       data <- subset(data, age_group == input$inTTag)
-    #     }
-    #     if (input$inTTgender != 3)
-    #       data <- subset(data, Sex_B01ID %in% input$inTTgender)
-    #     
-    #     if (input$inTTses != "All"){
-    #       data <- subset(data, NSSec_B03ID %in% input$inTTses)
-    #     }
-    #     
-    #     if (input$inTTethnicity != "All"){
-    #       data <- subset(data, EthGroupTS_B02ID %in% input$inTTethnicity)
-    #     }
-    #     data[is.na(data)] <- 0
-    #     
-    #     
-    #     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
-    #                         paste("eq", input$inTTEQ,sep = ""), sep="_")
-    #     
-    #     #tripData <- scenariosTripTimeTravelIdata[,c("baseline", columnName)]
-    #     tripData <- data[,c("MainMode_Reduced", columnName)]
-    #     
-    #     tripData <- as.data.frame(((tripData[[columnName]] - tripData$MainMode_Reduced) / tripData$MainMode_Reduced ) * 100)
-    #     
-    #     colnames(tripData) <- c("diff")
-    #     tripDataSubset <- subset(tripData, diff <= 200 & diff >= -200 )
-    #     tripDataSubset <- subset(tripDataSubset, diff != 0 )
-    #     scFilteredTripTimeTraveldata <<- tripDataSubset
-  })
-  
   filterHealthData <- reactive({
-    data1 <- yll
+    
+    if (input$inHealthVarSwitch == "Death")
+      data1 <- death
+    else
+      data1 <- yll
     # Temporarily removing YLL total values
     data1 <- subset(data1, age.band != "All Ages")
     data2 <- yll_red
@@ -168,15 +89,27 @@ shinyServer(function(input, output, session){
     
     columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("ebik", input$inHealthEB,sep = ""), 
                         paste("eq", input$inHealthEQ,sep = ""), sep="_")
-    # cat(columnName, "\n")
-    data1 <- data1[,c("age.band", "gender",columnName)]
-    colnames(data1) <- c("age.band", "gender", "scenario")
     
-    data2 <- data2[,c("age.band", "gender",columnName)]
-    colnames(data2) <- c("age.band", "gender", "scenario")
+    columnName1 <- paste(paste("MS", input$inHealthMS1,sep = ""),  paste("ebik", input$inHealthEB1,sep = ""), 
+                        paste("eq", input$inHealthEQ1,sep = ""), sep="_")
+    cat(columnName1, "\n")
+    dat1 <- data1[,c("age.band", "gender",columnName)]
+    colnames(dat1) <- c("age.band", "gender", "scenario")
     
-    scYllData <<- data1
-    scYllReductionData <<- data2
+    dat2 <- data2[,c("age.band", "gender",columnName)]
+    colnames(dat2) <- c("age.band", "gender", "scenario")
+    
+    dat3 <- data1[,c("age.band", "gender",columnName1)]
+    colnames(dat3) <- c("age.band", "gender", "scenario")
+    
+    dat4 <- data2[,c("age.band", "gender",columnName1)]
+    colnames(dat2) <- c("age.band", "gender", "scenario")
+    
+    scYllData <<- dat1
+    scYllReductionData <<- dat2
+    
+    scYllData1 <<- dat3
+    scYllReductionData1 <<- dat4
     
   })
   
@@ -529,7 +462,8 @@ shinyServer(function(input, output, session){
     return(h1)
     
   })
-  output$plotYLL <- renderChart({
+  output$plotHealth <- renderChart({
+    input$inHealthVarSwitch
     filterHealthData()
     h1 <- Highcharts$new()
     h1$chart(type = "column")
@@ -537,25 +471,97 @@ shinyServer(function(input, output, session){
     
     if (nrow(scYllReductionData) > 0){
       
-      # For both gender, create new series
-      ugender <- unique(scYllData$gender)
-      for (i in 1:length(ugender)){
-        data <- subset(scYllData, gender == ugender[i])
-        h1$series(data = data$scenario, name = ugender[i])
+      if (input$inHealthSwitch == "Scenario"){
+#         uage = c ("18-39", "40-59", "60-84")
+#         for (i in 1:3){
+#           h1$series(data = c(1,3), name = uage[i])
+#     
+#         }
+        
+        # For both gender, create new series
+        
+#         uage <- unique(scYllData1$age.band)
+#         for (i in 1:length(uage)){
+#           data1 <- subset(scYllData, age.band == uage[i])
+#           data2 <- subset(scYllData1, age.band == uage[i])
+#           #h1$series(data = data1$scenario)
+#           #h1$series(data = data2$scenario)#, name = uage[i]
+#           
+#           data3 <- rbind(data1, data2)
+#           #data3 <- arrange(data3, data3[,1])
+#           
+#           ugender <- unique(scYllData1$gender)  
+#           for (j in 1:length(ugender)){
+#             d1 <- subset(data1, gender == ugender[j])
+#             h1$series(data = d1$scenario)#, name = paste(uage[i], ugender[j]))
+#             d2 <- subset(data2, gender == ugender[j])
+#             h1$series(data = d2$scenario)#, name = paste(uage[i], ugender[j]))
+#           }
+#         }
+        
+#         for (i in 1:length(scYllData)){
+#           h1$series(data = scYllData$scenario[i])
+#           h1$series(data = scYllData1$scenario[i])
+#         }
+        
+        columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("ebik", input$inHealthEB,sep = ""), 
+                            paste("eq", input$inHealthEQ,sep = ""), sep="_")
+        
+        columnName1 <- paste(paste("MS", input$inHealthMS1,sep = ""),  paste("ebik", input$inHealthEB1,sep = ""), 
+                             paste("eq", input$inHealthEQ1,sep = ""), sep="_")
+        h1$series(data = scYllData$scenario, name = paste("CM",input$inHealthMS, "Equity", input$inHealthEQ, "Ebike", input$inHealthEB))
+        h1$series(data = scYllData1$scenario, name = paste("CM",input$inHealthMS1, "Equity", input$inHealthEQ1, "Ebike", input$inHealthEB1))
+        
+#         displayGender <- "All"
+#         if (input$inHealthG == 1){
+#           displayGender <- "Male"
+#         }else if (input$inHealthG == 2){
+#           displayGender <- "Female"
+#         }
+#         xAxisCat <- paste(displayGender,input$inHealthAG, " ", sep = "")
+#         cat(xAxisCat, "\n")
+#         h1$xAxis(categories = xAxisCat, title = list(text = 'Age and Gender Group'))
+#         if (length(unique(scYllData$age.band)) > 1)
+        h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band))#c("M 18-39", "F 18-39", "M 40-59", "F 40-59", "M 60-89", "F 60-84"))
+#         
+#         h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
+#         if (length(unique(scYllData1$age.band)) > 1)
+#           h1$xAxis(categories = append(unique(scYllData$age.band), unique(scYllData$age.band)), title = list(text = 'Age and Gender Groups'))
+#         
+#         
+#         h1$series( )
+
+
+      }else{
+        
+        # For both gender, create new series
+        ugender <- unique(scYllData$gender)
+        for (i in 1:length(ugender)){
+          data <- subset(scYllData, gender == ugender[i])
+          h1$series(data = data$scenario, name = ugender[i])
+        }
+        
+        h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
+        if (length(unique(scYllData$age.band)) > 1)
+          h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Age and Gender Groups'))
+        
+        
+        
       }
       
-      h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
-      if (length(unique(scYllData$age.band)) > 1)
-        h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Age and Gender Groups'))
+      if (input$inHealthVarSwitch == "YLL")
+        h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
+      else
+        h1$yAxis(title = list(text = 'Averted # of Deaths'))
       
-      
-      h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
-    
-    h1$title(text = "Years of Life Lost (YLL) for the English Population")
-    h1$set(dom = "plotYLL")
+    if (input$inHealthVarSwitch == "YLL")
+      h1$title(text = "Years of Life Lost (YLL) for the English Population")
+    else
+      h1$title(text = "Averted # of Deaths for the English Population")
+    h1$set(dom = "plotHealth")
     h1$exporting(enabled = T)
     # h1$data(c("this is very interesting"))
     #h1$labels(items = HTML(bsCollapse(id = "intro", bsCollapsePanel("asdsadasd"))))
@@ -564,8 +570,8 @@ shinyServer(function(input, output, session){
     return(h1)
   })
   
-  output$plotYLLReduction <- renderChart({
-    
+  output$plotHealthReduction <- renderChart({
+    input$inHealthVarSwitch
     filterHealthData()
     
     h1 <- Highcharts$new()
@@ -591,7 +597,7 @@ shinyServer(function(input, output, session){
     
     h1$title(text = "Reduction in Years of Life Lost (YLL) for the English Population")
     h1$tooltip(valueSuffix= '%')
-    h1$set(dom = "plotYLLReduction")
+    h1$set(dom = "plotHealthReduction")
     h1$exporting(enabled = T)
     return(h1)
   })
@@ -779,9 +785,13 @@ shinyServer(function(input, output, session){
     colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "MainMode_Reduced", columnName)
     data <- tripData[,colList]
     
-    msbl <- subset(tripData, select = MainMode_Reduced)
-    msbl <- count(msbl, "MainMode_Reduced")
-    names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
+#     msbl <- subset(tripData, select = MainMode_Reduced)
+#     msbl <- count(msbl, "MainMode_Reduced")
+#     names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
+    
+    msbl <- data.frame(baseline = tripData$MainMode_Reduced)
+    
+    msbl <- count(msbl)
     
     msbl$freq <- round(msbl$freq / sum(msbl$freq) * 100, digit = 1)
     
@@ -791,9 +801,13 @@ shinyServer(function(input, output, session){
     
     msBaseline <<- msbl
     
-    mssc <- subset(tripData, select = columnName)
-    mssc <- count(mssc, columnName)
-    names(mssc)[names(mssc)== columnName] <- "scenario"
+#     mssc <- subset(tripData, select = columnName)
+#     mssc <- count(mssc, columnName)
+#     names(mssc)[names(mssc)== columnName] <- "scenario"
+    
+    mssc <- data.frame(scenario = tripData[[columnName]])
+    
+    mssc <- count(mssc)
     
     mssc$freq <- round(mssc$freq / sum(mssc$freq) * 100, digit = 1)
     

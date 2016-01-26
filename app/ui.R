@@ -1,12 +1,4 @@
-library(DT)
-library(devtools)
-if (!require(rCharts)) {
-  install_github("rCharts", "ramnathv")
-  library(rCharts)
-}
-library(shinyBS)
-library(shinyjs)
-source("data-processing.R")
+source("setup.R")
 uniqueMS <- sort(unique(sdata$MS))
 uMS <- append("All", sort(unique(sdata$MS)))
 uEQ <- append("All",sort(unique(sdata$equity)))
@@ -97,8 +89,19 @@ shinyUI(fluidPage(useShinyjs(),
                                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                                      HTML("<hr>"),
+                                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline", "Scenario"), inline = TRUE),
+                                     HTML("<hr>"),
+                                     conditionalPanel(
+                                       condition = "input.inHealthSwitch == 'Scenario'",
+                                       selectInput(inputId = "inHealthMS1", label = "Select Cycling Multiplier:", choices =  uniqueMS),
+                                       radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                                       radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
+                                     ),
+                                     HTML("<hr>"),
                                      selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
-                                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE) #gender
+                                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
+                                     HTML("<hr>"),
+                                     radioButtons("inHealthVarSwitch", label = "Variable:", c("YLL", "Death"), inline = TRUE)
                                      
                     ),
                     conditionalPanel(condition="input.conditionedPanels == 4",
@@ -182,8 +185,8 @@ shinyUI(fluidPage(useShinyjs(),
                                            helpText("Displays two plots for health gains in terms of Years of Life Lost (YLL) and Reduction in YLLs. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike.
                                             Sub-population filter is only applied for age and gender groups.")
                                )),
-                               showOutput("plotYLL", "highcharts"),
-                               showOutput("plotYLLReduction", "highcharts")
+                               showOutput("plotHealth", "highcharts"),
+                               showOutput("plotHealthReduction", "highcharts")
                       ),
                       tabPanel("Physical Activity", value = 4,
                                a(id = "PAHelp", "Help", href = "#"),
