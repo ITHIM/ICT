@@ -479,7 +479,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllData$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllData$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -528,8 +528,27 @@ shinyServer(function(input, output, session){
     h1$chart(type = "column")
     if (nrow(scYllReductionData) > 0){
       if (input$inHealthSwitch == "Scenario"){
-        h1$series(data = scYllReductionData$scenario, name = paste("CM",input$inHealthMS, "Equity", input$inHealthEQ, "Ebike", input$inHealthEB))
-        h1$series(data = scYllReductionData1$scenario, name = paste("CM",input$inHealthMS1, "Equity", input$inHealthEQ1, "Ebike", input$inHealthEB1))
+        
+        eq <- "Off"
+        if (input$inHealthEQ == 1)
+          eq <- "On"
+        
+        eb <- "Off"
+        if (input$inHealthEB == 1)
+          eb <- "On"
+        
+        h1$series(data = scYllReductionData$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        
+        eq <- "Off"
+        if (input$inHealthEQ1 == 1)
+          eq <- "On"
+        
+        eb <- "Off"
+        if (input$inHealthEB1 == 1)
+          eb <- "On"
+        
+        h1$series(data = scYllReductionData1$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        
         h1$xAxis(categories = paste(scYllReductionData$gender, scYllReductionData$age.band))
       }else{
       
