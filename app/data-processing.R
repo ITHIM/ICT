@@ -14,6 +14,7 @@ tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car P
 
 # # Read Health Calculations
 yll <- read.csv("data/csv/yll_agg.csv", header = T, as.is = T)
+death <- read.csv("data/csv/death_agg.csv", header = T, as.is = T)
 yll_red <- read.csv("data/csv/yll_red_agg.csv", header = T, as.is = T)
 
 #Read Car Miles data
