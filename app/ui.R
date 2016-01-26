@@ -176,10 +176,9 @@ shinyUI(fluidPage(useShinyjs(),
                     tabsetPanel(
                       tabPanel("Scenarios", value = 1,
                                showOutput("plotCycPercent", "highcharts"),
-                               h6("(Click on the legend to enable/disable a line)", align="center"),
-                               showOutput("plotGenericVariable", "highcharts"),
-                               h6("(Click on the legend to enable/disable a line)", align="center"),
-                               HTML("<style>iframe.rChart{ width: 100%; height: 400px;}</style>")
+                               showOutput("plotGenericVariable", "highcharts")
+#                                h6("(Click on the legend to enable/disable a line)", align="center"),
+#                                HTML("<style>iframe.rChart{ width: 100%; height: 400px;}</style>")
                       ),
                       tabPanel("Mode Share", value = 2,
                                a(id = "MSHelp", "Help", href = "#"),
