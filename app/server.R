@@ -92,7 +92,7 @@ shinyServer(function(input, output, session){
     
     columnName1 <- paste(paste("MS", input$inHealthMS1,sep = ""),  paste("ebik", input$inHealthEB1,sep = ""), 
                         paste("eq", input$inHealthEQ1,sep = ""), sep="_")
-    cat(columnName1, "\n")
+    
     dat1 <- data1[,c("age.band", "gender",columnName)]
     colnames(dat1) <- c("age.band", "gender", "scenario")
     
@@ -103,14 +103,13 @@ shinyServer(function(input, output, session){
     colnames(dat3) <- c("age.band", "gender", "scenario")
     
     dat4 <- data2[,c("age.band", "gender",columnName1)]
-    colnames(dat2) <- c("age.band", "gender", "scenario")
+    colnames(dat4) <- c("age.band", "gender", "scenario")
     
     scYllData <<- dat1
     scYllReductionData <<- dat2
     
     scYllData1 <<- dat3
     scYllReductionData1 <<- dat4
-    
   })
   
   #   filterCarMilesData <- reactive ({
@@ -472,66 +471,26 @@ shinyServer(function(input, output, session){
     if (nrow(scYllReductionData) > 0){
       
       if (input$inHealthSwitch == "Scenario"){
-#         uage = c ("18-39", "40-59", "60-84")
-#         for (i in 1:3){
-#           h1$series(data = c(1,3), name = uage[i])
-#     
-#         }
+        eq <- "Off"
+        if (input$inHealthEQ == 1)
+          eq <- "On"
         
-        # For both gender, create new series
+        eb <- "Off"
+        if (input$inHealthEB == 1)
+          eb <- "On"
         
-#         uage <- unique(scYllData1$age.band)
-#         for (i in 1:length(uage)){
-#           data1 <- subset(scYllData, age.band == uage[i])
-#           data2 <- subset(scYllData1, age.band == uage[i])
-#           #h1$series(data = data1$scenario)
-#           #h1$series(data = data2$scenario)#, name = uage[i]
-#           
-#           data3 <- rbind(data1, data2)
-#           #data3 <- arrange(data3, data3[,1])
-#           
-#           ugender <- unique(scYllData1$gender)  
-#           for (j in 1:length(ugender)){
-#             d1 <- subset(data1, gender == ugender[j])
-#             h1$series(data = d1$scenario)#, name = paste(uage[i], ugender[j]))
-#             d2 <- subset(data2, gender == ugender[j])
-#             h1$series(data = d2$scenario)#, name = paste(uage[i], ugender[j]))
-#           }
-#         }
+        h1$series(data = scYllData$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
         
-#         for (i in 1:length(scYllData)){
-#           h1$series(data = scYllData$scenario[i])
-#           h1$series(data = scYllData1$scenario[i])
-#         }
+        eq <- "Off"
+        if (input$inHealthEQ1 == 1)
+          eq <- "On"
         
-        columnName <- paste(paste("MS", input$inHealthMS,sep = ""),  paste("ebik", input$inHealthEB,sep = ""), 
-                            paste("eq", input$inHealthEQ,sep = ""), sep="_")
+        eb <- "Off"
+        if (input$inHealthEB1 == 1)
+          eb <- "On"
         
-        columnName1 <- paste(paste("MS", input$inHealthMS1,sep = ""),  paste("ebik", input$inHealthEB1,sep = ""), 
-                             paste("eq", input$inHealthEQ1,sep = ""), sep="_")
-        h1$series(data = scYllData$scenario, name = paste("CM",input$inHealthMS, "Equity", input$inHealthEQ, "Ebike", input$inHealthEB))
-        h1$series(data = scYllData1$scenario, name = paste("CM",input$inHealthMS1, "Equity", input$inHealthEQ1, "Ebike", input$inHealthEB1))
-        
-#         displayGender <- "All"
-#         if (input$inHealthG == 1){
-#           displayGender <- "Male"
-#         }else if (input$inHealthG == 2){
-#           displayGender <- "Female"
-#         }
-#         xAxisCat <- paste(displayGender,input$inHealthAG, " ", sep = "")
-#         cat(xAxisCat, "\n")
-#         h1$xAxis(categories = xAxisCat, title = list(text = 'Age and Gender Group'))
-#         if (length(unique(scYllData$age.band)) > 1)
-        h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band))#c("M 18-39", "F 18-39", "M 40-59", "F 40-59", "M 60-89", "F 60-84"))
-#         
-#         h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
-#         if (length(unique(scYllData1$age.band)) > 1)
-#           h1$xAxis(categories = append(unique(scYllData$age.band), unique(scYllData$age.band)), title = list(text = 'Age and Gender Groups'))
-#         
-#         
-#         h1$series( )
-
-
+        h1$series(data = scYllData1$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band))
       }else{
         
         # For both gender, create new series
@@ -540,15 +499,10 @@ shinyServer(function(input, output, session){
           data <- subset(scYllData, gender == ugender[i])
           h1$series(data = data$scenario, name = ugender[i])
         }
-        
-        h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
+        h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Group'))
         if (length(unique(scYllData$age.band)) > 1)
           h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Age and Gender Groups'))
-        
-        
-        
       }
-      
       if (input$inHealthVarSwitch == "YLL")
         h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
       else
@@ -563,10 +517,6 @@ shinyServer(function(input, output, session){
       h1$title(text = "Averted # of Deaths for the English Population")
     h1$set(dom = "plotHealth")
     h1$exporting(enabled = T)
-    # h1$data(c("this is very interesting"))
-    #h1$labels(items = HTML(bsCollapse(id = "intro", bsCollapsePanel("asdsadasd"))))
-    
-    # h1$annotations(xValue: 4, yValue: 125, title = list (text = "Annotated chart!"))
     return(h1)
   })
   
@@ -577,6 +527,11 @@ shinyServer(function(input, output, session){
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     if (nrow(scYllReductionData) > 0){
+      if (input$inHealthSwitch == "Scenario"){
+        h1$series(data = scYllReductionData$scenario, name = paste("CM",input$inHealthMS, "Equity", input$inHealthEQ, "Ebike", input$inHealthEB))
+        h1$series(data = scYllReductionData1$scenario, name = paste("CM",input$inHealthMS1, "Equity", input$inHealthEQ1, "Ebike", input$inHealthEB1))
+        h1$xAxis(categories = paste(scYllReductionData$gender, scYllReductionData$age.band))
+      }else{
       
       # For both gender, create new series
       ugender <- unique(scYllReductionData$gender[-1])
@@ -589,13 +544,17 @@ shinyServer(function(input, output, session){
       h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
       if (length(unique(scYllReductionData$age.band)) > 2)
         h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Age and Gender Groups'))
+      }
       
       h1$yAxis(title = list(text = 'Percentage (%)'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
-    h1$title(text = "Reduction in Years of Life Lost (YLL) for the English Population")
+    if (input$inHealthVarSwitch == "YLL")
+      h1$title(text = "Reduction in Years of Life Lost (YLL) for the English Population")
+    else
+      h1$title(text = "Reduction in number of Deaths for the English Population")
     h1$tooltip(valueSuffix= '%')
     h1$set(dom = "plotHealthReduction")
     h1$exporting(enabled = T)
@@ -2301,4 +2260,19 @@ shinyServer(function(input, output, session){
   shinyjs::onclick("MCHelp", shinyjs::toggle(id = "MCHelpText", anim = FALSE))
   shinyjs::onclick("CMHelp", shinyjs::toggle(id = "CMHelpText", anim = FALSE))
   shinyjs::onclick("CO2Help", shinyjs::toggle(id = "CO2HelpText", anim = FALSE))
+  
+  # Experiment with nvd3 library
+#   output$myChart <- renderChart({
+#     #data1 <- subset(yll, age.band != "All Ages")
+#     dat1 <- yll[,c("age.band", "gender","MS64_ebik1_eq1")]
+#     
+#     colnames(dat1) <- c("age.band", "gender", "scenario")
+#     
+#     # hair_eye_male <- subset(as.data.frame(HairEyeColor), Sex == "Male")
+#     n2 <- nPlot(scenario ~ age.band, group = 'gender', data = dat1, type = 'multiBarChart')
+#     n2$set(dom = "myChart")
+#     return(n2)
+#   })
+  
 })
+
