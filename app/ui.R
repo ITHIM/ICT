@@ -208,7 +208,7 @@ shinyUI(fluidPage(useShinyjs(),
                                #                                )
                                
                                hidden (div(id = "MSHelpText",
-                                           helpText("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline.")
+                                           helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
                                )),
                                showOutput("plotBDMode", "highcharts"),
                                showOutput("plotBDSCMode", "highcharts")
@@ -216,7 +216,7 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Miles Cycled", value = 2,
                                a(id = "MCHelp", "Help", href = "#"),
                                hidden (div(id = "MCHelpText",
-                                           helpText("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can use the ‘Denominator’ option to switch between showing percentages relative to a) the total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the total population, and/or between selected scenarios and baseline")
+                                           helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the total population, and/or between selected scenarios and baseline"))
                                )),
                                showOutput("plotMilesCycled", "highcharts"),
                                showOutput("plotFilteredMilesCycled", "highcharts")
@@ -224,11 +224,11 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Physical Activity", value = 3,
                                a(id = "PAHelp", "Help", href = "#"),
                                hidden (div(id = "PAHelpText",
-                                           helpText(p("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
+                                           helpText(HTML("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
                                                       we have assumed that 150 minutes of walking per week (the mininum physical activity to meet the guidelines), roughly translates 
-                                                      into 100 minutes of cycling per week. In terms of Marginal MET (MMET) per week, it translates into 8.5 MMET (MET stands for ‘Metabolic Equivalent Task’
-                                                      , with a MET value of 1 being equivalent to being at rest). The WHO’s ‘higher physical activity’ guideline assumes 300 minutes of walking per week, or 200 minutes of cycling per week, which translates to 17.5 MMET per week. 
-                                                      Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline
+                                                      into 100 minutes of cycling per week. In terms of Marginal MET (MMET) per week, it translates into 8.5 MMET (MET stands for &#39;Metabolic Equivalent Task&#39;
+                                                      , with a MET value of 1 being equivalent to being at rest). The WHO&#39;s higher physical activity guideline assumes 300 minutes of walking per week, or 200 minutes of cycling per week, which translates to 17.5 MMET per week. 
+                                                      Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline.
                                                     "))
                                )),
                                showOutput("plotMET", "highcharts"),
@@ -237,13 +237,13 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Health", value = 4,
                                a(id = "HealthHelp", "Help", href = "#"),
                                hidden (div(id = "HealthHelpText",
-                                           helpText("Displays two plots for health gains in terms of Years of Life Lost (YLL) and 
+                                           helpText(HTML("Displays two plots for health gains in terms of Years of Life Lost (YLL) and 
                                                     Reduction in YLLs. YLL is an estimate of the average number of additional years a 
                                                     person would have lived if premature mortality were eliminated. 
-                                                    A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike – 
+                                                    A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
                                                     this scenario can then be compared against baseline or against an alternative scenario.  
                                                     Results are presented by age and gender, or the display can be restricted to particular age and 
-                                                    gender groups using the subpopulation option")
+                                                    gender groups using the subpopulation option."))
                                )),
                                showOutput("plotHealth", "highcharts"),
                                showOutput("plotHealthReduction", "highcharts")
@@ -253,10 +253,10 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Car Miles", value = 5,
                                a(id = "CMHelp", "Help", href = "#"),
                                hidden (div(id = "CMHelpText",
-                                           helpText("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
+                                           helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
                                                     scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a 
                                                     car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car 
-                                                    miles between selected sub-populations and the total population, and/or between selected scenarios and baseline")
+                                                    miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
                                )),
                                showOutput("plotFilteredCarMiles", "highcharts"),
                                showOutput("plotCarMiles", "highcharts")
@@ -264,9 +264,9 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("CO2", value = 6,
                                a(id = "CO2Help", "Help", href = "#"),
                                hidden (div(id = "CO2HelpText",
-                                           helpText("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
+                                           helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
                                                     car/van passenger.  Users can choose to compare CO2 emissions from car travel between selected 
-                                                    sub-populations and the total population, and/or between selected scenarios and baseline.")
+                                                    sub-populations and the total population, and/or between selected scenarios and baseline."))
                                )),
                                showOutput("plotFilteredCO2", "highcharts"),
                                showOutput("plotCO2", "highcharts")
