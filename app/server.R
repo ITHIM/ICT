@@ -325,7 +325,7 @@ shinyServer(function(input, output, session){
         if (nrow(as.data.frame(bc)) > 0)
           bc2max <- max(bc$Freq, na.rm = T)
         max_y <- max(bc1max, bc2max)
-        h1$yAxis(min = 0, max = max(30, max_y), tickInterval = 10, title = list(text = 'Percentage'))
+        h1$yAxis(min = 0, max = max(30, max_y), tickInterval = 10, title = list(text = 'Percentage of the total population'))
         
         if(filter){
           h1$series(data = bc$Freq, name = secondColName)
@@ -401,7 +401,7 @@ shinyServer(function(input, output, session){
           h1$subtitle(text= filtered_title)
         }
         
-        h1$yAxis(tickInterval = 20, title = list(text = 'Percentage'))
+        h1$yAxis(tickInterval = 20, title = list(text = 'Percentage of the total population'))
         
         h1$plotOptions(column=list(animation=FALSE, 
                                    dataLabels = list(enabled = T, 
@@ -449,7 +449,7 @@ shinyServer(function(input, output, session){
         if (nrow(as.data.frame(bc)) > 0)
           bc2max <- max(bc$Freq, na.rm = T)
         max_y <- max(bc1max, bc2max)
-        h1$yAxis(min = 0, max = max(30, max_y), tickInterval = 10, title = list(text = 'Percentage'))
+        h1$yAxis(min = 0, max = max(30, max_y), tickInterval = 10, title = list(text = 'Percentage of the total population'))
         
         
         if(filter){
@@ -576,7 +576,7 @@ shinyServer(function(input, output, session){
         h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Age and Gender Groups'))
       }
       
-      h1$yAxis(title = list(text = 'Percentage'))
+      h1$yAxis(title = list(text = 'Percentage of the total population'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
@@ -955,7 +955,7 @@ shinyServer(function(input, output, session){
   
   output$plotCycPercent <- renderChart({
     generateScenarioTable()
-    h <- genericPlot("% Cyclists in the Total Population")
+    h <- genericPlot("% cyclists in the total population")
     h$title(text = "% Cyclists in the Total Population")
     h$set(dom = "plotCycPercent")
     return (h)
@@ -1257,7 +1257,7 @@ shinyServer(function(input, output, session){
       }
       else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-        h1$yAxis(title = list(text = 'Percentage in Total Population'))
+        h1$yAxis(title = list(text = 'Percentage of the total population'))
       }
       
       #h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
@@ -1271,7 +1271,7 @@ shinyServer(function(input, output, session){
       }
       else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-        h1$yAxis(title = list(text = 'Percentage in Total Population'))
+        h1$yAxis(title = list(text = 'Percentage of the total population'))
       }
       h1$series(data = bc$Freq[-1], name = secondColName)
     }else{
@@ -1328,7 +1328,7 @@ shinyServer(function(input, output, session){
       }
       else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-        h1$yAxis(title = list(text = 'Percentage in Total Population'))
+        h1$yAxis(title = list(text = 'Percentage of the total population'))
       }
       
       h1$series(data = bc$Freq[-1], name = firstColName)
@@ -1339,7 +1339,7 @@ shinyServer(function(input, output, session){
       }
       else{
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-        h1$yAxis(title = list(text = 'Percentage in Total Population'))
+        h1$yAxis(title = list(text = 'Percentage of the total population'))
       }
       
       h1$series(data = bc$Freq[-1], name = secondColName)
@@ -1453,7 +1453,7 @@ shinyServer(function(input, output, session){
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = "plotFilteredCarMiles")
-    h1$yAxis(title = list(text = 'Fraction'))
+    h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
     return (h1)
@@ -1506,7 +1506,7 @@ shinyServer(function(input, output, session){
     
     h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$set(dom = "plotCarMiles")
-    h1$yAxis(title = list(text = 'Fraction'))
+    h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(valueSuffix= '%')
     
     h1$exporting(enabled = T)
@@ -1610,7 +1610,7 @@ shinyServer(function(input, output, session){
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = "plotFilteredCO2")
-    h1$yAxis(title = list(text = 'Fraction'))
+    h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
     return (h1)
@@ -1663,7 +1663,7 @@ shinyServer(function(input, output, session){
     
     h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$set(dom = "plotCO2")
-    h1$yAxis(title = list(text = 'Fraction'))
+    h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(valueSuffix= '%')
     
     h1$exporting(enabled = T)
