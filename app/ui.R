@@ -140,7 +140,7 @@ shinyUI(fluidPage(useShinyjs(),
                                      HTML("<hr>"),
                                      radioButtons("flipMETHG", label = "Flip Histogram:", switchRButton, inline = TRUE),
                                      HTML("<hr>"),
-                                     radioButtons("phyGuideline", label = "Physical activity outcome measure", phyGLRButton, inline = TRUE)#, selected = phyGLRButton[2]
+                                     radioButtons("phyGuideline", label = "Physical activity outcome measure", phyGLRButton, inline = TRUE)
                     )
                     ,
                     conditionalPanel(condition="input.conditionedPanels == 4",
@@ -208,9 +208,7 @@ shinyUI(fluidPage(useShinyjs(),
                                #                                )
                                
                                hidden (div(id = "MSHelpText",
-                                           helpText("Displays plots for mode share of trips based on main mode only.  
-                                                    A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. 
-                                                    Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline.")
+                                           helpText("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline.")
                                )),
                                showOutput("plotBDMode", "highcharts"),
                                showOutput("plotBDSCMode", "highcharts")
@@ -218,10 +216,7 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Miles Cycled", value = 2,
                                a(id = "MCHelp", "Help", href = "#"),
                                hidden (div(id = "MCHelpText",
-                                           helpText("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the 
-                                                    baseline. Users can use the ‘Denominator’ option to switch between showing percentages relative to a) the total 
-                                                    population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and 
-                                                    the total population, and/or between selected scenarios and baseline")
+                                           helpText("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can use the ‘Denominator’ option to switch between showing percentages relative to a) the total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the total population, and/or between selected scenarios and baseline")
                                )),
                                showOutput("plotMilesCycled", "highcharts"),
                                showOutput("plotFilteredMilesCycled", "highcharts")
@@ -229,8 +224,7 @@ shinyUI(fluidPage(useShinyjs(),
                       tabPanel("Physical Activity", value = 3,
                                a(id = "PAHelp", "Help", href = "#"),
                                hidden (div(id = "PAHelpText",
-                                           helpText(p("Displays histogram of total physical activity and also the fraction of the population 
-                                                      meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
+                                           helpText(p("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
                                                       we have assumed that 150 minutes of walking per week (the mininum physical activity to meet the guidelines), roughly translates 
                                                       into 100 minutes of cycling per week. In terms of Marginal MET (MMET) per week, it translates into 8.5 MMET (MET stands for ‘Metabolic Equivalent Task’
                                                       , with a MET value of 1 being equivalent to being at rest). The WHO’s ‘higher physical activity’ guideline assumes 300 minutes of walking per week, or 200 minutes of cycling per week, which translates to 17.5 MMET per week. 
