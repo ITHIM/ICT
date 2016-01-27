@@ -33,6 +33,9 @@ allOnOffRButton <- c("All" = "All",
                      "On" = 1,
                      "Off" = 0)
 
+healthRButton <- c("Years of Life Lost (YLL)" = "YLL", 
+                   "Deaths" = "Deaths")
+
 # ag <- "All"
 # ag <- append(ag, sort(unique(as.character(tdata$age_group))))
 
@@ -62,14 +65,21 @@ shinyUI(fluidPage(useShinyjs(),
                   width="100%", height="100%",
                   a(bsCollapse(id = "intro", bsCollapsePanel(
                     tags$div(title = "Click here to open an introductory document", 
-                             h4("Impacts of Cycling Tool (Prototype)"),
+                             h4("Impacts of Cycling Tool"),
                              tags$style(HTML("
                               h4 {
-                                font-size: 20px;
-                                font-weight: 2000;
+                                font-size: 25px;
+                                font-weight: bold;
                                 line-height: 1.1;
                                 text-decoration:underline;
                               }
+                              h4:hover {
+                                background-color: #C0C0C0;
+                              } 
+                              /* selected link
+                              a:active {
+                                color: yellow;
+                              }  */
                         
                             "))
                              
@@ -112,7 +122,7 @@ shinyUI(fluidPage(useShinyjs(),
                                      selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
                                      radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
                                      HTML("<hr>"),
-                                     radioButtons("inHealthVarSwitch", label = "Variable:", c("YLL", "Death"), inline = TRUE)
+                                     radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
                                      
                     ),
                     conditionalPanel(condition="input.conditionedPanels == 4",
@@ -189,9 +199,9 @@ shinyUI(fluidPage(useShinyjs(),
 #                                )
                                
                                hidden (div(id = "MSHelpText",
-                                           helpText("Displays plots for trip mode share, where a selected scenario is compared with the baseline. This involves only the main mode used in each trip. 
+                                           helpText("Displays plots for mode share of trips based on main mode only.  
                                                     A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. 
-                                                    Users can compare total as well as sub-population of the scenario and baseline")
+                                                    Users can investigate the mode share for the whole pouplation and population subgroups either at baseline or under one of the scenarios.")
                                )),
                                showOutput("plotBDMode", "highcharts"),
                                showOutput("plotBDSCMode", "highcharts")
