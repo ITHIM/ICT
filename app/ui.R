@@ -108,7 +108,7 @@ shinyUI(fluidPage(
   a(bsCollapse(id = "intro", bsCollapsePanel(
     tags$div(title = "Click here to open an introductory document", 
              h4("Impacts of Cycling Tool"),
-             tags$style(HTML("
+                          tags$style(HTML("
                               h4 {
                                 font-size: 25px;
                                 font-weight: bold;
@@ -121,6 +121,7 @@ shinyUI(fluidPage(
                             "))
              
     ), 
+    
     includeMarkdown("README.md")))),
   #                                     box(
   #                                       collapsible = TRUE, collapsed = TRUE,
@@ -260,12 +261,16 @@ shinyUI(fluidPage(
       tabPanel("Physical Activity", value = 3,
                a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
-                           helpText(HTML("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
-                                                      we have assumed that 150 minutes of walking per week (the mininum physical activity to meet the guidelines), roughly translates 
-                                                      into 100 minutes of cycling per week. In terms of Marginal MET (MMET) per week, it translates into 8.5 MMET (MET stands for &#39;Metabolic Equivalent Task&#39;
-                                                      , with a MET value of 1 being equivalent to being at rest). The WHO&#39;s higher physical activity guideline assumes 300 minutes of walking per week, or 200 minutes of cycling per week, which translates to 17.5 MMET per week. 
-                                                      Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline.
-                                                    "))
+                           helpText(
+                            p("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). "),
+                            p(HTML("The <a href='http://www.who.int/dietphysicalactivity/factsheet_recommendations/en/' target='_blank'>WHO guidelines</a> are for 150 minutes of moderate intensity or 75 minutes of vigorous intensity activity, 
+                              with additional benefits by achieving 300 minutes of moderate intensity or 150 minutes of vigorous intensity activity. We have translated these guidelines into Marginal Metabolic Equivalent Task (MMET) 
+                            hours per week. MMETs represent the body mass adjusted energy expenditure above resting. To do this we have assumed that moderate intensity activity is 3.5 MMETs and thus the 
+                            lower target is 8.75 MMET hours per week, and the higher target is 17.5 MMET hours per week. We have assumed the MMET rates are for walking 3.6, for cycling 5.4, and for 
+                            ebikes 3.5 (<a href='http://www.ncbi.nlm.nih.gov/pubmed/26441297' target='_blank'>[1]</a>  and <a href='http://link.springer.com/article/10.1007/s00421-012-2382-0/fulltext.html' target='_blank'>[2]</a>). 
+                            Thus the lower target could be achieved by 145 minutes per week of walking, 97 minutes of cycling, or 150 minutes of ebiking. ")),
+                            p(HTML("Non-travel activity is estimated using self-reported data from probabilistically matched individuals of a similar age, gender, and ethnicity from the <a href = 'https://data.gov.uk/dataset/health_survey_for_england' target='_blank'>Health Survey for England 2012</a>. ")),
+                            p("Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline. "))
                )),
                showOutput("plotMET", "highcharts"),
                showOutput("plotScenarioMET", "highcharts")
