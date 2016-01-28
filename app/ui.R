@@ -18,7 +18,7 @@ variableList <- variableList[,7:length(colnames(sdata))]
 # Car Miles
 # CO2
 
-variableRButton <- c("Mode Share" =    "% cyclists in the total population",
+variableRButton <- c("Number of Cyclists" =    "% cyclists in the total population",
                      "Miles Cycled" = "Miles cycled per person per week",
                      "Physical Activity" = "Marginal METs per person per week",
                      "Health" = "Years of Life Lost (YLL)",
@@ -236,7 +236,7 @@ shinyUI(fluidPage(
   mainPanel(
     tabsetPanel(
       tabPanel("Mode Share", value = 1,
-               a(id = "MSHelp", "Help", href = "#"),
+               a(id = "MSHelp", "Help?", href = "#"),
                # showOutput("myChart","Nvd3")
                #                                div(class='wrapper',
                #                                    tags$style(".Nvd3{ height: 400px;}"),
@@ -250,7 +250,7 @@ shinyUI(fluidPage(
                showOutput("plotBDSCMode", "highcharts")
       ),
       tabPanel("Miles Cycled", value = 2,
-               a(id = "MCHelp", "Help", href = "#"),
+               a(id = "MCHelp", "Help?", href = "#"),
                hidden (div(id = "MCHelpText",
                            helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the total population, and/or between selected scenarios and baseline"))
                )),
@@ -258,7 +258,7 @@ shinyUI(fluidPage(
                showOutput("plotFilteredMilesCycled", "highcharts")
       ),
       tabPanel("Physical Activity", value = 3,
-               a(id = "PAHelp", "Help", href = "#"),
+               a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
                            helpText(HTML("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
                                                       we have assumed that 150 minutes of walking per week (the mininum physical activity to meet the guidelines), roughly translates 
@@ -271,7 +271,7 @@ shinyUI(fluidPage(
                showOutput("plotScenarioMET", "highcharts")
       ),
       tabPanel("Health", value = 4,
-               a(id = "HealthHelp", "Help", href = "#"),
+               a(id = "HealthHelp", "Help?", href = "#"),
                hidden (div(id = "HealthHelpText",
                            helpText(HTML("Displays two plots for health gains in terms of Years of Life Lost (YLL) and 
                                                     Reduction in YLLs. YLL is an estimate of the average number of additional years a 
@@ -287,7 +287,7 @@ shinyUI(fluidPage(
       
       
       tabPanel("Car Miles", value = 5,
-               a(id = "CMHelp", "Help", href = "#"),
+               a(id = "CMHelp", "Help?", href = "#"),
                hidden (div(id = "CMHelpText",
                            helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
                                                     scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a 
@@ -298,7 +298,7 @@ shinyUI(fluidPage(
                showOutput("plotCarMiles", "highcharts")
       ),
       tabPanel("CO2", value = 6,
-               a(id = "CO2Help", "Help", href = "#"),
+               a(id = "CO2Help", "Help?", href = "#"),
                hidden (div(id = "CO2HelpText",
                            helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
                                                     car/van passenger.  Users can choose to compare CO2 emissions from car travel between selected 
@@ -308,7 +308,6 @@ shinyUI(fluidPage(
                showOutput("plotCO2", "highcharts")
       ),
       tabPanel("Summary", value = 7,
-               showOutput("plotCycPercent", "highcharts"),
                showOutput("plotGenericVariable", "highcharts")
       ),
       
