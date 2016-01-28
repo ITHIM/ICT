@@ -262,7 +262,7 @@ shinyUI(fluidPage(
                a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
                            helpText(
-                            p("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). "),
+                            p("Displays histogram of total physical activity and also the percentage of the population meeting the physical activity guidelines of the World Health Organization (WHO). "),
                             p(HTML("The <a href='http://www.who.int/dietphysicalactivity/factsheet_recommendations/en/' target='_blank'>WHO guidelines</a> are for 150 minutes of moderate intensity or 75 minutes of vigorous intensity activity, 
                               with additional benefits by achieving 300 minutes of moderate intensity or 150 minutes of vigorous intensity activity. We have translated these guidelines into Marginal Metabolic Equivalent Task (MMET) 
                             hours per week. MMETs represent the body mass adjusted energy expenditure above resting. To do this we have assumed that moderate intensity activity is 3.5 MMETs and thus the 
@@ -278,13 +278,13 @@ shinyUI(fluidPage(
       tabPanel("Health", value = 4,
                a(id = "HealthHelp", "Help?", href = "#"),
                hidden (div(id = "HealthHelpText",
-                           helpText(HTML("Displays two plots for health gains in terms of Years of Life Lost (YLL) and 
-                                                    Reduction in YLLs. YLL is an estimate of the average number of additional years a 
-                                                    person would have lived if premature mortality were eliminated. 
-                                                    A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
-                                                    this scenario can then be compared against baseline or against an alternative scenario.  
-                                                    Results are presented by age and gender, or the display can be restricted to particular age and 
-                                                    gender groups using the subpopulation option."))
+                           helpText(HTML("
+                            Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
+                            YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
+                            YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
+                            A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
+                            this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
+                            age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
                )),
                showOutput("plotHealth", "highcharts"),
                showOutput("plotHealthReduction", "highcharts")
