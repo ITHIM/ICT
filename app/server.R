@@ -91,7 +91,7 @@ shinyServer(function(input, output, session){
                         paste("eq", input$inHealthEQ,sep = ""), sep="_")
     
     columnName1 <- paste(paste("MS", input$inHealthMS1,sep = ""),  paste("ebik", input$inHealthEB1,sep = ""), 
-                        paste("eq", input$inHealthEQ1,sep = ""), sep="_")
+                         paste("eq", input$inHealthEQ1,sep = ""), sep="_")
     
     dat1 <- data1[,c("age.band", "gender",columnName)]
     colnames(dat1) <- c("age.band", "gender", "scenario")
@@ -271,7 +271,7 @@ shinyServer(function(input, output, session){
           h1$subtitle(text= filtered_title)
         }
         
-        h1$yAxis(tickInterval = 20, title = list(text = 'Percentage'))
+        h1$yAxis(tickInterval = 20, title = list(text = 'Percentage of the total population'))
         
         h1$plotOptions(column=list(animation=FALSE, 
                                    dataLabels = list(enabled = T, 
@@ -293,10 +293,10 @@ shinyServer(function(input, output, session){
         
         # h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "> 52.8")), title = list(text = 'Marginal MET Hours'))
         
-#         h1$xAxis(categories = c("0", "> 0 and <= 4.4" , "> 4.4 and <= 8.8", "> 4.4 and <= 8.8", "> 8.8 and <= 13.2",
-#                                 "> 13.2 and <= 17.6" ,"> 17.6 and <= 22", "> 22 and <= 26.4", "> 26.4 and <= 30.8", "> 30.8 and <= 35.2",
-#                                 "> 35.2 and <= 39.6", "> 39.6 and <= 44" , "> 44 and <= 48.4", "> 48.4 and < 52.8", " > 52.8")
-                 
+        #         h1$xAxis(categories = c("0", "> 0 and <= 4.4" , "> 4.4 and <= 8.8", "> 4.4 and <= 8.8", "> 8.8 and <= 13.2",
+        #                                 "> 13.2 and <= 17.6" ,"> 17.6 and <= 22", "> 22 and <= 26.4", "> 26.4 and <= 30.8", "> 30.8 and <= 35.2",
+        #                                 "> 35.2 and <= 39.6", "> 39.6 and <= 44" , "> 44 and <= 48.4", "> 48.4 and < 52.8", " > 52.8")
+        
         h1$xAxis(categories = c("0",">0 & <=4.4",">4.4 & <=8.8",">8.8 & <=13.2",">13.2 & <=17.6",
                                 ">17.6 & <=22",">22 & <=26.4",">26.4 & <=30.8",">30.8 & <=35.2",
                                 ">35.2 & <=39.6",">39.6 & <=44",">44 & <=48.4",">48.4 & <52.8",">52.8"), title = list(text = 'Marginal MET Hours'))
@@ -562,18 +562,18 @@ shinyServer(function(input, output, session){
         
         h1$xAxis(categories = paste(scYllReductionData$gender, scYllReductionData$age.band))
       }else{
-      
-      # For both gender, create new series
-      ugender <- unique(scYllReductionData$gender[-1])
-      
-      for (i in 1:length(ugender)){
-        data <- subset(scYllReductionData, gender == ugender[i])
-        h1$series(data = data$scenario, name = ugender[i])
-      }
-      
-      h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
-      if (length(unique(scYllReductionData$age.band)) > 2)
-        h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Age and Gender Groups'))
+        
+        # For both gender, create new series
+        ugender <- unique(scYllReductionData$gender[-1])
+        
+        for (i in 1:length(ugender)){
+          data <- subset(scYllReductionData, gender == ugender[i])
+          h1$series(data = data$scenario, name = ugender[i])
+        }
+        
+        h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
+        if (length(unique(scYllReductionData$age.band)) > 2)
+          h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Age and Gender Groups'))
       }
       
       h1$yAxis(title = list(text = 'Percentage of the total population'))
@@ -774,9 +774,9 @@ shinyServer(function(input, output, session){
     colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "MainMode_Reduced", columnName)
     data <- tripData[,colList]
     
-#     msbl <- subset(tripData, select = MainMode_Reduced)
-#     msbl <- count(msbl, "MainMode_Reduced")
-#     names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
+    #     msbl <- subset(tripData, select = MainMode_Reduced)
+    #     msbl <- count(msbl, "MainMode_Reduced")
+    #     names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
     
     msbl <- data.frame(baseline = tripData$MainMode_Reduced)
     
@@ -790,9 +790,9 @@ shinyServer(function(input, output, session){
     
     msBaseline <<- msbl
     
-#     mssc <- subset(tripData, select = columnName)
-#     mssc <- count(mssc, columnName)
-#     names(mssc)[names(mssc)== columnName] <- "scenario"
+    #     mssc <- subset(tripData, select = columnName)
+    #     mssc <- count(mssc, columnName)
+    #     names(mssc)[names(mssc)== columnName] <- "scenario"
     
     mssc <- data.frame(scenario = tripData[[columnName]])
     
@@ -964,8 +964,14 @@ shinyServer(function(input, output, session){
   output$plotGenericVariable <- renderChart({
     generateScenarioTable()
     #retrieveVariableName()
-    h <- genericPlot(input$varname)
-    h$title(text = input$varname)
+    if (input$varname != "Car miles per person per week"){
+      h <- genericPlot(input$varname)
+      h$title(text = input$varname)
+    }else{
+      h <- genericPlot(input$CMVarName)
+      h$title(text = input$CMVarName)
+      
+    }
     h$set(dom = "plotGenericVariable")
     return (h)
   })
@@ -1166,52 +1172,52 @@ shinyServer(function(input, output, session){
     }
   })
   
-#   output$plotCarTripsCycled <- renderChart ({
-#     filterCarMilesData()
-#     h1 <- Highcharts$new()
-#     h1$chart(type = "column")
-#     
-#     if (!is.null(scCarMilesData) && !is.null(scCarMilesFilteredData)){
-#       h1$plotOptions(column=list(animation=FALSE))
-#       
-#       h1$title(text = "Car Miles:  Histogram of Car Miles in the Selected Scenario")
-#       
-#       #       data.decile <- cut2(scCarMilesFilteredData$scenario, g = 10)
-#       #       h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Car Trips (Miles)")
-#       #       h1$xAxis(categories = c(1:10), title = "Decile")
-#       #       h1$yAxis(title = list(text = 'Miles'))
-#       
-#       #       dhit <- hist(scCarMilesFilteredData$scenario)
-#       #       
-#       #       data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
-#       #       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-#       #       #       data <- subset(data, freq >= 0.1)
-#       #       data <- subset(data, breaks != 0)
-#       #       
-#       #       h1$series(data =  data$freq, name = "Car Miles")
-#       #       
-#       #       h1$xAxis(categories = data$breaks)
-#       #       
-#       #       h1$yAxis(title = list(text = 'Percentage %'))
-#       #       h1$tooltip(valueSuffix= '%')
-#       
-#       bc <- as.data.frame(table (cut (scCarMilesFilteredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFilteredData$scenario)))))
-#       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-#       bc1max <- max(bc$Freq, na.rm = T)
-#       
-#       h1$xAxis(categories = as.list(append(c(seq(0,300, 50))[-1], "300+")), title = list(text = 'Car Miles'))
-#       h1$yAxis(title = list(text = 'Percentage %'))
-#       
-#       h1$series(data = bc$Freq, name = "Car Miles")
-#       h1$tooltip(valueSuffix= '%')
-#       
-#       
-#     }
-#     h1$set(dom = "plotCarTripsCycled")
-#     h1$exporting(enabled = T)
-#     return (h1)
-#     
-#   })
+  #   output$plotCarTripsCycled <- renderChart ({
+  #     filterCarMilesData()
+  #     h1 <- Highcharts$new()
+  #     h1$chart(type = "column")
+  #     
+  #     if (!is.null(scCarMilesData) && !is.null(scCarMilesFilteredData)){
+  #       h1$plotOptions(column=list(animation=FALSE))
+  #       
+  #       h1$title(text = "Car Miles:  Histogram of Car Miles in the Selected Scenario")
+  #       
+  #       #       data.decile <- cut2(scCarMilesFilteredData$scenario, g = 10)
+  #       #       h1$series(data = as.data.frame(table(data.decile))$Freq, name = "Car Trips (Miles)")
+  #       #       h1$xAxis(categories = c(1:10), title = "Decile")
+  #       #       h1$yAxis(title = list(text = 'Miles'))
+  #       
+  #       #       dhit <- hist(scCarMilesFilteredData$scenario)
+  #       #       
+  #       #       data <- data.frame(breaks = dhit$breaks[-1], counts = dhit$counts, 0)
+  #       #       data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+  #       #       #       data <- subset(data, freq >= 0.1)
+  #       #       data <- subset(data, breaks != 0)
+  #       #       
+  #       #       h1$series(data =  data$freq, name = "Car Miles")
+  #       #       
+  #       #       h1$xAxis(categories = data$breaks)
+  #       #       
+  #       #       h1$yAxis(title = list(text = 'Percentage %'))
+  #       #       h1$tooltip(valueSuffix= '%')
+  #       
+  #       bc <- as.data.frame(table (cut (scCarMilesFilteredData$scenario, breaks = c(seq(0,300, 50), max(scCarMilesFilteredData$scenario)))))
+  #       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+  #       bc1max <- max(bc$Freq, na.rm = T)
+  #       
+  #       h1$xAxis(categories = as.list(append(c(seq(0,300, 50))[-1], "300+")), title = list(text = 'Car Miles'))
+  #       h1$yAxis(title = list(text = 'Percentage %'))
+  #       
+  #       h1$series(data = bc$Freq, name = "Car Miles")
+  #       h1$tooltip(valueSuffix= '%')
+  #       
+  #       
+  #     }
+  #     h1$set(dom = "plotCarTripsCycled")
+  #     h1$exporting(enabled = T)
+  #     return (h1)
+  #     
+  #   })
   
   
   output$plotFilteredMilesCycled <- renderChart ({
@@ -1823,60 +1829,60 @@ shinyServer(function(input, output, session){
       filtered_title
   }
   
-#   observe({
-#     
-#     if (input$inBDEQ != 3){
-#       updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
-#       updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
-#       updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
-#       updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
-#       updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
-#       
-#     }
-#     
-#     if (input$inHealthEQ != 3){
-#       updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
-#       updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
-#       updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
-#       updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
-#       updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
-#     }
-#     
-#     
-#     
-#     if (input$inMETEQ != 3){
-#       updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
-#       updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
-#       updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
-#       updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
-#       updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
-#     }
-#     
-#     if (input$inMSEQ != 3){
-#       updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
-#       updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
-#       updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
-#       updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
-#       updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
-#     }
-#     
-#     if (input$inCMEQ != 3){
-#       updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
-#       updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
-#       updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
-#       updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
-#       updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
-#     }
-#     
-#     if (input$inCO2EQ != 3){
-#       updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
-#       updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
-#       updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
-#       updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
-#       updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
-#     }
-# 
-#   })
+  #   observe({
+  #     
+  #     if (input$inBDEQ != 3){
+  #       updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
+  #       updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
+  #       updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
+  #       updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
+  #       updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
+  #       
+  #     }
+  #     
+  #     if (input$inHealthEQ != 3){
+  #       updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
+  #       updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
+  #       updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
+  #       updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
+  #       updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
+  #     }
+  #     
+  #     
+  #     
+  #     if (input$inMETEQ != 3){
+  #       updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
+  #       updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
+  #       updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
+  #       updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
+  #       updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
+  #     }
+  #     
+  #     if (input$inMSEQ != 3){
+  #       updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
+  #       updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
+  #       updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
+  #       updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
+  #       updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
+  #     }
+  #     
+  #     if (input$inCMEQ != 3){
+  #       updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
+  #       updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
+  #       updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
+  #       updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
+  #       updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
+  #     }
+  #     
+  #     if (input$inCO2EQ != 3){
+  #       updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
+  #       updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
+  #       updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
+  #       updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
+  #       updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
+  #     }
+  # 
+  #   })
   
   
   
@@ -2292,17 +2298,39 @@ shinyServer(function(input, output, session){
   shinyjs::onclick("CO2Help", shinyjs::toggle(id = "CO2HelpText", anim = FALSE))
   
   # Experiment with nvd3 library
-#   output$myChart <- renderChart({
-#     #data1 <- subset(yll, age.band != "All Ages")
-#     dat1 <- yll[,c("age.band", "gender","MS64_ebik1_eq1")]
-#     
-#     colnames(dat1) <- c("age.band", "gender", "scenario")
-#     
-#     # hair_eye_male <- subset(as.data.frame(HairEyeColor), Sex == "Male")
-#     n2 <- nPlot(scenario ~ age.band, group = 'gender', data = dat1, type = 'multiBarChart')
-#     n2$set(dom = "myChart")
-#     return(n2)
-#   })
+  #   output$myChart <- renderChart({
+  #     #data1 <- subset(yll, age.band != "All Ages")
+  #     dat1 <- yll[,c("age.band", "gender","MS64_ebik1_eq1")]
+  #     
+  #     colnames(dat1) <- c("age.band", "gender", "scenario")
+  #     
+  #     # hair_eye_male <- subset(as.data.frame(HairEyeColor), Sex == "Male")
+  #     n2 <- nPlot(scenario ~ age.band, group = 'gender', data = dat1, type = 'multiBarChart')
+  #     n2$set(dom = "myChart")
+  #     return(n2)
+  #   })
+  
+  #   output$oSample <- renderPlot({
+  #     if (input$goButton == 0){
+  #       cat(" button 0")
+  #       return()
+  #     }else{
+  #       cat(" button 1")
+  #       
+  #     }
+  #     
+  #     # plot-making code here
+  #   })
+  
+  #   observe({
+  #     # do_something_button is your actionButton id.
+  #     if (input$intro > 0) {
+  #       cat("press!")
+  #       #updateTextInput(session = session, inputId = "goButton", label = "pressed", value = "pressed")
+  #     }
+  #     
+  #   })
+  
   
 })
 

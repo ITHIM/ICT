@@ -11,6 +11,27 @@ uEB <- append("All", sort(unique(sdata$ebike)))
 variableList <- t(as.matrix(colnames(sdata)))
 variableList <- variableList[,7:length(colnames(sdata))]
 
+# Mode Share
+# Miles Cycled
+# Physical Activity
+# Health
+# Car Miles
+# CO2
+
+variableRButton <- c("Mode Share" =    "% cyclists in the total population",
+                     "Miles Cycled" = "Miles cycled per person per week",
+                     "Physical Activity" = "Marginal METs per person per week",
+                     "Health" = "Years of Life Lost (YLL)",
+                     "Car Miles" = "Car miles per person per week",
+                     "CO2" = "CO2 from car travel per person per week"
+                     )
+carMilesRButton <- c("Car Miles" = "Car miles per person per week",
+                     "Car Miles Reduced" = "Car miles reduced per person per week")
+
+
+# % cyclists in the total population	Miles cycled per person per week	Car miles cycled  per week	Marginal METs per person per week	Car miles per person per week	Car miles reduced per person per week	CO2 from car travel per person per week
+
+
 scenarios <- c("Trip Mode Share" = "t",
                "Individual METs" =    "i")
 
@@ -61,12 +82,33 @@ genderForHealthCalculations <- c("All",
                                  "Male",
                                  "Female")
 
-shinyUI(fluidPage(useShinyjs(),
-                  width="100%", height="100%",
-                  a(class = "toggle-box", bsCollapse(id = "intro", bsCollapsePanel(
-                    tags$div(title = "Click here to open an introductory document", 
-                             h4("Impacts of Cycling Tool"),
-                             tags$style(HTML("
+shinyUI(fluidPage(
+  tags$script('
+# $(document).ready(function(){
+# 
+#                $(".slidingDiv").hide();
+#                $(".show_hide").show();
+#                
+#                $(".show_hide").toggle(function(){
+#                $("#plus").text("-");
+#                $(".slidingDiv").slideDown();
+#                
+#                },function(){
+#                $("#plus").text("+");
+#                $(".slidingDiv").slideUp();
+#                });
+#                
+#                });
+     
+   '),
+  useShinyjs(),
+  width="100%", height="100%",
+#   actionButton("goButton", "Impacts of Cycling Tool (+)"),
+  uiOutput("oSample"),
+  a(bsCollapse(id = "intro", bsCollapsePanel(
+    tags$div(title = "Click here to open an introductory document", 
+             h4("Impacts of Cycling Tool"),
+             tags$style(HTML("
                               h4 {
                                 font-size: 25px;
                                 font-weight: bold;
@@ -76,209 +118,201 @@ shinyUI(fluidPage(useShinyjs(),
                               h4:hover {
                                 background-color: #C0C0C0;
                               } 
-                              /* selected link
-                              a:active {
-                                color: yellow;
-                              }  */
-
-                              /* Icon when the collapsible content is shown */
-                              .a:after {
-                                  content: 'e114';
-                              }
-                              
-                              .a.collapsed:after {
-                                  content: 'e080'';
-                              }
                             "))
-                             
-                    ), 
-                    includeMarkdown("README.md"))))
-                  #                   box(
-                  #                     title = "Histogram", status = "primary", solidHeader = TRUE,
-                  #                     collapsible = TRUE, collapsed = TRUE,
-                  #                     includeMarkdown("README.md")#, height = 250
-                  #                   )
-                  ,
-                  sidebarPanel(
-                    conditionalPanel(condition="input.conditionedPanels == 1",
-                                     selectInput(inputId = "inBDMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
-                                     radioButtons(inputId = "inBDEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                     radioButtons(inputId = "inBDEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                                     HTML("<hr>"),
-                                     selectizeInput("inBDAG", "Age Group:", ag, selected = ag[1], multiple = F),
-                                     radioButtons("inBDGender", "Gender: ", gender, inline = TRUE),
-                                     selectizeInput("inBDSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
-                                     radioButtons("inBDEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
-                                     
-                    ),
-                    conditionalPanel(condition="input.conditionedPanels == 2",
-                                     selectInput(inputId = "inMSMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                                     radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                     radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                                     HTML("<hr>"),
-                                     selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
-                                     radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
-                                     selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
-                                     radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
-                    ),
-                    conditionalPanel(condition="input.conditionedPanels == 3",
-                                     selectInput(inputId = "inMETMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
-                                     radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                     radioButtons("inMETEB", "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                                     
-                                     HTML("<hr>"),
-                                     selectizeInput("mag", "Age Group:", ag, selected = ag[1], multiple = F),
-                                     radioButtons("mgender", "Gender: ", gender, inline = TRUE),
-                                     selectizeInput("mses", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
-                                     radioButtons("methnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("flipMETHG", label = "Flip Histogram:", switchRButton, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("phyGuideline", label = "Physical activity outcome measure", phyGLRButton, inline = TRUE)
-                    )
-                    ,
-                    conditionalPanel(condition="input.conditionedPanels == 4",
-                                     selectInput(inputId = "inHealthMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                                     radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                     radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
-                                     HTML("<hr>"),
-                                     conditionalPanel(
-                                       condition = "input.inHealthSwitch == 'Scenario'",
-                                       selectInput(inputId = "inHealthMS1", label = "Select Cycling Multiplier:", choices =  uniqueMS),
-                                       radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                       radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
-                                     ),
-                                     HTML("<hr>"),
-                                     selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
-                                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
-                                     
-                    ),
-                    
-                    
-                    conditionalPanel(condition="input.conditionedPanels == 5",
-                                     selectInput(inputId = "inCMMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                                     radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                     radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                                     HTML("<hr>"),
-                                     selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
-                                     radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
-                                     selectizeInput("inCMSES", "Socio Economic Classification :", ses),
-                                     radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-                                     
-                    ),
-                    conditionalPanel(condition="input.conditionedPanels == 6",
-                                     selectInput(inputId = "inCO2MS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                                     radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                                     radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                                     HTML("<hr>"),
-                                     selectizeInput("inCO2AG", "Age Group:", ag, multiple = F),
-                                     radioButtons("inCO2G", "Gender: ", gender, inline = TRUE),
-                                     selectizeInput("inCO2SES", "Socio Economic Classification :", ses),
-                                     radioButtons("inCO2Ethnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                                     HTML("<hr>"),
-                                     radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-                    ),
-                    conditionalPanel(condition="input.conditionedPanels == 7",
-                                     radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
-                                     radioButtons(inputId = "inEB", label = "Select Ebike (EB):", allOnOffRButton, inline = TRUE),
-                                     selectInput("varname", label = "Plot Variable:", variableList)
-                    )
-                    
-                  ),
-                  mainPanel(
-                    tabsetPanel(
-                      tabPanel("Mode Share", value = 1,
-                               a(id = "MSHelp", "Help", href = "#"),
-                               # showOutput("myChart","Nvd3")
-                               #                                div(class='wrapper',
-                               #                                    tags$style(".Nvd3{ height: 400px;}"),
-                               #                                    showOutput("myChart","Nvd3")
-                               #                                )
-                               
-                               hidden (div(id = "MSHelpText",
-                                           helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
-                               )),
-                               showOutput("plotBDMode", "highcharts"),
-                               showOutput("plotBDSCMode", "highcharts")
-                      ),
-                      tabPanel("Miles Cycled", value = 2,
-                               a(id = "MCHelp", "Help", href = "#"),
-                               hidden (div(id = "MCHelpText",
-                                           helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the total population, and/or between selected scenarios and baseline"))
-                               )),
-                               showOutput("plotMilesCycled", "highcharts"),
-                               showOutput("plotFilteredMilesCycled", "highcharts")
-                      ),
-                      tabPanel("Physical Activity", value = 3,
-                               a(id = "PAHelp", "Help", href = "#"),
-                               hidden (div(id = "PAHelpText",
-                                           helpText(HTML("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
+             
+    ), 
+    includeMarkdown("README.md")))),
+  #                                     box(
+  #                                       collapsible = TRUE, collapsed = TRUE,
+  #                                       includeMarkdown("README.md")#
+  #                                     )
+  # ,
+  sidebarPanel(
+    conditionalPanel(condition="input.conditionedPanels == 1",
+                     selectInput(inputId = "inBDMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     radioButtons(inputId = "inBDEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inBDEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inBDAG", "Age Group:", ag, selected = ag[1], multiple = F),
+                     radioButtons("inBDGender", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inBDSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                     radioButtons("inBDEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                     
+    ),
+    conditionalPanel(condition="input.conditionedPanels == 2",
+                     selectInput(inputId = "inMSMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
+                     radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
+                     radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
+    ),
+    conditionalPanel(condition="input.conditionedPanels == 3",
+                     selectInput(inputId = "inMETMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons("inMETEB", "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     
+                     HTML("<hr>"),
+                     selectizeInput("mag", "Age Group:", ag, selected = ag[1], multiple = F),
+                     radioButtons("mgender", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("mses", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                     radioButtons("methnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("flipMETHG", label = "Flip Histogram:", switchRButton, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("phyGuideline", label = "Physical activity outcome measure", phyGLRButton, inline = TRUE)
+    )
+    ,
+    conditionalPanel(condition="input.conditionedPanels == 4",
+                     selectInput(inputId = "inHealthMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
+                     HTML("<hr>"),
+                     conditionalPanel(
+                       condition = "input.inHealthSwitch == 'Scenario'",
+                       selectInput(inputId = "inHealthMS1", label = "Select Cycling Multiplier:", choices =  uniqueMS),
+                       radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                       radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
+                     ),
+                     HTML("<hr>"),
+                     selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
+                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
+                     
+    ),
+    
+    
+    conditionalPanel(condition="input.conditionedPanels == 5",
+                     selectInput(inputId = "inCMMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
+                     radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inCMSES", "Socio Economic Classification :", ses),
+                     radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                     
+    ),
+    conditionalPanel(condition="input.conditionedPanels == 6",
+                     selectInput(inputId = "inCO2MS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inCO2AG", "Age Group:", ag, multiple = F),
+                     radioButtons("inCO2G", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inCO2SES", "Socio Economic Classification :", ses),
+                     radioButtons("inCO2Ethnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+    ),
+    conditionalPanel(condition="input.conditionedPanels == 7",
+                     radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inEB", label = "Select Ebike (EB):", allOnOffRButton, inline = TRUE),
+                     HTML("<hr>"),
+                     
+                     radioButtons("varname", label = "Plot Variable:", variableRButton),
+                     
+                     conditionalPanel(
+                       condition = "input.varname == 'Car miles per person per week'",
+                       radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
+                     )
+                     # selectInput("varname", label = "Plot Variable:", variableList)
+    )
+    
+  ),
+  mainPanel(
+    tabsetPanel(
+      tabPanel("Mode Share", value = 1,
+               a(id = "MSHelp", "Help", href = "#"),
+               # showOutput("myChart","Nvd3")
+               #                                div(class='wrapper',
+               #                                    tags$style(".Nvd3{ height: 400px;}"),
+               #                                    showOutput("myChart","Nvd3")
+               #                                )
+               
+               hidden (div(id = "MSHelpText",
+                           helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
+               )),
+               showOutput("plotBDMode", "highcharts"),
+               showOutput("plotBDSCMode", "highcharts")
+      ),
+      tabPanel("Miles Cycled", value = 2,
+               a(id = "MCHelp", "Help", href = "#"),
+               hidden (div(id = "MCHelpText",
+                           helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with the baseline. Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the total population, and/or between selected scenarios and baseline"))
+               )),
+               showOutput("plotMilesCycled", "highcharts"),
+               showOutput("plotFilteredMilesCycled", "highcharts")
+      ),
+      tabPanel("Physical Activity", value = 3,
+               a(id = "PAHelp", "Help", href = "#"),
+               hidden (div(id = "PAHelpText",
+                           helpText(HTML("Displays histogram of total physical activity and also the fraction of the population meeting the physical activity guidelines of the World Health Organisation (WHO). For comparison with WHO guidelines,
                                                       we have assumed that 150 minutes of walking per week (the mininum physical activity to meet the guidelines), roughly translates 
                                                       into 100 minutes of cycling per week. In terms of Marginal MET (MMET) per week, it translates into 8.5 MMET (MET stands for &#39;Metabolic Equivalent Task&#39;
                                                       , with a MET value of 1 being equivalent to being at rest). The WHO&#39;s higher physical activity guideline assumes 300 minutes of walking per week, or 200 minutes of cycling per week, which translates to 17.5 MMET per week. 
                                                       Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline.
                                                     "))
-                               )),
-                               showOutput("plotMET", "highcharts"),
-                               showOutput("plotScenarioMET", "highcharts")
-                      ),
-                      tabPanel("Health", value = 4,
-                               a(id = "HealthHelp", "Help", href = "#"),
-                               hidden (div(id = "HealthHelpText",
-                                           helpText(HTML("Displays two plots for health gains in terms of Years of Life Lost (YLL) and 
+               )),
+               showOutput("plotMET", "highcharts"),
+               showOutput("plotScenarioMET", "highcharts")
+      ),
+      tabPanel("Health", value = 4,
+               a(id = "HealthHelp", "Help", href = "#"),
+               hidden (div(id = "HealthHelpText",
+                           helpText(HTML("Displays two plots for health gains in terms of Years of Life Lost (YLL) and 
                                                     Reduction in YLLs. YLL is an estimate of the average number of additional years a 
                                                     person would have lived if premature mortality were eliminated. 
                                                     A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
                                                     this scenario can then be compared against baseline or against an alternative scenario.  
                                                     Results are presented by age and gender, or the display can be restricted to particular age and 
                                                     gender groups using the subpopulation option."))
-                               )),
-                               showOutput("plotHealth", "highcharts"),
-                               showOutput("plotHealthReduction", "highcharts")
-                      ),
-                      
-                      
-                      tabPanel("Car Miles", value = 5,
-                               a(id = "CMHelp", "Help", href = "#"),
-                               hidden (div(id = "CMHelpText",
-                                           helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
+               )),
+               showOutput("plotHealth", "highcharts"),
+               showOutput("plotHealthReduction", "highcharts")
+      ),
+      
+      
+      tabPanel("Car Miles", value = 5,
+               a(id = "CMHelp", "Help", href = "#"),
+               hidden (div(id = "CMHelpText",
+                           helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
                                                     scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a 
                                                     car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car 
                                                     miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
-                               )),
-                               showOutput("plotFilteredCarMiles", "highcharts"),
-                               showOutput("plotCarMiles", "highcharts")
-                      ),
-                      tabPanel("CO2", value = 6,
-                               a(id = "CO2Help", "Help", href = "#"),
-                               hidden (div(id = "CO2HelpText",
-                                           helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
+               )),
+               showOutput("plotFilteredCarMiles", "highcharts"),
+               showOutput("plotCarMiles", "highcharts")
+      ),
+      tabPanel("CO2", value = 6,
+               a(id = "CO2Help", "Help", href = "#"),
+               hidden (div(id = "CO2HelpText",
+                           helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
                                                     car/van passenger.  Users can choose to compare CO2 emissions from car travel between selected 
                                                     sub-populations and the total population, and/or between selected scenarios and baseline."))
-                               )),
-                               showOutput("plotFilteredCO2", "highcharts"),
-                               showOutput("plotCO2", "highcharts")
-                      ),
-                      tabPanel("Multi-Scenario Comparison", value = 7,
-                               showOutput("plotCycPercent", "highcharts"),
-                               showOutput("plotGenericVariable", "highcharts")
-                               #                                h6("(Click on the legend to enable/disable a line)", align="center"),
-                               #                                HTML("<style>iframe.rChart{ width: 100%; height: 400px;}</style>")
-                      ),
-                      
-                      id = "conditionedPanels"
-                    )
-                  )
+               )),
+               showOutput("plotFilteredCO2", "highcharts"),
+               showOutput("plotCO2", "highcharts")
+      ),
+      tabPanel("Summary", value = 7,
+               showOutput("plotCycPercent", "highcharts"),
+               showOutput("plotGenericVariable", "highcharts")
+      ),
+      
+      id = "conditionedPanels"
+    )
+  )
 ))
