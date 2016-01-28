@@ -1687,17 +1687,18 @@ shinyServer(function(input, output, session){
       data <- subset(data, Sex_B01ID %in% input$inCO2G)
     
     if (input$inCO2SES != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inCO2SES)
+      data <- subset(data, NSSec_B03ID == input$inCO2SES)
     }
     
     if (input$inCO2Ethnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inCO2thnicity)
+      data <- subset(data, EthGroupTS_B02ID == input$inCO2Ethnicity)
     }
     #data[is.na(data)] <- 0
-    
-    
+
     columnName <- paste(paste("MS", input$inCO2MS,sep = ""),  paste("ebik", input$inCO2EB,sep = ""), 
                         paste("eq", input$inCO2EQ,sep = ""), sep="_")
+    
+    # cat(dim(data), " : ", columnName, "\n")
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
