@@ -341,7 +341,29 @@ shinyServer(function(input, output, session){
     }
     
     h1$title(text = extended_title)
-    h1$tooltip(valueSuffix= '%')
+    
+    
+    # h1$tooltip(formatter = "#! function() { return '<b>'+ this.series.name +', age '+ this.point.category +'</b><br/>' + 'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);} !#")
+    # h1$tooltip(formatter = "#! function() { return this.series.name +'<br/>'+ this.x + '<br/>' + this.y; } !#")
+    
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
+    # h1$tooltip()
+    
+    
+    #h1$tooltip(formatter = "#! function() {  return 'The value for <b>' + this.x + '</b> is <b>' + this.y + '</b>, in series '+ this.series.name; } !#")
+    
+#     h1$tooltip(formatter = "#! function() {
+#       var s = '<b>'+ this.x +'</b>';
+#       
+#       $.each(this.points, function(i, point) {
+#         s += '<br/><span style='color:'+ point.series.color +'>\u25CF</span>: ' + point.series.name + ': ' + point.y;
+#       });
+#       
+#       return s;
+#     },
+#     shared: true
+#     !#")
+    
     h1$set(dom = "plotMET")
     h1$exporting(enabled = T)
     return(h1)
@@ -466,7 +488,7 @@ shinyServer(function(input, output, session){
     }
     
     h1$title(text = extended_title)
-    h1$tooltip(valueSuffix= '%')
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     h1$set(dom = "plotScenarioMET")
     h1$exporting(enabled = T)
     return(h1)
@@ -1288,7 +1310,7 @@ shinyServer(function(input, output, session){
     
     h1$set(dom = "plotFilteredMilesCycled")
     # h1$yAxis(title = list(text = 'Percentage %'))
-    h1$tooltip(valueSuffix= '%')
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     h1$exporting(enabled = T)
     return (h1)
   })
@@ -1357,7 +1379,7 @@ shinyServer(function(input, output, session){
     h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
     h1$set(dom = "plotMilesCycled")
     # h1$yAxis(title = list(text = 'Percentage %'))
-    h1$tooltip(valueSuffix= '%')
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     
     h1$exporting(enabled = T)
     return (h1)
@@ -1447,20 +1469,20 @@ shinyServer(function(input, output, session){
       
       #h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
       
-      h1$series(data = bc$Freq[-1], name = firstColName)
+      h1$series(data = bc$Freq, name = firstColName)
       bc <- NULL
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-      h1$series(data = bc$Freq[-1], name = secondColName)
+      h1$series(data = bc$Freq, name = secondColName)
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
-    h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
+    h1$xAxis(categories = c("0", "> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = "plotFilteredCarMiles")
     h1$yAxis(title = list(text = 'Percentage of the total population'))
-    h1$tooltip(valueSuffix= '%')
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     h1$exporting(enabled = T)
     return (h1)
   })
@@ -1501,19 +1523,19 @@ shinyServer(function(input, output, session){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(firstColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
       
-      h1$series(data = bc$Freq[-1], name = firstColName)
+      h1$series(data = bc$Freq, name = firstColName)
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-      h1$series(data = bc$Freq[-1], name = secondColName)
+      h1$series(data = bc$Freq, name = secondColName)
       h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
-    h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
+    h1$xAxis(categories = c("0","> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$set(dom = "plotCarMiles")
     h1$yAxis(title = list(text = 'Percentage of the total population'))
-    h1$tooltip(valueSuffix= '%')
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     
     h1$exporting(enabled = T)
     return (h1)
@@ -1579,7 +1601,7 @@ shinyServer(function(input, output, session){
       firstColName <- "Baseline (Total Population)"
       secondColName <- "Baseline (Sub-Population)"
       
-      extended_title <- "Baseline - CO2 (kg) per person per week"
+      extended_title <- "Baseline - CO2 (kg) from car travel per person per week"
       #extended_title <- "Scenario - Mode Share"
       
     }else{
@@ -1592,7 +1614,7 @@ shinyServer(function(input, output, session){
       
       subtitle <- ""
       
-      extended_title <- "Total Population - CO2 (kg) per person per week"
+      extended_title <- "Total Population - CO2 (kg) from car travel per person per week"
     }
     
     h1$title(text = extended_title)
@@ -1604,20 +1626,21 @@ shinyServer(function(input, output, session){
       
       #h1$xAxis(categories = bc$Var1[-1])#c(2, 5, 10, 20, 40, 60, " > 60"))
       
-      h1$series(data = bc$Freq[-1], name = firstColName)
+      h1$series(data = bc$Freq, name = firstColName)
       bc <- NULL
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-      h1$series(data = bc$Freq[-1], name = secondColName)
+      h1$series(data = bc$Freq, name = secondColName)
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
-    h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
+    h1$xAxis(categories = c("0", "> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = "plotFilteredCO2")
     h1$yAxis(title = list(text = 'Percentage of the total population'))
-    h1$tooltip(valueSuffix= '%')
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
+    # h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T)
     return (h1)
   })
@@ -1639,7 +1662,7 @@ shinyServer(function(input, output, session){
       firstColName <- "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
       
-      extended_title <- "Scenario - CO2 (kg) per person per week"
+      extended_title <- "Scenario - CO2 (kg) from car travel per person per week"
       
     }else{
       # Keep the data mixed
@@ -1649,7 +1672,7 @@ shinyServer(function(input, output, session){
       firstColName <- "Baseline (Sub-Population)"
       secondColName <- "Scenario (Sub-Population)"
       
-      extended_title <- "Sub-Population - CO2 (kg) per person per week"
+      extended_title <- "Sub-Population - CO2 (kg) from car travel per person per week"
     }
     subtitle <- getCO2FilteredTitle()
     h1$title(text = extended_title)
@@ -1658,20 +1681,19 @@ shinyServer(function(input, output, session){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(firstColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
       
-      h1$series(data = bc$Freq[-1], name = firstColName)
+      h1$series(data = bc$Freq, name = firstColName)
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-      h1$series(data = bc$Freq[-1], name = secondColName)
+      h1$series(data = bc$Freq, name = secondColName)
       h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
-    h1$xAxis(categories = c("> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
+    h1$xAxis(categories = c("0", "> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$set(dom = "plotCO2")
     h1$yAxis(title = list(text = 'Percentage of the total population'))
-    h1$tooltip(valueSuffix= '%')
-    
+    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     h1$exporting(enabled = T)
     return (h1)
   })
