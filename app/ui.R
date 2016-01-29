@@ -118,7 +118,10 @@ shinyUI(fluidPage(
                               }
                               h4:hover {
                                 background-color: #C0C0C0;
-                              } 
+                              }
+                              h6 {
+                                color: #6495ED;
+                              }
                             "))
              
     ), 
