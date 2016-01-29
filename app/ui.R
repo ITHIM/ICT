@@ -114,13 +114,14 @@ shinyUI(fluidPage(
                                 font-size: 25px;
                                 font-weight: bold;
                                 line-height: 1.1;
-                                text-decoration:underline;
+                                //text-decoration:underline;
                               }
                               h4:hover {
                                 background-color: #C0C0C0;
                               }
                               h6 {
                                 color: #6495ED;
+                                //text-decoration:none;
                               }
                             "))
              
