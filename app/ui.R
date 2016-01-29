@@ -328,7 +328,8 @@ shinyUI(fluidPage(
                showOutput("plotGenericVariable", "highcharts")
       ),
       tabPanel("About", value = 8,
-               includeMarkdown("about.md")
+               includeHTML("about.html")
+               # includeMarkdown("about.md")
       ),
       
       id = "conditionedPanels"
