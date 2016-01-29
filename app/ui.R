@@ -24,7 +24,7 @@ variableRButton <- c("Number of Cyclists" =    "% cyclists in the total populati
                      "Health" = "Years of Life Lost (YLL)",
                      "Car Miles" = "Car miles per person per week",
                      "CO2" = "CO2 from car travel per person per week"
-                     )
+)
 carMilesRButton <- c("Car Miles" = "Car miles per person per week",
                      "Car Miles Reduced" = "Car miles reduced per person per week")
 
@@ -103,13 +103,13 @@ shinyUI(fluidPage(
    '),
   useShinyjs(),
   width="100%", height="100%",
-#   actionButton("goButton", "Impacts of Cycling Tool (+)"),
+  #   actionButton("goButton", "Impacts of Cycling Tool (+)"),
   uiOutput("oSample"),
   a(bsCollapse(id = "intro", bsCollapsePanel(
     tags$div(title = "Click here to open an introductory document", 
              h4("Impacts of Cycling Tool"),
              h6("(show/hide information)"),
-                          tags$style(HTML("
+             tags$style(HTML("
                               h4 {
                                 font-size: 25px;
                                 font-weight: bold;
@@ -250,7 +250,9 @@ shinyUI(fluidPage(
                #                                )
                
                hidden (div(id = "MSHelpText",
-                           helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
+                           helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of 
+                                         three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
+                                         sub-populations and the total population, and/or between selected scenarios and baseline."))
                )),
                showOutput("plotBDMode", "highcharts"),
                showOutput("plotBDSCMode", "highcharts")
@@ -272,15 +274,15 @@ shinyUI(fluidPage(
                a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
                            helpText(
-                            p("Displays histogram of total physical activity and also the percentage of the population meeting the physical activity guidelines of the World Health Organization (WHO). "),
-                            p(HTML("The <a href='http://www.who.int/dietphysicalactivity/factsheet_recommendations/en/' target='_blank'>WHO guidelines</a> are for 150 minutes of moderate intensity or 75 minutes of vigorous intensity activity, 
+                             p("Displays histogram of total physical activity and also the percentage of the population meeting the physical activity guidelines of the World Health Organization (WHO). "),
+                             p(HTML("The <a href='http://www.who.int/dietphysicalactivity/factsheet_recommendations/en/' target='_blank'>WHO guidelines</a> are for 150 minutes of moderate intensity or 75 minutes of vigorous intensity activity, 
                               with additional benefits by achieving 300 minutes of moderate intensity or 150 minutes of vigorous intensity activity. We have translated these guidelines into Marginal Metabolic Equivalent Task (MMET) 
                             hours per week. MMETs represent the body mass adjusted energy expenditure above resting. 
                             To do this we have assumed that moderate intensity activity is 3.5 MMETs, meaning that the lower target is 8.75 MMET hours per week, 
                             and the higher target is 17.5 MMET hours per week. We have assumed the MMET rates are 3.6 for walking, 5.4 for cycling 5.4, and 3.5 for ebikes (<a href='http://www.ncbi.nlm.nih.gov/pubmed/26441297' target='_blank'>Costa et al., 2015</a>  and <a href='http://link.springer.com/article/10.1007/s00421-012-2382-0/fulltext.html' target='_blank'>Sperlich et al., 2012</a>). 
                             Thus the lower target could be achieved by 145 minutes per week of walking, 97 minutes of cycling, or 150 minutes of ebiking. ")),
-                            p(HTML("Non-travel activity is estimated using self-reported data from probabilistically matched individuals of a similar age, gender, and ethnicity from the <a href = 'https://data.gov.uk/dataset/health_survey_for_england' target='_blank'>Health Survey for England 2012</a>. ")),
-                            p("Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline. "))
+                             p(HTML("Non-travel activity is estimated using self-reported data from probabilistically matched individuals of a similar age, gender, and ethnicity from the <a href = 'https://data.gov.uk/dataset/health_survey_for_england' target='_blank'>Health Survey for England 2012</a>. ")),
+                             p("Users can choose to compare physical activity between selected sub-populations and the total population, and/or between selected scenarios and baseline. "))
                )),
                showOutput("plotMET", "highcharts"),
                showOutput("plotScenarioMET", "highcharts")
@@ -324,6 +326,9 @@ shinyUI(fluidPage(
       ),
       tabPanel("Summary", value = 7,
                showOutput("plotGenericVariable", "highcharts")
+      ),
+      tabPanel("About", value = 8,
+               includeMarkdown("about.md")
       ),
       
       id = "conditionedPanels"
