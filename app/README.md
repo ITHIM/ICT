@@ -22,6 +22,6 @@ The effects of people switching their trips to cycling are assessed across multi
 *	health (physical activity levels, mortality rates)
 *	transport related CO2 emissions
 *	transport (trips time and mode shift)
-*	equity (uptake rate of cycling by women, elderly or ethnic minorities)
+*	equity (uptake rate of cycling by women, the elderly or ethnic minorities)
 
 The impact on mortality risk of increasing activity is estimated based on this study <a href="http://www.thelancet.com/journals/lancet/article/PIIS0140-6736%2811%2960749-6/abstract" target="_blank">here</a>.
