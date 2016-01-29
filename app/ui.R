@@ -255,7 +255,9 @@ shinyUI(fluidPage(
                a(id = "MCHelp", "Help?", href = "#"),
                hidden (div(id = "MCHelpText",
                            helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with 
-                                         the baseline. Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the 
+                                         the baseline. Note that the bar charts do not include a bar for people with zero cycling. 
+                                         In order to see the total number of cyclists in scenarios, please refer to the &#39;Number of Cyclists&#39; in the <i>Summary</i> tab. 
+                                         Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the 
                                          total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the 
                                          total population, and/or between selected scenarios and baseline."))
                )),
