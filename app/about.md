@@ -1,3 +1,24 @@
+<div>
+<table width="70%" border="0" cellpadding="0">
+<tr>
+<td align="left" valign="left">
+
+<a href="http://www.cedar.iph.cam.ac.uk/" target="_blank">
+  <img src="./assets/CEDAR_greenlogo.png" width = "60%" height = "60%"/>
+</a>
+</td>
+
+<td align="right" valign="right">
+<a href="https://www.gov.uk/government/organisations/department-for-transport" target="_blank">
+  <img src="./assets/Department_for_Transport.png" width = "100%" height = "70%"/>
+</a>
+</td>
+</tr>
+
+</table>
+</div>
+
+
 ## Welcome to the Impacts of Cycling Tool (ICT)
 
 Impacts of Cycling Tool (ICT) is released under a <a href="http://geo8.webarch.net/ICT/licence.html" target = '_blank'>GNU AGP Licence</a> and we accept no liability, included but not limited to loss or damages. The code of which is hosted on <a href="https://www.github.com/ITHIM/ICT" target="_blank">GitHub</a>.
