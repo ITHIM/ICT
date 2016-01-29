@@ -18,10 +18,10 @@ death <- read.csv("data/csv/death_agg.csv", header = T, as.is = T)
 yll_red <- read.csv("data/csv/yll_red_agg.csv", header = T, as.is = T)
 
 #Read Car Miles data
-carMiles <- read.csv("data/csv/carMiles_var.csv", header = T, as.is = T)
+carMiles <- read.csv("data/csv/carMiles_var1.csv", header = T, as.is = T)
 carMiles[is.na(carMiles)] <- 0
 
-milesCycled <- read.csv("data/csv/milesCycled.pers_var.csv", header = T, as.is = T)
+milesCycled <- read.csv("data/csv/milesCycled.pers_var1.csv", header = T, as.is = T)
 milesCycled[is.na(milesCycled)] <- 0
 
 # #Read Trip data
