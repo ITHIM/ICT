@@ -23,7 +23,7 @@ variableRButton <- c("Number of Cyclists" =    "% cyclists in the total populati
                      "Physical Activity" = "Marginal METs per person per week",
                      "Health" = "Years of Life Lost (YLL)",
                      "Car Miles" = "Car miles per person per week",
-                     "CO2" = "CO2 from car travel per person per week"
+                     "CO2" = "CO2 (kg) from car travel per person per week"
 )
 carMilesRButton <- c("Car Miles" = "Car miles per person per week",
                      "Car Miles Reduced" = "Car miles reduced per person per week")
