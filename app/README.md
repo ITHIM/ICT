@@ -13,7 +13,7 @@ In modelling scenarios in which some non-cyclists become cyclists, we use three 
 
 1. The *Cycling Multiplier* is the overall population-level increase in the probability of being a cyclist.
 2. In *Equity* scenarios we assume that men and women and older and younger people are equally likely to become cyclists. Without Equity we assume current inequalities remain in the probability of becoming a cyclist.
-3. In *Ebike* Ebike scenarios we assume that new cyclists have got an ebike and so will be willing to cycle longer trips. We assume that with an ebike all population groups have the same probability of cycling a trip of a given length.
+3. In *Ebike* scenarios we assume that new cyclists have got an ebike and so will be willing to cycle longer trips. We assume that with an ebike all population groups have the same probability of cycling a trip of a given length.
 
 Thus by itself the Ebike scenario equalises the distances that people of different ages and genders are willing to cycle, but leaves unchanged age/gender differences in the probability of becoming a cyclist. By itself, the *Equity*  scenario does the opposite, equalising the probability that people of different ages and genders become cyclsits, but leaving unchanged age/gender differences in the distance they are willing to cycle. In combination an *Equity + Ebike* scenario equalises both the probability of being a cyclist and the distance that people are willing to cycle.
 
