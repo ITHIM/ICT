@@ -67,11 +67,12 @@ shinyServer(function(input, output, session){
   })
   
   filterHealthData <- reactive({
-    
-    if (input$inHealthVarSwitch == "Death")
+    data1 <- NULL
+    if (input$inHealthVarSwitch == "Deaths")
       data1 <- death
-    else
+    else if (input$inHealthVarSwitch == "YLL")
       data1 <- yll
+    
     # Temporarily removing YLL total values
     data1 <- subset(data1, age.band != "All Ages")
     data2 <- yll_red
@@ -495,6 +496,7 @@ shinyServer(function(input, output, session){
     
   })
   output$plotHealth <- renderChart({
+    
     input$inHealthVarSwitch
     filterHealthData()
     h1 <- Highcharts$new()
@@ -538,7 +540,7 @@ shinyServer(function(input, output, session){
       }
       if (input$inHealthVarSwitch == "YLL")
         h1$yAxis(title = list(text = 'YLL (Absolute Numbers)'))
-      else
+      else if (input$inHealthVarSwitch == "Deaths")
         h1$yAxis(title = list(text = 'Averted number of Deaths'))
       
     }else{
