@@ -13,8 +13,8 @@ sdata[is.na(sdata)] <- 0
 tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"), code = c(1, 2, 2.5, c(3:7)))
 
 # # Read Health Calculations
-yll <- read.csv("data/csv/yll_agg.csv", header = T, as.is = T)
-death <- read.csv("data/csv/death_agg.csv", header = T, as.is = T)
+yll <- read.csv("data/csv/yll_agg_u.csv", header = T, as.is = T)
+death <- read.csv("data/csv/death_agg_u.csv", header = T, as.is = T)
 yll_red <- read.csv("data/csv/yll_red_agg.csv", header = T, as.is = T)
 
 #Read Car Miles data
