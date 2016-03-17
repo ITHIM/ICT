@@ -83,6 +83,7 @@ genderForHealthCalculations <- c("All",
                                  "Female")
 
 shinyUI(fluidPage(
+  list(tags$title(HTML('Impacts of Cycling Tool'))),
   tags$script('
 # $(document).ready(function(){
 # 
