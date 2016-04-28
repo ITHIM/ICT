@@ -127,7 +127,7 @@ shinyUI(fluidPage(
                      selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
                      radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
                      HTML("<hr>"),
-                     radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                     radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
     ),
     conditionalPanel(condition="input.conditionedPanels == 3",
