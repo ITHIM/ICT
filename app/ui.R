@@ -4,10 +4,6 @@ uMS <- append("All", sort(unique(sdata$MS)))
 uEQ <- append("All",sort(unique(sdata$equity)))
 uEB <- append("All", sort(unique(sdata$ebike)))
 
-# uBDMS <- (sort(unique(msharedtata$MS)[-1]) - 1)
-# uBDEQ <- sort(unique(msharedtata$equity))
-# uBDEB <- sort(unique(msharedtata$ebike))
-
 variableList <- t(as.matrix(colnames(sdata)))
 variableList <- variableList[,7:length(colnames(sdata))]
 
@@ -57,9 +53,6 @@ allOnOffRButton <- c("All" = "All",
 healthRButton <- c("Years of Life Lost (YLL)" = "YLL", 
                    "Deaths" = "Deaths")
 
-# ag <- "All"
-# ag <- append(ag, sort(unique(as.character(tdata$age_group))))
-
 ag <- "All"
 ag <- append(ag, sort(unique(as.character(tripData$age_group))))
 
@@ -86,7 +79,6 @@ shinyUI(fluidPage(
   list(tags$title(HTML('Impacts of Cycling Tool'))),
   useShinyjs(),
   width="100%", height="100%",
-  #   actionButton("goButton", "Impacts of Cycling Tool (+)"),
   uiOutput("oSample"),
   a(bsCollapse(id = "intro", bsCollapsePanel(
     tags$div(title = "Click here to open an introductory document", 
@@ -111,11 +103,6 @@ shinyUI(fluidPage(
     ), 
     
     includeMarkdown("README.md")))),
-  #                                     box(
-  #                                       collapsible = TRUE, collapsed = TRUE,
-  #                                       includeMarkdown("README.md")#
-  #                                     )
-  # ,
   sidebarPanel(
     conditionalPanel(condition="input.conditionedPanels == 1",
                      selectInput(inputId = "inBDMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
@@ -231,7 +218,6 @@ shinyUI(fluidPage(
                        condition = "input.varname == 'Car miles per person per week'",
                        radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
                      )
-                     # selectInput("varname", label = "Plot Variable:", variableList)
     )
     
   ),
@@ -256,7 +242,7 @@ shinyUI(fluidPage(
                ))
                ,
                showOutput("plotTTMode", "highcharts")#,
-#                showOutput("plotBDSCMode", "highcharts")
+               #                showOutput("plotBDSCMode", "highcharts")
       ),
       tabPanel("Miles Cycled", value = 3,
                a(id = "MCHelp", "Help?", href = "#"),
