@@ -84,24 +84,6 @@ genderForHealthCalculations <- c("All",
 
 shinyUI(fluidPage(
   list(tags$title(HTML('Impacts of Cycling Tool'))),
-  tags$script('
-# $(document).ready(function(){
-# 
-#                $(".slidingDiv").hide();
-#                $(".show_hide").show();
-#                
-#                $(".show_hide").toggle(function(){
-#                $("#plus").text("-");
-#                $(".slidingDiv").slideDown();
-#                
-#                },function(){
-#                $("#plus").text("+");
-#                $(".slidingDiv").slideUp();
-#                });
-#                
-#                });
-     
-   '),
   useShinyjs(),
   width="100%", height="100%",
   #   actionButton("goButton", "Impacts of Cycling Tool (+)"),
