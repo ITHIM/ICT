@@ -5,6 +5,7 @@ scFilteredMETdata <- NULL
 scTimeTraveldata <- NULL
 scFilteredTimeTraveldata <- NULL
 scFilteredTripTimeTraveldata <- NULL
+scFilteredTripModeTraveldata <- NULL
 
 ftdata <- NULL
 swdata <- NULL
@@ -1142,6 +1143,126 @@ shinyServer(function(input, output, session){
     
   })
   
+  output$plotTTMode <- renderChart({
+    generateTTData()
+    #scenariosTimeTravelIdata
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    h1$yAxis(title = list(text = 'Percentage %'))
+    #              , min = 0, max = 80 )
+    
+    if (!is.null(scFilteredTripTimeTraveldata) && nrow(scFilteredTripTimeTraveldata) > 0){
+      
+      h1$plotOptions(column = list(animation=FALSE,
+                                   dataLabels = list(enabled = T, 
+                                                     formatter = format_function,      
+                                                     rotation = -90, 
+                                                     align = 'right', 
+                                                     color = '#FFFFFF', 
+                                                     width = 100,
+                                                     x = 4, 
+                                                     y = 10, 
+                                                     style = list(fontSize = '11px', fontFamily = 'Verdana, sans-serif'))),
+                     series = list(dataLabels = list(crop = F))
+      )
+      
+      mname <- c("Walk", "Bicycle", "Car", "Other")
+      
+      total_col <- ncol(scFilteredTripTimeTraveldata)
+      umode <- unique(scFilteredTripTimeTraveldata[,total_col])
+      h1$title(text = "Histogram of Relative Changes in Trip Durations")
+      for (i in 1:length(umode)){
+        ldata <- subset(scFilteredTripTimeTraveldata, scFilteredTripTimeTraveldata[,total_col] == umode[i])
+        dhist <- hist(ldata$diff)
+        
+        data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
+        data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+        data <- subset(data, freq >= 0.1)
+        data <- subset(data, breaks = 0)
+        
+        h1$series(data =  data$freq, name = mname[i]) #"Time Difference from Baseline (%)
+      }
+      
+      if (nrow(data) == 1){
+        xlabel <- data$breaks
+        h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
+                                                                  fontFamily = 'Verdana, sans-serif',
+                                                                  whiteSpace = 'nowrap',
+                                                                  paddingLeft = '10px',
+                                                                  paddingRight = '10px',
+                                                                  paddingTop = '10px'))
+        )
+        
+      }else{
+        
+        h1$xAxis(categories = paste(data$breaks, "%"))
+      }
+      
+      h1$tooltip(valueSuffix= '%')
+      
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    
+    h1$set(dom = 'plotTTMode')
+    h1$exporting(enabled = T)
+    return(h1)
+  })
+  
+  generateTTData <- reactive({
+    
+    data <- tripTime
+    
+    if (input$inTTAG != 'All'){
+      data <- subset(data, age_group == input$inTTAG)
+    }
+    if (input$inTTGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inTTGender)
+    
+    if (input$inTTSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inTTSES)
+    }
+    
+    if (input$inTTEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inTTEthnicity)
+    }
+    data[is.na(data)] <- 0
+    
+    
+    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+                        paste("eq", input$inTTEQ,sep = ""), sep="_")
+    
+    
+    # localtripData <- tripTime[,c("X","baseline", columnName)]
+    
+    # Get row numbers with NA
+    temp <- data.frame(rn = which(tripTime$X %in% data$X))
+    
+    locatTripModeData <- tripMode[,c("X","baseline", columnName)]
+    # Remove all rows with NA in them
+    locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
+    
+    localtripData <- data[,c("X","baseline", columnName)]
+    
+    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$baseline) / localtripData$baseline ) * 100)
+    
+#     bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
+#     bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+#     bc1max <- max(bc$Freq, na.rm = T)
+    
+    
+    #names(localtripData) <- c("rn", "baseline", "diff")
+    localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
+    
+    locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
+    
+    names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
+    #tripDataSubset <- subset(tripDataSubset, diff != 0 )
+    localtripData <- inner_join(localtripData, locatTripModeData, by = "rn")
+    scFilteredTripTimeTraveldata <<- localtripData
+    #scFilteredTripModeTraveldata <<- locatTripModeData
+  })
+  
   
   output$plotBDFasterTrips <- renderChart({
     generateFasterTripsTable()
@@ -1603,7 +1724,8 @@ shinyServer(function(input, output, session){
       firstColName <- "Baseline (Total Population)"
       secondColName <- "Baseline (Sub-Population)"
       
-      extended_title <- "Baseline - CO2 (kg) from car travel per person per week"
+      
+      extended_title <- HTML("Baseline - CO<sub>2<sub> (kg) from car travel per person per week")
       #extended_title <- "Scenario - Mode Share"
       
     }else{
@@ -1615,8 +1737,7 @@ shinyServer(function(input, output, session){
       secondColName <- "Scenario (Total Population)"
       
       subtitle <- ""
-      
-      extended_title <- "Total Population - CO2 (kg) from car travel per person per week"
+      extended_title <- HTML("Total population - CO<sub>2<sub> (kg) from car travel per person per week")
     }
     
     h1$title(text = extended_title)
@@ -1663,8 +1784,7 @@ shinyServer(function(input, output, session){
       
       firstColName <- "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
-      
-      extended_title <- "Scenario - CO2 (kg) from car travel per person per week"
+      extended_title <- HTML("Scenario - CO<sub>2<sub> (kg) from car travel per person per week")
       
     }else{
       # Keep the data mixed
@@ -1674,8 +1794,10 @@ shinyServer(function(input, output, session){
       firstColName <- "Baseline (Sub-Population)"
       secondColName <- "Scenario (Sub-Population)"
       
-      extended_title <- "Sub-Population - CO2 (kg) from car travel per person per week"
+      extended_title <- HTML("Sub population - CO<sub>2<sub> (kg) from car travel per person per week")
     }
+      
+      
     subtitle <- getCO2FilteredTitle()
     h1$title(text = extended_title)
     bc <- NULL
@@ -1912,10 +2034,9 @@ shinyServer(function(input, output, session){
   
   
   
-  
   # EQ
-  
-  observeEvent(input$inBDEQ, function(){
+  observe({
+    input$inBDEQ
     updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
@@ -1923,7 +2044,8 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
   })
   
-  observeEvent(input$inHealthEQ, function(){
+  observe({
+    input$inHealthEQ
     updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
     updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
@@ -1931,7 +2053,8 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
   })
   
-  observeEvent(input$inMETEQ, function(){
+  observe({
+    input$inMETEQ
     updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
     updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
@@ -1939,7 +2062,8 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
   })
   
-  observeEvent(input$inMSEQ, function(){
+  observe({
+    input$inMSEQ
     updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
@@ -1947,7 +2071,8 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
   })
   
-  observeEvent(input$inCMEQ, function(){
+  observe({
+    input$inCMEQ
     updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
@@ -1955,7 +2080,8 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
   })
   
-  observeEvent(input$inCO2EQ, function(){
+  observe({
+    input$inCO2EQ
     updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
     updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
@@ -1972,7 +2098,8 @@ shinyServer(function(input, output, session){
   
   # EB
   
-  observeEvent(input$inBDEB, function(){
+  observe({
+    input$inBDEB
     updateTextInput(session, "inHealthEB", NULL, input$inBDEB)
     updateTextInput(session, "inMETEB", NULL, input$inBDEB)
     updateTextInput(session, "inMSEB", NULL, input$inBDEB)
@@ -1980,7 +2107,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EB", NULL, input$inBDEB)
   })
   
-  observeEvent(input$inHealthEB, function(){
+  observe({input$inHealthEB
     updateTextInput(session, "inBDEB", NULL, input$inHealthEB)
     updateTextInput(session, "inMETEB", NULL, input$inHealthEB)
     updateTextInput(session, "inMSEB", NULL, input$inHealthEB)
@@ -1988,7 +2115,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EB", NULL, input$inHealthEB)
   })
   
-  observeEvent(input$inMETEB, function(){
+  observe({input$inMETEB
     updateTextInput(session, "inBDEB", NULL, input$inMETEB)
     updateTextInput(session, "inHealthEB", NULL, input$inMETEB)
     updateTextInput(session, "inMSEB", NULL, input$inMETEB)
@@ -1996,7 +2123,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EB", NULL, input$inMETEB)
   })
   
-  observeEvent(input$inMSEB, function(){
+  observe({input$inMSEB
     updateTextInput(session, "inBDEB", NULL, input$inMSEB)
     updateTextInput(session, "inHealthEB", NULL, input$inMSEB)
     updateTextInput(session, "inMETEB", NULL, input$inMSEB)
@@ -2004,7 +2131,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EB", NULL, input$inMSEB)
   })
   
-  observeEvent(input$inCMEB, function(){
+  observe({input$inCMEB
     updateTextInput(session, "inBDEB", NULL, input$inCMEB)
     updateTextInput(session, "inHealthEB", NULL, input$inCMEB)
     updateTextInput(session, "inMETEB", NULL, input$inCMEB)
@@ -2012,7 +2139,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2EB", NULL, input$inCMEB)
   })
   
-  observeEvent(input$inCO2EB, function(){
+  observe({input$inCO2EB
     updateTextInput(session, "inBDEB", NULL, input$inCO2EB)
     updateTextInput(session, "inHealthEB", NULL, input$inCO2EB)
     updateTextInput(session, "inMETEB", NULL, input$inCO2EB)
@@ -2027,7 +2154,8 @@ shinyServer(function(input, output, session){
   # inCMEB
   # inCO2EB
   
-  observeEvent(input$inBDMS, function(){
+  observe({
+    input$inBDMS
     updateTextInput(session, "inHealthMS", NULL, input$inBDMS)
     updateTextInput(session, "inMETMS", NULL, input$inBDMS)
     updateTextInput(session, "inMSMS", NULL, input$inBDMS)
@@ -2035,7 +2163,8 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2MS", NULL, input$inBDMS)
   })
   
-  observeEvent(input$inHealthMS, function(){
+  observe({
+    input$inHealthMS
     updateTextInput(session, "inBDMS", NULL, input$inHealthMS)
     updateTextInput(session, "inMETMS", NULL, input$inHealthMS)
     updateTextInput(session, "inMSMS", NULL, input$inHealthMS)
@@ -2043,7 +2172,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2MS", NULL, input$inHealthMS)
   })
   
-  observeEvent(input$inMETMS, function(){
+  observe({input$inMETMS
     updateTextInput(session, "inBDMS", NULL, input$inMETMS)
     updateTextInput(session, "inHealthMS", NULL, input$inMETMS)
     updateTextInput(session, "inMSMS", NULL, input$inMETMS)
@@ -2051,7 +2180,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2MS", NULL, input$inMETMS)
   })
   
-  observeEvent(input$inMSMS, function(){
+  observe({input$inMSMS
     updateTextInput(session, "inBDMS", NULL, input$inMSMS)
     updateTextInput(session, "inHealthMS", NULL, input$inMSMS)
     updateTextInput(session, "inMETMS", NULL, input$inMSMS)
@@ -2059,7 +2188,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2MS", NULL, input$inMSMS)
   })
   
-  observeEvent(input$inCMMS, function(){
+  observe({input$inCMMS
     updateTextInput(session, "inBDMS", NULL, input$inCMMS)
     updateTextInput(session, "inHealthMS", NULL, input$inCMMS)
     updateTextInput(session, "inMETMS", NULL, input$inCMMS)
@@ -2067,7 +2196,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2MS", NULL, input$inCMMS)
   })
   
-  observeEvent(input$inCO2MS, function(){
+  observe({input$inCO2MS
     updateTextInput(session, "inBDMS", NULL, input$inCO2MS)
     updateTextInput(session, "inHealthMS", NULL, input$inCO2MS)
     updateTextInput(session, "inMETMS", NULL, input$inCO2MS)
@@ -2078,7 +2207,7 @@ shinyServer(function(input, output, session){
   
   # age
   
-  observeEvent(input$inBDAG, function(){
+  observe({input$inBDAG
     updateTextInput(session, "mag", NULL, input$inBDAG)
     updateTextInput(session, "inMSAG", NULL, input$inBDAG)
     updateTextInput(session, "inCMAG", NULL, input$inBDAG)
@@ -2086,28 +2215,28 @@ shinyServer(function(input, output, session){
     
   })
   
-  observeEvent(input$mag, function(){
+  observe({input$mag
     updateTextInput(session, "inBDAG", NULL, input$mag)
     updateTextInput(session, "inMSAG", NULL, input$mag)
     updateTextInput(session, "inCMAG", NULL, input$mag)
     updateTextInput(session, "inCO2AG", NULL, input$mag)
   })
   
-  observeEvent(input$inMSAG, function(){
+  observe({input$inMSAG
     updateTextInput(session, "inBDAG", NULL, input$inMSAG)
     updateTextInput(session, "mag", NULL, input$inMSAG)
     updateTextInput(session, "inCMAG", NULL, input$inMSAG)
     updateTextInput(session, "inCO2AG", NULL, input$inMSAG)
   })
   
-  observeEvent(input$inCMAG, function(){
+  observe({input$inCMAG
     updateTextInput(session, "inBDAG", NULL, input$inCMAG)
     updateTextInput(session, "mag", NULL, input$inCMAG)
     updateTextInput(session, "inMSAG", NULL, input$inCMAG)
     updateTextInput(session, "inCO2AG", NULL, input$inCMAG)
   })
   
-  observeEvent(input$inCO2AG, function(){
+  observe({input$inCO2AG
     updateTextInput(session, "inBDAG", NULL, input$inCO2AG)
     updateTextInput(session, "mag", NULL, input$inCO2AG)
     updateTextInput(session, "inMSAG", NULL, input$inCO2AG)
@@ -2123,7 +2252,7 @@ shinyServer(function(input, output, session){
   
   # gender
   
-  observeEvent(input$inBDGender, function(){
+  observe({input$inBDGender
     updateTextInput(session, "inHealthG", NULL, input$inBDGender)
     updateTextInput(session, "mgender", NULL, input$inBDGender)
     updateTextInput(session, "inMSG", NULL, input$inBDGender)
@@ -2131,7 +2260,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2G", NULL, input$inBDGender)
   })
   
-  observeEvent(input$inHealthG, function(){
+  observe({input$inHealthG
     updateTextInput(session, "inBDGender", NULL, input$inHealthG)
     updateTextInput(session, "mgender", NULL, input$inHealthG)
     updateTextInput(session, "inMSG", NULL, input$inHealthG)
@@ -2139,7 +2268,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2G", NULL, input$inHealthG)
   })
   
-  observeEvent(input$mgender, function(){
+  observe({input$mgender
     updateTextInput(session, "inBDGender", NULL, input$mgender)
     updateTextInput(session, "inHealthG", NULL, input$mgender)
     updateTextInput(session, "inMSG", NULL, input$mgender)
@@ -2148,7 +2277,7 @@ shinyServer(function(input, output, session){
     
   })
   
-  observeEvent(input$inMSG, function(){
+  observe({input$inMSG
     updateTextInput(session, "inBDGender", NULL, input$inMSG)
     updateTextInput(session, "inHealthG", NULL, input$inMSG)
     updateTextInput(session, "mgender", NULL, input$inMSG)
@@ -2156,7 +2285,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2G", NULL, input$inMSG)
   })
   
-  observeEvent(input$inCMG, function(){
+  observe({input$inCMG
     updateTextInput(session, "inBDGender", NULL, input$inCMG)
     updateTextInput(session, "inHealthG", NULL, input$inCMG)
     updateTextInput(session, "mgender", NULL, input$inCMG)
@@ -2164,7 +2293,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCO2G", NULL, input$inCMG)
   })
   
-  observeEvent(input$inCO2G, function(){
+  observe({input$inCO2G
     updateTextInput(session, "inBDGender", NULL, input$inCO2G)
     updateTextInput(session, "inHealthG", NULL, input$inCO2G)
     updateTextInput(session, "mgender", NULL, input$inCO2G)
@@ -2182,7 +2311,7 @@ shinyServer(function(input, output, session){
   
   # SES
   
-  observeEvent(input$inBDSES, function(){
+  observe({input$inBDSES
     updateTextInput(session, "mses", NULL, input$inBDSES)
     updateTextInput(session, "inMSSES", NULL, input$inBDSES)
     updateTextInput(session, "inCMSES", NULL, input$inBDSES)
@@ -2190,28 +2319,28 @@ shinyServer(function(input, output, session){
   })
   
   
-  observeEvent(input$mses, function(){
+  observe({input$mses
     updateTextInput(session, "inBDSES", NULL, input$mses)
     updateTextInput(session, "inMSSES", NULL, input$mses)
     updateTextInput(session, "inCMSES", NULL, input$mses)
     updateTextInput(session, "inCO2SES", NULL, input$mses)
   })
   
-  observeEvent(input$inMSSES, function(){
+  observe({input$inMSSES
     updateTextInput(session, "inBDSES", NULL, input$inMSSES)
     updateTextInput(session, "mses", NULL, input$inMSSES)
     updateTextInput(session, "inCMSES", NULL, input$inMSSES)
     updateTextInput(session, "inCO2SES", NULL, input$inMSSES)
   })
   
-  observeEvent(input$inCMSES, function(){
+  observe({input$inCMSES
     updateTextInput(session, "inBDSES", NULL, input$inCMSES)
     updateTextInput(session, "mses", NULL, input$inCMSES)
     updateTextInput(session, "inMSSES", NULL, input$inCMSES)
     updateTextInput(session, "inCO2SES", NULL, input$inCMSES)
   })
   
-  observeEvent(input$inCO2SES, function(){
+  observe({input$inCO2SES
     updateTextInput(session, "inBDSES", NULL, input$inCO2SES)
     updateTextInput(session, "mses", NULL, input$inCO2SES)
     updateTextInput(session, "inMSSES", NULL, input$inCO2SES)
@@ -2228,14 +2357,14 @@ shinyServer(function(input, output, session){
   #Ethnicity
   
   
-  observeEvent(input$inBDEthnicity, function(){
+  observe({input$inBDEthnicity
     updateTextInput(session, "methnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inCO2Ethnicity", NULL, input$inBDEthnicity)
   })
   
-  observeEvent(input$methnicity, function(){
+  observe({input$methnicity
     updateTextInput(session, "inBDEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$methnicity)
@@ -2243,21 +2372,21 @@ shinyServer(function(input, output, session){
     
   })
   
-  observeEvent(input$inMSEthnicity, function(){
+  observe({input$inMSEthnicity
     updateTextInput(session, "inBDEthnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "inCO2Ethnicity", NULL, input$inMSEthnicity)
   })
   
-  observeEvent(input$inCMEthnicity, function(){
+  observe({input$inCMEthnicity
     updateTextInput(session, "inBDEthnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "inCO2Ethnicity", NULL, input$inCMEthnicity)
   })
   
-  observeEvent(input$inCO2Ethnicity, function(){
+  observe({input$inCO2Ethnicity
     updateTextInput(session, "inBDEthnicity", NULL, input$inCO2Ethnicity)
     updateTextInput(session, "methnicity", NULL, input$inCO2Ethnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inCO2Ethnicity)
@@ -2271,14 +2400,14 @@ shinyServer(function(input, output, session){
   #   inCO2Ethnicity
   
   
-  observeEvent(input$flipMS, function(){
+  observe({input$flipMS
     updateTextInput(session, "flipMETHG", NULL, input$flipMS)
     updateTextInput(session, "inMSflip", NULL, input$flipMS)
     updateTextInput(session, "inCMflip", NULL, input$flipMS)
     updateTextInput(session, "inCO2flip", NULL, input$flipMS)
   })
   
-  observeEvent(input$flipMETHG, function(){
+  observe({input$flipMETHG
     updateTextInput(session, "flipMS", NULL, input$flipMETHG)
     updateTextInput(session, "inMSflip", NULL, input$flipMETHG)
     updateTextInput(session, "inCMflip", NULL, input$flipMETHG)
@@ -2286,7 +2415,7 @@ shinyServer(function(input, output, session){
     
   })
   
-  observeEvent(input$inMSflip, function(){
+  observe({input$inMSflip
     updateTextInput(session, "flipMS", NULL, input$inMSflip)
     updateTextInput(session, "flipMETHG", NULL, input$inMSflip)
     updateTextInput(session, "inCMflip", NULL, input$inMSflip)
@@ -2294,14 +2423,14 @@ shinyServer(function(input, output, session){
     
   })
   
-  observeEvent(input$inCMflip, function(){
+  observe({input$inCMflip
     updateTextInput(session, "flipMS", NULL, input$inCMflip)
     updateTextInput(session, "flipMETHG", NULL, input$inCMflip)
     updateTextInput(session, "inMSflip", NULL, input$inCMflip)
     updateTextInput(session, "inCO2flip", NULL, input$inCMflip)
   })
   
-  observeEvent(input$inCO2flip, function(){
+  observe({input$inCO2flip
     updateTextInput(session, "flipMS", NULL, input$inCO2flip)
     updateTextInput(session, "flipMETHG", NULL, input$inCO2flip)
     updateTextInput(session, "inMSflip", NULL, input$inCO2flip)
@@ -2316,6 +2445,7 @@ shinyServer(function(input, output, session){
   #inCO2flip
   
   shinyjs::onclick("MSHelp", shinyjs::toggle(id = "MSHelpText", anim = FALSE))
+  shinyjs::onclick("MTHelp", shinyjs::toggle(id = "MTHelpText", anim = FALSE))
   shinyjs::onclick("HealthHelp", shinyjs::toggle(id = "HealthHelpText", anim = FALSE))
   shinyjs::onclick("PAHelp", shinyjs::toggle(id = "PAHelpText", anim = FALSE))
   shinyjs::onclick("MCHelp", shinyjs::toggle(id = "MCHelpText", anim = FALSE))

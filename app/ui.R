@@ -149,6 +149,19 @@ shinyUI(fluidPage(
                      
     ),
     conditionalPanel(condition="input.conditionedPanels == 2",
+                     selectInput(inputId = "inTTMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inTTAG", "Age Group:", ag, selected = ag[1], multiple = F),
+                     radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                     radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                     
+    ),
+    conditionalPanel(condition="input.conditionedPanels == 3",
                      selectInput(inputId = "inMSMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -162,7 +175,7 @@ shinyUI(fluidPage(
                      HTML("<hr>"),
                      radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
     ),
-    conditionalPanel(condition="input.conditionedPanels == 3",
+    conditionalPanel(condition="input.conditionedPanels == 4",
                      selectInput(inputId = "inMETMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
                      radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons("inMETEB", "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -178,7 +191,7 @@ shinyUI(fluidPage(
                      radioButtons("phyGuideline", label = "Physical activity outcome measure:", phyGLRButton, inline = TRUE)
     )
     ,
-    conditionalPanel(condition="input.conditionedPanels == 4",
+    conditionalPanel(condition="input.conditionedPanels == 5",
                      selectInput(inputId = "inHealthMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -200,7 +213,7 @@ shinyUI(fluidPage(
     ),
     
     
-    conditionalPanel(condition="input.conditionedPanels == 5",
+    conditionalPanel(condition="input.conditionedPanels == 6",
                      selectInput(inputId = "inCMMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -213,7 +226,7 @@ shinyUI(fluidPage(
                      radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
     ),
-    conditionalPanel(condition="input.conditionedPanels == 6",
+    conditionalPanel(condition="input.conditionedPanels == 7",
                      selectInput(inputId = "inCO2MS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -225,7 +238,7 @@ shinyUI(fluidPage(
                      HTML("<hr>"),
                      radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
     ),
-    conditionalPanel(condition="input.conditionedPanels == 7",
+    conditionalPanel(condition="input.conditionedPanels == 8",
                      radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
                      radioButtons(inputId = "inEB", label = "Select Ebike (EB):", allOnOffRButton, inline = TRUE),
                      HTML("<hr>"),
@@ -244,12 +257,6 @@ shinyUI(fluidPage(
     tabsetPanel(
       tabPanel("Mode Share", value = 1,
                a(id = "MSHelp", "Help?", href = "#"),
-               # showOutput("myChart","Nvd3")
-               #                                div(class='wrapper',
-               #                                    tags$style(".Nvd3{ height: 400px;}"),
-               #                                    showOutput("myChart","Nvd3")
-               #                                )
-               
                hidden (div(id = "MSHelpText",
                            helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of 
                                          three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
@@ -258,7 +265,18 @@ shinyUI(fluidPage(
                showOutput("plotBDMode", "highcharts"),
                showOutput("plotBDSCMode", "highcharts")
       ),
-      tabPanel("Miles Cycled", value = 2,
+      tabPanel("Mode Time", value = 2,
+               a(id = "MTHelp", "Help?", href = "#"),
+               hidden (div(id = "MTHelpText",
+                           helpText(HTML("Displays plots for trip time for modes based on main mode only. A scenario is selected by a combination of 
+                                         three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
+                                         sub-populations and the total population, and/or between selected scenarios and baseline."))
+               ))
+               ,
+               showOutput("plotTTMode", "highcharts")#,
+#                showOutput("plotBDSCMode", "highcharts")
+      ),
+      tabPanel("Miles Cycled", value = 3,
                a(id = "MCHelp", "Help?", href = "#"),
                hidden (div(id = "MCHelpText",
                            helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with 
@@ -271,7 +289,7 @@ shinyUI(fluidPage(
                showOutput("plotMilesCycled", "highcharts"),
                showOutput("plotFilteredMilesCycled", "highcharts")
       ),
-      tabPanel("Physical Activity", value = 3,
+      tabPanel("Physical Activity", value = 4,
                a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
                            helpText(
@@ -288,7 +306,7 @@ shinyUI(fluidPage(
                showOutput("plotMET", "highcharts"),
                showOutput("plotScenarioMET", "highcharts")
       ),
-      tabPanel("Health", value = 4,
+      tabPanel("Health", value = 5,
                a(id = "HealthHelp", "Help?", href = "#"),
                hidden (div(id = "HealthHelpText",
                            helpText(HTML("
@@ -304,7 +322,7 @@ shinyUI(fluidPage(
       ),
       
       
-      tabPanel("Car Miles", value = 5,
+      tabPanel("Car Miles", value = 6,
                a(id = "CMHelp", "Help?", href = "#"),
                hidden (div(id = "CMHelpText",
                            helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
@@ -315,7 +333,7 @@ shinyUI(fluidPage(
                showOutput("plotFilteredCarMiles", "highcharts"),
                showOutput("plotCarMiles", "highcharts")
       ),
-      tabPanel("CO2", value = 6,
+      tabPanel(HTML("CO<sub>2<sub>"), value = 7,
                a(id = "CO2Help", "Help?", href = "#"),
                hidden (div(id = "CO2HelpText",
                            helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
@@ -325,10 +343,10 @@ shinyUI(fluidPage(
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
-      tabPanel("Summary", value = 7,
+      tabPanel("Summary", value = 8,
                showOutput("plotGenericVariable", "highcharts")
       ),
-      tabPanel("About", value = 8,
+      tabPanel("About", value = 9,
                includeHTML("about.html")
                # includeMarkdown("about.md")
       ),
