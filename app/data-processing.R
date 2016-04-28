@@ -27,5 +27,33 @@ milesCycled[is.na(milesCycled)] <- 0
 # #Read Trip data
 tripData <- read.csv("data/csv/tripsdf.csv", header = T, as.is = T)
 
+# Read updated Trip data
+tripMode <- read.csv("data/csv/tripsdf_updated.csv", header = T, as.is = T)
+
+# Read trip time
+tripTime <- read.csv("data/csv/triptime.csv", header = T, as.is = T)
+
+# Get row numbers with NA
+temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
+
+# Remove all rows with NA in them
+tripMode <- (subset(tripMode, !(X %in% temp$rn) ))
+
+tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
+
+# "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
+# Reduce the number of modes to 4
+# walk, bicycle, car, others
+lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
+
+# Replace number of modes in each of the scenarios and the baseline to 4
+for (i in 7:31){
+  tripMode[,i] <- lookup$red_mode[match(tripMode[,i], lookup$mode)]
+}
+
+names(tripTime)[names(tripTime)=="MainMode_Reduced"] <- "baseline"
+
+names(tripMode)[names(tripMode)=="MainMode_Reduced"] <- "baseline"
+
 #Read CO2 data
 co2data <- read.csv("data/csv/co2.csv", header = T, as.is = T)
