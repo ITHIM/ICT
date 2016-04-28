@@ -2037,15 +2037,19 @@ shinyServer(function(input, output, session){
   # EQ
   observe({
     input$inBDEQ
+    updateTextInput(session, "inTTEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
     updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
+    
+    
   })
   
   observe({
     input$inHealthEQ
+    updateTextInput(session, "inTTEQ", NULL, input$inHealthEQ)
     updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
     updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
@@ -2055,6 +2059,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inMETEQ
+    updateTextInput(session, "inTTEQ", NULL, input$inMETEQ)
     updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
     updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
@@ -2064,6 +2069,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inMSEQ
+    updateTextInput(session, "inTTEQ", NULL, input$inMSEQ)
     updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
@@ -2073,6 +2079,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inCMEQ
+    updateTextInput(session, "inTTEQ", NULL, input$inCMEQ)
     updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
     updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
@@ -2082,6 +2089,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inCO2EQ
+    updateTextInput(session, "inTTEQ", NULL, input$inCO2EQ)
     updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
     updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
     updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
@@ -2089,7 +2097,18 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
   })
   
+  observe({
+    input$inTTEQ
+    updateTextInput(session, "inCO2EQ", NULL, input$inTTEQ)
+    updateTextInput(session, "inBDEQ", NULL, input$inTTEQ)
+    updateTextInput(session, "inHealthEQ", NULL, input$inTTEQ)
+    updateTextInput(session, "inMETEQ", NULL, input$inTTEQ)
+    updateTextInput(session, "inMSEQ", NULL, input$inTTEQ)
+    updateTextInput(session, "inCMEQ", NULL, input$inTTEQ)
+  })
+  
   # inBDEQ
+  # inTTEQ
   # inHealthEQ
   # inMETEQ
   # inMSEQ
@@ -2100,6 +2119,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inBDEB
+    updateTextInput(session, "inTTEB", NULL, input$inBDEB)
     updateTextInput(session, "inHealthEB", NULL, input$inBDEB)
     updateTextInput(session, "inMETEB", NULL, input$inBDEB)
     updateTextInput(session, "inMSEB", NULL, input$inBDEB)
@@ -2108,6 +2128,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inHealthEB
+    updateTextInput(session, "inTTEB", NULL, input$inHealthEB)
     updateTextInput(session, "inBDEB", NULL, input$inHealthEB)
     updateTextInput(session, "inMETEB", NULL, input$inHealthEB)
     updateTextInput(session, "inMSEB", NULL, input$inHealthEB)
@@ -2116,6 +2137,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMETEB
+    updateTextInput(session, "inTTEB", NULL, input$inMETEB)
     updateTextInput(session, "inBDEB", NULL, input$inMETEB)
     updateTextInput(session, "inHealthEB", NULL, input$inMETEB)
     updateTextInput(session, "inMSEB", NULL, input$inMETEB)
@@ -2124,6 +2146,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSEB
+    updateTextInput(session, "inTTEB", NULL, input$inMSEB)
     updateTextInput(session, "inBDEB", NULL, input$inMSEB)
     updateTextInput(session, "inHealthEB", NULL, input$inMSEB)
     updateTextInput(session, "inMETEB", NULL, input$inMSEB)
@@ -2132,6 +2155,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMEB
+    updateTextInput(session, "inTTEB", NULL, input$inCMEB)
     updateTextInput(session, "inBDEB", NULL, input$inCMEB)
     updateTextInput(session, "inHealthEB", NULL, input$inCMEB)
     updateTextInput(session, "inMETEB", NULL, input$inCMEB)
@@ -2140,11 +2164,22 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2EB
+    updateTextInput(session, "inTTEB", NULL, input$inCO2EB)
     updateTextInput(session, "inBDEB", NULL, input$inCO2EB)
     updateTextInput(session, "inHealthEB", NULL, input$inCO2EB)
     updateTextInput(session, "inMETEB", NULL, input$inCO2EB)
     updateTextInput(session, "inMSEB", NULL, input$inCO2EB)
     updateTextInput(session, "inCMEB", NULL, input$inCO2EB)
+  })
+  
+  
+  observe({input$inTTEB
+    updateTextInput(session, "inCO2EB", NULL, input$inTTEB)
+    updateTextInput(session, "inBDEB", NULL, input$inTTEB)
+    updateTextInput(session, "inHealthEB", NULL, input$inTTEB)
+    updateTextInput(session, "inMETEB", NULL, input$inTTEB)
+    updateTextInput(session, "inMSEB", NULL, input$inTTEB)
+    updateTextInput(session, "inCMEB", NULL, input$inTTEB)
   })
   
   # inBDEB
@@ -2156,6 +2191,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inBDMS
+    updateTextInput(session, "inTTMS", NULL, input$inBDMS)
     updateTextInput(session, "inHealthMS", NULL, input$inBDMS)
     updateTextInput(session, "inMETMS", NULL, input$inBDMS)
     updateTextInput(session, "inMSMS", NULL, input$inBDMS)
@@ -2165,6 +2201,7 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inHealthMS
+    updateTextInput(session, "inTTMS", NULL, input$inHealthMS)
     updateTextInput(session, "inBDMS", NULL, input$inHealthMS)
     updateTextInput(session, "inMETMS", NULL, input$inHealthMS)
     updateTextInput(session, "inMSMS", NULL, input$inHealthMS)
@@ -2173,6 +2210,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMETMS
+    updateTextInput(session, "inTTMS", NULL, input$inMETMS)
     updateTextInput(session, "inBDMS", NULL, input$inMETMS)
     updateTextInput(session, "inHealthMS", NULL, input$inMETMS)
     updateTextInput(session, "inMSMS", NULL, input$inMETMS)
@@ -2181,6 +2219,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSMS
+    updateTextInput(session, "inTTMS", NULL, input$inMSMS)
     updateTextInput(session, "inBDMS", NULL, input$inMSMS)
     updateTextInput(session, "inHealthMS", NULL, input$inMSMS)
     updateTextInput(session, "inMETMS", NULL, input$inMSMS)
@@ -2189,6 +2228,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMMS
+    updateTextInput(session, "inTTMS", NULL, input$inCMMS)
     updateTextInput(session, "inBDMS", NULL, input$inCMMS)
     updateTextInput(session, "inHealthMS", NULL, input$inCMMS)
     updateTextInput(session, "inMETMS", NULL, input$inCMMS)
@@ -2197,6 +2237,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2MS
+    updateTextInput(session, "inTTMS", NULL, input$inCO2MS)
     updateTextInput(session, "inBDMS", NULL, input$inCO2MS)
     updateTextInput(session, "inHealthMS", NULL, input$inCO2MS)
     updateTextInput(session, "inMETMS", NULL, input$inCO2MS)
@@ -2205,9 +2246,19 @@ shinyServer(function(input, output, session){
   })
   
   
+  observe({input$inTTMS
+    updateTextInput(session, "inCO2MS", NULL, input$inTTMS)
+    updateTextInput(session, "inBDMS", NULL, input$inTTMS)
+    updateTextInput(session, "inHealthMS", NULL, input$inTTMS)
+    updateTextInput(session, "inMETMS", NULL, input$inTTMS)
+    updateTextInput(session, "inMSMS", NULL, input$inTTMS)
+    updateTextInput(session, "inCMMS", NULL, input$inTTMS)
+  })
+  
   # age
   
   observe({input$inBDAG
+    updateTextInput(session, "inTTAG", NULL, input$inBDAG)
     updateTextInput(session, "mag", NULL, input$inBDAG)
     updateTextInput(session, "inMSAG", NULL, input$inBDAG)
     updateTextInput(session, "inCMAG", NULL, input$inBDAG)
@@ -2216,6 +2267,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$mag
+    updateTextInput(session, "inTTAG", NULL, input$mag)
     updateTextInput(session, "inBDAG", NULL, input$mag)
     updateTextInput(session, "inMSAG", NULL, input$mag)
     updateTextInput(session, "inCMAG", NULL, input$mag)
@@ -2223,6 +2275,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSAG
+    updateTextInput(session, "inTTAG", NULL, input$inMSAG)
     updateTextInput(session, "inBDAG", NULL, input$inMSAG)
     updateTextInput(session, "mag", NULL, input$inMSAG)
     updateTextInput(session, "inCMAG", NULL, input$inMSAG)
@@ -2230,6 +2283,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMAG
+    updateTextInput(session, "inTTAG", NULL, input$inCMAG)
     updateTextInput(session, "inBDAG", NULL, input$inCMAG)
     updateTextInput(session, "mag", NULL, input$inCMAG)
     updateTextInput(session, "inMSAG", NULL, input$inCMAG)
@@ -2237,10 +2291,19 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2AG
+    updateTextInput(session, "inTTAG", NULL, input$inCO2AG)
     updateTextInput(session, "inBDAG", NULL, input$inCO2AG)
     updateTextInput(session, "mag", NULL, input$inCO2AG)
     updateTextInput(session, "inMSAG", NULL, input$inCO2AG)
     updateTextInput(session, "inCMAG", NULL, input$inCO2AG)
+  })
+  
+  observe({input$inTTAG
+    updateTextInput(session, "inCO2AG", NULL, input$inTTAG)
+    updateTextInput(session, "inBDAG", NULL, input$inTTAG)
+    updateTextInput(session, "mag", NULL, input$inTTAG)
+    updateTextInput(session, "inMSAG", NULL, input$inTTAG)
+    updateTextInput(session, "inCMAG", NULL, input$inTTAG)
   })
   
   #   inBDAG
@@ -2253,6 +2316,7 @@ shinyServer(function(input, output, session){
   # gender
   
   observe({input$inBDGender
+    updateTextInput(session, "inTTGender", NULL, input$inBDGender)
     updateTextInput(session, "inHealthG", NULL, input$inBDGender)
     updateTextInput(session, "mgender", NULL, input$inBDGender)
     updateTextInput(session, "inMSG", NULL, input$inBDGender)
@@ -2261,6 +2325,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inHealthG
+    updateTextInput(session, "inTTGender", NULL, input$inHealthG)
     updateTextInput(session, "inBDGender", NULL, input$inHealthG)
     updateTextInput(session, "mgender", NULL, input$inHealthG)
     updateTextInput(session, "inMSG", NULL, input$inHealthG)
@@ -2269,6 +2334,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$mgender
+    updateTextInput(session, "inTTGender", NULL, input$mgender)
     updateTextInput(session, "inBDGender", NULL, input$mgender)
     updateTextInput(session, "inHealthG", NULL, input$mgender)
     updateTextInput(session, "inMSG", NULL, input$mgender)
@@ -2278,6 +2344,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSG
+    updateTextInput(session, "inTTGender", NULL, input$inMSG)
     updateTextInput(session, "inBDGender", NULL, input$inMSG)
     updateTextInput(session, "inHealthG", NULL, input$inMSG)
     updateTextInput(session, "mgender", NULL, input$inMSG)
@@ -2286,6 +2353,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMG
+    updateTextInput(session, "inTTGender", NULL, input$inCMG)
     updateTextInput(session, "inBDGender", NULL, input$inCMG)
     updateTextInput(session, "inHealthG", NULL, input$inCMG)
     updateTextInput(session, "mgender", NULL, input$inCMG)
@@ -2294,11 +2362,21 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2G
+    updateTextInput(session, "inTTGender", NULL, input$inCO2G)
     updateTextInput(session, "inBDGender", NULL, input$inCO2G)
     updateTextInput(session, "inHealthG", NULL, input$inCO2G)
     updateTextInput(session, "mgender", NULL, input$inCO2G)
     updateTextInput(session, "inMSG", NULL, input$inCO2G)
     updateTextInput(session, "inCMG", NULL, input$inCO2G)
+  })
+  
+  observe({input$inTTGender
+    updateTextInput(session, "inCO2G", NULL, input$inTTGender)
+    updateTextInput(session, "inBDGender", NULL, input$inTTGender)
+    updateTextInput(session, "inHealthG", NULL, input$inTTGender)
+    updateTextInput(session, "mgender", NULL, input$inTTGender)
+    updateTextInput(session, "inMSG", NULL, input$inTTGender)
+    updateTextInput(session, "inCMG", NULL, input$inTTGender)
   })
   
   #   inBDGender
@@ -2312,6 +2390,7 @@ shinyServer(function(input, output, session){
   # SES
   
   observe({input$inBDSES
+    updateTextInput(session, "inTTSES", NULL, input$inBDSES)
     updateTextInput(session, "mses", NULL, input$inBDSES)
     updateTextInput(session, "inMSSES", NULL, input$inBDSES)
     updateTextInput(session, "inCMSES", NULL, input$inBDSES)
@@ -2320,6 +2399,7 @@ shinyServer(function(input, output, session){
   
   
   observe({input$mses
+    updateTextInput(session, "inTTSES", NULL, input$mses)
     updateTextInput(session, "inBDSES", NULL, input$mses)
     updateTextInput(session, "inMSSES", NULL, input$mses)
     updateTextInput(session, "inCMSES", NULL, input$mses)
@@ -2327,6 +2407,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSSES
+    updateTextInput(session, "inTTSES", NULL, input$inMSSES)
     updateTextInput(session, "inBDSES", NULL, input$inMSSES)
     updateTextInput(session, "mses", NULL, input$inMSSES)
     updateTextInput(session, "inCMSES", NULL, input$inMSSES)
@@ -2334,6 +2415,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMSES
+    updateTextInput(session, "inTTSES", NULL, input$inCMSES)
     updateTextInput(session, "inBDSES", NULL, input$inCMSES)
     updateTextInput(session, "mses", NULL, input$inCMSES)
     updateTextInput(session, "inMSSES", NULL, input$inCMSES)
@@ -2341,10 +2423,19 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2SES
+    updateTextInput(session, "inTTSES", NULL, input$inCO2SES)
     updateTextInput(session, "inBDSES", NULL, input$inCO2SES)
     updateTextInput(session, "mses", NULL, input$inCO2SES)
     updateTextInput(session, "inMSSES", NULL, input$inCO2SES)
     updateTextInput(session, "inCMSES", NULL, input$inCO2SES)
+  })
+  
+  observe({input$inTTSES
+    updateTextInput(session, "inCO2SES", NULL, input$inTTSES)
+    updateTextInput(session, "inBDSES", NULL, input$inTTSES)
+    updateTextInput(session, "mses", NULL, input$inTTSES)
+    updateTextInput(session, "inMSSES", NULL, input$inTTSES)
+    updateTextInput(session, "inCMSES", NULL, input$inTTSES)
   })
   
   
@@ -2358,6 +2449,7 @@ shinyServer(function(input, output, session){
   
   
   observe({input$inBDEthnicity
+    updateTextInput(session, "inTTEthnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inBDEthnicity)
@@ -2365,6 +2457,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$methnicity
+    updateTextInput(session, "inTTEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inBDEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$methnicity)
@@ -2373,6 +2466,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSEthnicity
+    updateTextInput(session, "inTTEthnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "inBDEthnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inMSEthnicity)
@@ -2380,6 +2474,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMEthnicity
+    updateTextInput(session, "inTTEthnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "inBDEthnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inCMEthnicity)
@@ -2387,10 +2482,19 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2Ethnicity
+    updateTextInput(session, "inTTEthnicity", NULL, input$inCO2Ethnicity)
     updateTextInput(session, "inBDEthnicity", NULL, input$inCO2Ethnicity)
     updateTextInput(session, "methnicity", NULL, input$inCO2Ethnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inCO2Ethnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inCO2Ethnicity)
+  })
+  
+  observe({input$inTTEthnicity
+    updateTextInput(session, "inCO2Ethnicity", NULL, input$inTTEthnicity)
+    updateTextInput(session, "inBDEthnicity", NULL, input$inTTEthnicity)
+    updateTextInput(session, "methnicity", NULL, input$inTTEthnicity)
+    updateTextInput(session, "inMSEthnicity", NULL, input$inTTEthnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inTTEthnicity)
   })
   
   #   inBDEthnicity
@@ -2401,6 +2505,7 @@ shinyServer(function(input, output, session){
   
   
   observe({input$flipMS
+    updateTextInput(session, "flipTT", NULL, input$flipMS)
     updateTextInput(session, "flipMETHG", NULL, input$flipMS)
     updateTextInput(session, "inMSflip", NULL, input$flipMS)
     updateTextInput(session, "inCMflip", NULL, input$flipMS)
@@ -2408,6 +2513,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$flipMETHG
+    updateTextInput(session, "flipTT", NULL, input$flipMETHG)
     updateTextInput(session, "flipMS", NULL, input$flipMETHG)
     updateTextInput(session, "inMSflip", NULL, input$flipMETHG)
     updateTextInput(session, "inCMflip", NULL, input$flipMETHG)
@@ -2416,6 +2522,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inMSflip
+    updateTextInput(session, "flipTT", NULL, input$inMSflip)
     updateTextInput(session, "flipMS", NULL, input$inMSflip)
     updateTextInput(session, "flipMETHG", NULL, input$inMSflip)
     updateTextInput(session, "inCMflip", NULL, input$inMSflip)
@@ -2424,6 +2531,7 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCMflip
+    updateTextInput(session, "flipTT", NULL, input$inCMflip)
     updateTextInput(session, "flipMS", NULL, input$inCMflip)
     updateTextInput(session, "flipMETHG", NULL, input$inCMflip)
     updateTextInput(session, "inMSflip", NULL, input$inCMflip)
@@ -2431,11 +2539,21 @@ shinyServer(function(input, output, session){
   })
   
   observe({input$inCO2flip
+    updateTextInput(session, "flipTT", NULL, input$inCO2flip)
     updateTextInput(session, "flipMS", NULL, input$inCO2flip)
     updateTextInput(session, "flipMETHG", NULL, input$inCO2flip)
     updateTextInput(session, "inMSflip", NULL, input$inCO2flip)
     updateTextInput(session, "inCMflip", NULL, input$inCO2flip)
   })
+  
+  observe({input$flipTT
+    updateTextInput(session, "inCO2flip", NULL, input$flipTT)
+    updateTextInput(session, "flipMS", NULL, input$flipTT)
+    updateTextInput(session, "flipMETHG", NULL, input$flipTT)
+    updateTextInput(session, "inMSflip", NULL, input$flipTT)
+    updateTextInput(session, "inCMflip", NULL, input$flipTT)
+  })
+  
   
   
   #flipMS
