@@ -1170,7 +1170,10 @@ shinyServer(function(input, output, session){
       
       total_col <- ncol(scFilteredTripTimeTraveldata)
       umode <- unique(scFilteredTripTimeTraveldata[,total_col])
+      # brks <- matrix(nrow = length(umode), ncol = 1)
+      # brks <- list()
       h1$title(text = "Histogram of Relative Changes in Trip Durations")
+      xdf <- data.frame(breaks = seq(-60,200, 20), count = 0)
       for (i in 1:length(umode)){
         ldata <- subset(scFilteredTripTimeTraveldata, scFilteredTripTimeTraveldata[,total_col] == umode[i])
         dhist <- hist(ldata$diff)
@@ -1178,11 +1181,13 @@ shinyServer(function(input, output, session){
         data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
         data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
         data <- subset(data, freq >= 0.1)
-        data <- subset(data, breaks = 0)
-        
+        data <- subset(data, select = c(breaks, freq))
+        data <- appendMissingFrequencies(xdf, data)
+
         h1$series(data =  data$freq, name = mname[i]) #"Time Difference from Baseline (%)
+        # brks[[i]] <- append(brks, data$breaks)
       }
-      
+      # print(brks)
       if (nrow(data) == 1){
         xlabel <- data$breaks
         h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
@@ -1195,7 +1200,7 @@ shinyServer(function(input, output, session){
         
       }else{
         
-        h1$xAxis(categories = paste(data$breaks, "%"))
+        h1$xAxis(categories = paste(xdf$breaks, "%"))
       }
       
       h1$tooltip(valueSuffix= '%')
