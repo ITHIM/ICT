@@ -31,7 +31,7 @@ tripData <- read.csv("data/csv/tripsdf.csv", header = T, as.is = T)
 tripMode <- read.csv("data/csv/tripsdf_updated.csv", header = T, as.is = T)
 
 # Read trip time
-tripTime <- read.csv("data/csv/triptime.csv", header = T, as.is = T)
+tripTime <- read.csv("data/csv/triptime1.csv", header = T, as.is = T)
 
 # Get row numbers with NA
 temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
