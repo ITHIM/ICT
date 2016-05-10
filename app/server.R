@@ -1143,52 +1143,78 @@ shinyServer(function(input, output, session){
     
   })
   
+  getModeTimeFilteredTitle <- function(){
+    
+    filtered_title <- ""
+    if (input$inTTAG != "All" || input$inTTGender != 3 || input$inTTEthnicity != "All" || input$inTTSES != "All" ){
+      displayGender <- "All"
+      if (input$inTTGender == 1){
+        displayGender <- "Male"
+      }else if (input$inTTGender == 2){
+        displayGender <- "Female"
+      }
+      
+      displayEthnicity <- "All"
+      if (input$inTTEthnicity == 1){
+        displayEthnicity <- "White"
+      }else if (input$inTTEthnicity == 2){
+        displayEthnicity <- "Non-White"
+      }
+      
+      displaySES <- "All"
+      if (input$inTTSES == 1){
+        displaySES <- "Managerial and professional occupations"
+      }else if (input$inTTSES == 2){
+        displaySES <- "Intermediate occupations and small employers"
+      }else if (input$inTTSES == 3){
+        displaySES <- "Routine and manual occupations"
+      }else if (input$inTTSES == 4){
+        displaySES <- "Never worked and long-term unemployed"
+      }else if (input$inTTSES == 5){
+        displaySES <- "Not classified (including students)"
+      }
+      filtered_title <- paste("Age Group: ", str_trim(input$inTTAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title
+    }else
+      filtered_title
+  }
+  
   output$plotTTMode <- renderChart({
     generateTTData()
-    #scenariosTimeTravelIdata
     h1 <- Highcharts$new()
     h1$chart(type = "column")
     h1$yAxis(title = list(text = 'Percentage %'))
-    #              , min = 0, max = 80 )
+    
     
     if (!is.null(scFilteredTripTimeTraveldata) && nrow(scFilteredTripTimeTraveldata) > 0){
       
-      h1$plotOptions(column = list(animation=FALSE,
-                                   dataLabels = list(enabled = T, 
-                                                     formatter = format_function,      
-                                                     rotation = -90, 
-                                                     align = 'right', 
-                                                     color = '#FFFFFF', 
-                                                     width = 100,
-                                                     x = 4, 
-                                                     y = 10, 
-                                                     style = list(fontSize = '11px', fontFamily = 'Verdana, sans-serif'))),
-                     series = list(dataLabels = list(crop = F))
-      )
+      # mname <- c("Walk", "Bicycle", "Car", "Other")
+      mname <- c("Walk", "Car", "Other")
       
-      mname <- c("Walk", "Bicycle", "Car", "Other")
-      
-      total_col <- ncol(scFilteredTripTimeTraveldata)
-      umode <- unique(scFilteredTripTimeTraveldata[,total_col])
-      # brks <- matrix(nrow = length(umode), ncol = 1)
-      # brks <- list()
+      #total_col <- ncol(scFilteredTripTimeTraveldata)
+      total_col <- "baseline"
+      umode <- sort(unique(scFilteredTripTimeTraveldata[,total_col]))
+      # Exclude bicycle mode
+      umode <- umode[umode != 2]
       h1$title(text = "Histogram of Relative Changes in Trip Durations")
       xdf <- data.frame(breaks = seq(-60,200, 20), count = 0)
+      xlab <- ""
       for (i in 1:length(umode)){
         ldata <- subset(scFilteredTripTimeTraveldata, scFilteredTripTimeTraveldata[,total_col] == umode[i])
-        dhist <- hist(ldata$diff)
-        
-        data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
-        data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
-        data <- subset(data, freq >= 0.1)
-        data <- subset(data, select = c(breaks, freq))
-        data <- appendMissingFrequencies(xdf, data)
 
-        h1$series(data =  data$freq, name = mname[i]) #"Time Difference from Baseline (%)
-        # brks[[i]] <- append(brks, data$breaks)
+        bc <- as.data.frame(table (cut (ldata$diff, breaks = c(unique(seq(-60,200, 20), max(ldata$diff))))))
+        bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
+        
+        #data <- data.frame(breaks = dhist$breaks[-1], counts = dhist$counts, 0)
+        #data$freq <- round(data$counts / sum(data$counts) * 100, digits = 1)
+        #data <- subset(data, freq >= 0.1)
+        #data <- subset(data, select = c(breaks, freq))
+        #data <- appendMissingFrequencies(xdf, data)
+        
+        h1$series(data =  bc$Freq, name = mname[i]) #"Time Difference from Baseline (%)
+        xlab <- bc$Var1
       }
-      # print(brks)
-      if (nrow(data) == 1){
+      if (nrow(scFilteredTripTimeTraveldata) == 1){
         xlabel <- data$breaks
         h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
                                                                   fontFamily = 'Verdana, sans-serif',
@@ -1200,16 +1226,76 @@ shinyServer(function(input, output, session){
         
       }else{
         
-        h1$xAxis(categories = paste(xdf$breaks, "%"))
+        # h1$xAxis(categories = paste(append(xdf$breaks, "200+"), "%"))
+        h1$xAxis(categories = paste0(">",seq(-60, 180, 20), " <= ", seq(-40, 200, 20), " %"))
       }
       
       h1$tooltip(valueSuffix= '%')
+      st <- getModeTimeFilteredTitle()
+      
+      h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
       
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     
     h1$set(dom = 'plotTTMode')
+    h1$exporting(enabled = T)
+    return(h1)
+  })
+  
+  
+  output$plotTTModeDifference <- renderChart({
+    generateTTData()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    h1$yAxis(title = list(text = 'Percentage %'))
+    if (!is.null(scFilteredTripTimeTraveldata) && nrow(scFilteredTripTimeTraveldata) > 0){
+      
+      mname <- c("Walk", "Car", "Other")
+      
+      #total_col <- ncol(scFilteredTripTimeTraveldata)
+      total_col <- "baseline"
+      umode <- sort(unique(scFilteredTripTimeTraveldata[,total_col]))
+      # Exclude bicycle mode
+      umode <- umode[umode != 2]
+      h1$title(text = "Histogram of Absolute Changes in Trip Durations")
+      for (i in 1:length(umode)){
+        ldata <- subset(scFilteredTripTimeTraveldata, scFilteredTripTimeTraveldata[,total_col] == umode[i])
+        
+        
+        data <- data.frame(counts = c(nrow(subset(ldata, diff < 0)),
+                                      #nrow(subset(ldata, diff == 0)),
+                                      nrow(subset(ldata, diff > 0))))
+        data$counts <- round(data$counts / nrow(ldata) * 100, 2)
+        h1$series(data =  data$counts, name = mname[i]) #"Time Difference from Baseline (%)
+      }
+      if (nrow(data) == 1){
+        xlabel <- data$breaks
+        h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
+                                                                  fontFamily = 'Verdana, sans-serif',
+                                                                  whiteSpace = 'nowrap',
+                                                                  paddingLeft = '10px',
+                                                                  paddingRight = '10px',
+                                                                  paddingTop = '10px'))
+        )
+        
+      }else{
+        h1$xAxis(categories = c("Faster", "Slower"))
+      }
+      
+      h1$tooltip(valueSuffix= '%')
+      st <- getModeTimeFilteredTitle()
+      cat("st: ", st, "\n")
+      
+      h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      
+      
+    }else{
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+    }
+    
+    h1$set(dom = 'plotTTModeDifference')
     h1$exporting(enabled = T)
     return(h1)
   })
@@ -1237,9 +1323,6 @@ shinyServer(function(input, output, session){
     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
                         paste("eq", input$inTTEQ,sep = ""), sep="_")
     
-    
-    # localtripData <- tripTime[,c("X","baseline", columnName)]
-    
     # Get row numbers with NA
     temp <- data.frame(rn = which(tripTime$X %in% data$X))
     
@@ -1251,19 +1334,14 @@ shinyServer(function(input, output, session){
     
     localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$baseline) / localtripData$baseline ) * 100)
     
-#     bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
-#     bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-#     bc1max <- max(bc$Freq, na.rm = T)
-    
-    
-    #names(localtripData) <- c("rn", "baseline", "diff")
     localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
     
     locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
     
     names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
-    #tripDataSubset <- subset(tripDataSubset, diff != 0 )
     localtripData <- inner_join(localtripData, locatTripModeData, by = "rn")
+    
+    localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
     scFilteredTripTimeTraveldata <<- localtripData
     #scFilteredTripModeTraveldata <<- locatTripModeData
   })
