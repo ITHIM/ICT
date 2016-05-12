@@ -26,7 +26,7 @@ lookup_table <- function(data, ag){
 format_function <- "#! function() {
         var fraction  = this.y / this.series.yAxis.max * 100;
         if (fraction > 20){
-              return this.y;
+              return Math.round(this.y);
         }else{
             return null;
         }
@@ -53,4 +53,35 @@ appendMissingFrequencies <- function( df1, df2){
     }
   }
   df2
+}
+
+
+#(tripTime, tripMode, "MS64_ebik1_eq1", 2)
+
+getModeSpecificTrips <- function(data1, data2, columnName, mn){
+  
+  data1[is.na(data1)] <- 0
+  
+  temp <- data.frame(rn = data1$X)
+  
+  locatTripModeData <- data2[,c("X","baseline", columnName)]
+  
+  locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
+  
+  localtripData <- data1[,c("X","baseline", columnName)]
+  
+  localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$baseline) / localtripData$baseline ) * 100)
+  
+  localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
+  
+  locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
+  
+  names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
+  localtripData <- dplyr::inner_join(localtripData, locatTripModeData, by = "rn")
+  
+  wtrips <- subset(localtripData, baseline == mn)
+  
+  wtrips
+  
+  
 }
