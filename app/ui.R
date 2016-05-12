@@ -43,6 +43,9 @@ denominatorRButton <- c("Total Population" = "pop",
 phyGLRButton <- c("Marginal MET hours" =    "off",
                   "% meeting WHO physical activity guidelines" = "on")
 
+TTRButton <- c("Histogram" =    "histogram",
+                  "Slower/Faster trips" = "trip speed")
+
 onOffRButton <- c("On" = 1,
                   "Off" = 0)
 
@@ -126,8 +129,10 @@ shinyUI(fluidPage(
                      radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
                      selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
                      radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     #HTML("<hr>"),
+                     #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
                      HTML("<hr>"),
-                     radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE)
+                     radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
                      
     ),
     conditionalPanel(condition="input.conditionedPanels == 3",
@@ -241,8 +246,9 @@ shinyUI(fluidPage(
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                ))
                ,
-               showOutput("plotTTMode", "highcharts"),
-               showOutput("plotTTModeDifference", "highcharts")
+               showOutput("plotTTTotalMode", "highcharts"),
+               HTML("Faster <-> Slower"),
+               showOutput("plotTTFilteredMode", "highcharts")
       ),
       tabPanel("Miles Cycled", value = 3,
                a(id = "MCHelp", "Help?", href = "#"),
