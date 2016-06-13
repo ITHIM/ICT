@@ -57,7 +57,7 @@ healthRButton <- c("Years of Life Lost (YLL)" = "YLL",
                    "Deaths" = "Deaths")
 
 ag <- "All"
-ag <- append(ag, sort(unique(as.character(tripData$age_group))))
+ag <- append(ag, sort(unique(as.character(tripMode$age_group))))
 
 healthAG <- c("All", "18 - 39", "40 - 59", "60 - 84")
 
