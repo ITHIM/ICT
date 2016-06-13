@@ -797,14 +797,14 @@ shinyServer(function(input, output, session){
     columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
                         paste("eq", input$inBDEQ,sep = ""), sep="_")
     # cat(columnName, "\n")
-    colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "MainMode_Reduced", columnName)
-    data <- tripData[,colList]
+    colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "baseline", columnName)
+    data <- tripMode[,colList]
     
     #     msbl <- subset(tripData, select = MainMode_Reduced)
     #     msbl <- count(msbl, "MainMode_Reduced")
     #     names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
     
-    msbl <- data.frame(baseline = tripData$MainMode_Reduced)
+    msbl <- data.frame(baseline = tripMode$baseline)
     
     msbl <- count(msbl)
     
@@ -820,7 +820,7 @@ shinyServer(function(input, output, session){
     #     mssc <- count(mssc, columnName)
     #     names(mssc)[names(mssc)== columnName] <- "scenario"
     
-    mssc <- data.frame(scenario = tripData[[columnName]])
+    mssc <- data.frame(scenario = tripMode[[columnName]])
     
     mssc <- count(mssc)
     
@@ -857,7 +857,7 @@ shinyServer(function(input, output, session){
     
     tdScenario <<- data1
     
-    data2 <- count(data, "MainMode_Reduced")
+    data2 <- count(data, "baseline")
     names(data2)[names(data2)== columnName] <- "baseline"
     
     data2$freq <- round(data2$freq / sum(data2$freq) * 100, digit = 1)
@@ -1459,6 +1459,18 @@ shinyServer(function(input, output, session){
     temp <- data.frame(rn = which(tripTime$X %in% data$X))
     
     locatTripModeData <- tripMode[,c("X","baseline", columnName)]
+    
+    # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
+    # Reduce the number of modes to 4
+    # walk, bicycle, car, others
+    lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
+    
+    # Replace number of modes in each of the scenarios and the baseline to 4
+    locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
+    
+    # Replace number of modes in each of the scenarios and the baseline to 4
+    locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
+
     # Remove all rows with NA in them
     locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
     
@@ -1482,6 +1494,13 @@ shinyServer(function(input, output, session){
     temp <- data.frame(rn = tripTime$X)
     
     locatTripModeData <- tripMode[,c("X","baseline", columnName)]
+    
+    # Replace number of modes in each of the scenarios and the baseline to 4
+    locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
+    
+    # Replace number of modes in each of the scenarios and the baseline to 4
+    locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
+    
     # Remove all rows with NA in them
     locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
     
