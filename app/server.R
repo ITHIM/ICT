@@ -1239,7 +1239,8 @@ shinyServer(function(input, output, session){
         }else{
           
           # h1$xAxis(categories = c("(-100,-50]", "(-50,-20]","(-20,0]","(0,20]","(20,50]","(50,100]","(100,Inf]" ))
-          h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          # h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          h1$xAxis(categories = c(">51% faster", "21-50% faster","0-20% faster","1-20% slower","21-50% slower","51-100% slower",">101% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
@@ -1321,10 +1322,10 @@ shinyServer(function(input, output, session){
                                dataLabels = list(enabled = T, 
                                                  crop = FALSE, 
                                                  rotation = -90, 
-                                                 align = 'right', 
+                                                 align = 'center', 
                                                  color = '#FFFFFF', 
                                                  width = 100,
-                                                 x = 3, 
+                                                 x = 0, 
                                                  y = 10, 
                                                  style = list(fontSize = '09px', fontFamily = 'Verdana, sans-serif'),
                                                  formatter = format_function)))
@@ -1365,7 +1366,8 @@ shinyServer(function(input, output, session){
         }else{
           
           # h1$xAxis(categories = c("(-100,-50]", "(-50,-20]","(-20,0]","(0,20]","(20,50]","(50,100]","(100,Inf]" ))
-          h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          # h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          h1$xAxis(categories = c(">51% faster", "21-50% faster","0-20% faster","1-20% slower","21-50% slower","51-100% slower",">101% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
