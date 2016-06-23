@@ -1184,19 +1184,19 @@ shinyServer(function(input, output, session){
     input$flipTTPlot
     generateTTData()
     h1 <- Highcharts$new()
-    h1$chart(type = "column")
+    h1$chart(type = "column", style = list(fontFamily = 'Verdana, sans-serif', fontSize = '12px'))
     h1$yAxis(title = list(text = 'Percentage %'))
     
     h1$plotOptions(column=list(animation=FALSE, 
                                dataLabels = list(enabled = T, 
                                                  crop = FALSE, 
                                                  rotation = -90, 
-                                                 align = 'right', 
+                                                 align = 'center', 
                                                  color = '#FFFFFF', 
                                                  width = 100,
-                                                 x = 3, 
+                                                 x = 0, 
                                                  y = 10, 
-                                                 style = list(fontSize = '09px', fontFamily = 'Verdana, sans-serif'),
+                                                 style = list(fontSize = '9px'),
                                                  formatter = format_function)))
     
     
@@ -1228,27 +1228,29 @@ shinyServer(function(input, output, session){
         }
         if (nrow(scFilteredTripTimeTraveldata) == 1){
           xlabel <- data$breaks
-          h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
-                                                                    fontFamily = 'Verdana, sans-serif',
-                                                                    whiteSpace = 'nowrap',
-                                                                    paddingLeft = '10px',
-                                                                    paddingRight = '10px',
-                                                                    paddingTop = '10px'))
+          h1$xAxis(categories = c("%") , labels = list(padding = 10,
+                                                       style = list(fontSize = '10px',
+                                                                    whiteSpace = 'nowrap'))
           )
           
         }else{
           
           # h1$xAxis(categories = c("(-100,-50]", "(-50,-20]","(-20,0]","(0,20]","(20,50]","(50,100]","(100,Inf]" ))
-          h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          # h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower"))
         }
         
         h1$tooltip(valueSuffix= '%')
         st <- getModeTimeFilteredTitle()
         
-        h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+        h1$subtitle(text = st, style = list(fontSize = '12px',
+                                            fontWeight = 'bold'))
         
       }else{
-        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
+                    style = list(fontSize = '14px',
+                                 fontWeight = 'bold',
+                                 color = "#f00"))
       }
       
     }else{
@@ -1280,14 +1282,13 @@ shinyServer(function(input, output, session){
           data$counts <- round(data$counts / nrow(scFilteredTripTimeTraveldata) * 100, 2)
           h1$series(data =  data$counts, name = mname[i]) #"Time Difference from Baseline (%)
         }
+        
         if (nrow(data) == 1){
           xlabel <- data$breaks
-          h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
-                                                                    fontFamily = 'Verdana, sans-serif',
-                                                                    whiteSpace = 'nowrap',
-                                                                    paddingLeft = '10px',
-                                                                    paddingRight = '10px',
-                                                                    paddingTop = '10px'))
+          h1$xAxis(categories = c("%"), labels = list(padding = 10,
+                                                      style = list(fontSize = '10px',
+                                                                   whiteSpace = 'nowrap'
+                                                                   ))
           )
           
         }else{
@@ -1296,37 +1297,41 @@ shinyServer(function(input, output, session){
         
         h1$tooltip(valueSuffix= '%')
         st <- getModeTimeFilteredTitle()
-        h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+        h1$subtitle(text = st, style = list(fontSize = '12px'))
         
         
       }else{
-        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
+                    style = list(fontSize = '14px',
+                                 fontWeight = 'bold',
+                                 color = "#f00"))
       }
       
     }
     
     h1$set(dom = 'plotTTFilteredMode')
-    h1$exporting(enabled = T)
+    h1$exporting(enabled = T,
+                 chartOptions = list(chart = list(style = list(fontFamily = 'Arial')),
+                                     xAxis = list(labels = list(style = list(fontSize = '8px')))))
     return(h1)
   })
-  
   
   output$plotTTTotalMode <- renderChart({
     generateTTData()
     h1 <- Highcharts$new()
-    h1$chart(type = "column")
+    h1$chart(type = "column", style = list(fontFamily = 'Verdana, sans-serif', fontSize = '12px'))
     h1$yAxis(title = list(text = 'Percentage %'))
     
     h1$plotOptions(column=list(animation=FALSE, 
                                dataLabels = list(enabled = T, 
                                                  crop = FALSE, 
                                                  rotation = -90, 
-                                                 align = 'right', 
+                                                 align = 'center', 
                                                  color = '#FFFFFF', 
                                                  width = 100,
-                                                 x = 3, 
+                                                 x = 0, 
                                                  y = 10, 
-                                                 style = list(fontSize = '09px', fontFamily = 'Verdana, sans-serif'),
+                                                 style = list(fontSize = '9px'),
                                                  formatter = format_function)))
     
     if (input$flipTTPlot == "histogram"){
@@ -1354,18 +1359,16 @@ shinyServer(function(input, output, session){
         }
         if (nrow(scTripTimeTraveldata) == 1){
           xlabel <- data$breaks
-          h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
-                                                                    fontFamily = 'Verdana, sans-serif',
-                                                                    whiteSpace = 'nowrap',
-                                                                    paddingLeft = '10px',
-                                                                    paddingRight = '10px',
-                                                                    paddingTop = '10px'))
+          h1$xAxis(categories = c("%") , labels = list(padding = 10,
+                                                       style = list(fontSize = '10px',
+                                                                    whiteSpace = 'nowrap'))
           )
           
         }else{
           
           # h1$xAxis(categories = c("(-100,-50]", "(-50,-20]","(-20,0]","(0,20]","(20,50]","(50,100]","(100,Inf]" ))
-          h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          # h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
+          h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
@@ -1374,7 +1377,10 @@ shinyServer(function(input, output, session){
         #h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
         
       }else{
-        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
+                    style = list(fontSize = '14px',
+                                 fontWeight = 'bold',
+                                 color = "#f00"))
       }
       
     }else{
@@ -1403,12 +1409,9 @@ shinyServer(function(input, output, session){
         }
         if (nrow(data) == 1){
           xlabel <- data$breaks
-          h1$xAxis(categories = c("%") , labels = list(style = list(fontSize = '10px', 
-                                                                    fontFamily = 'Verdana, sans-serif',
-                                                                    whiteSpace = 'nowrap',
-                                                                    paddingLeft = '10px',
-                                                                    paddingRight = '10px',
-                                                                    paddingTop = '10px'))
+          h1$xAxis(categories = c("%") , labels = list(padding = 40,
+                                                       style = list(fontSize = '10px',
+                                                                    whiteSpace = 'nowrap'))
           )
           
         }else{
@@ -1421,14 +1424,19 @@ shinyServer(function(input, output, session){
         
         
       }else{
-        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+        h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
+                    style = list(fontSize = '14px',
+                                 fontWeight = 'bold',
+                                 color = "#f00"))
       }
       
     }
     
 
     h1$set(dom = 'plotTTTotalMode')
-    h1$exporting(enabled = T)
+    h1$exporting(enabled = T,
+                 chartOptions = list(chart = list(style = list(fontFamily = 'Arial')),
+                                     xAxis = list(labels = list(style = list(fontSize = '8px')))))
     return(h1)
   })
   

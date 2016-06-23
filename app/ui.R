@@ -238,16 +238,16 @@ shinyUI(fluidPage(
                showOutput("plotBDMode", "highcharts"),
                showOutput("plotBDSCMode", "highcharts")
       ),
-      tabPanel("Mode Time", value = 2,
+      tabPanel("Journey Time", value = 2,
                a(id = "MTHelp", "Help?", href = "#"),
                hidden (div(id = "MTHelpText",
-                           helpText(HTML("Displays plots for trip time for modes based on main mode only. A scenario is selected by a combination of 
+                           helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of 
                                          three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                ))
                ,
                showOutput("plotTTTotalMode", "highcharts"),
-               HTML("Faster <-> Slower"),
+               # HTML("Faster <-> Slower"),
                showOutput("plotTTFilteredMode", "highcharts")
       ),
       tabPanel("Miles Cycled", value = 3,
