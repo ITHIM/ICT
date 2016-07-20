@@ -238,31 +238,31 @@ shinyUI(fluidPage(
                showOutput("plotBDMode", "highcharts"),
                showOutput("plotBDSCMode", "highcharts")
       ),
-      tabPanel("Journey Time", value = 2,
-               a(id = "MTHelp", "Help?", href = "#"),
-               hidden (div(id = "MTHelpText",
-                           helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of 
-                                         three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
-                                         sub-populations and the total population, and/or between selected scenarios and baseline."))
-               ))
-               ,
-               showOutput("plotTTTotalMode", "highcharts"),
-               # HTML("Faster <-> Slower"),
-               showOutput("plotTTFilteredMode", "highcharts")
-      ),
-      tabPanel("Miles Cycled", value = 3,
-               a(id = "MCHelp", "Help?", href = "#"),
-               hidden (div(id = "MCHelpText",
-                           helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with 
-                                         the baseline. Note that the bar charts do not include a bar for people with zero cycling. 
-                                         In order to see the total number of cyclists in scenarios, please refer to the &#39;Number of Cyclists&#39; in the <i>Summary</i> tab. 
-                                         Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the 
-                                         total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the 
-                                         total population, and/or between selected scenarios and baseline."))
-               )),
-               showOutput("plotMilesCycled", "highcharts"),
-               showOutput("plotFilteredMilesCycled", "highcharts")
-      ),
+#       tabPanel("Journey Time", value = 2,
+#                a(id = "MTHelp", "Help?", href = "#"),
+#                hidden (div(id = "MTHelpText",
+#                            helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of 
+#                                          three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
+#                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
+#                ))
+#                ,
+#                showOutput("plotTTTotalMode", "highcharts"),
+#                # HTML("Faster <-> Slower"),
+#                showOutput("plotTTFilteredMode", "highcharts")
+#       ),
+#       tabPanel("Miles Cycled", value = 3,
+#                a(id = "MCHelp", "Help?", href = "#"),
+#                hidden (div(id = "MCHelpText",
+#                            helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with 
+#                                          the baseline. Note that the bar charts do not include a bar for people with zero cycling. 
+#                                          In order to see the total number of cyclists in scenarios, please refer to the &#39;Number of Cyclists&#39; in the <i>Summary</i> tab. 
+#                                          Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the 
+#                                          total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the 
+#                                          total population, and/or between selected scenarios and baseline."))
+#                )),
+#                showOutput("plotMilesCycled", "highcharts"),
+#                showOutput("plotFilteredMilesCycled", "highcharts")
+#       ),
       tabPanel("Physical Activity", value = 4,
                a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
@@ -295,18 +295,18 @@ shinyUI(fluidPage(
                showOutput("plotHealthReduction", "highcharts")
       ),
       
-      
-      tabPanel("Car Miles", value = 6,
-               a(id = "CMHelp", "Help?", href = "#"),
-               hidden (div(id = "CMHelpText",
-                           helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
-                                                    scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a 
-                                                    car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car 
-                                                    miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
-               )),
-               showOutput("plotFilteredCarMiles", "highcharts"),
-               showOutput("plotCarMiles", "highcharts")
-      ),
+#       
+#       tabPanel("Car Miles", value = 6,
+#                a(id = "CMHelp", "Help?", href = "#"),
+#                hidden (div(id = "CMHelpText",
+#                            helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
+#                                                     scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a 
+#                                                     car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car 
+#                                                     miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
+#                )),
+#                showOutput("plotFilteredCarMiles", "highcharts"),
+#                showOutput("plotCarMiles", "highcharts")
+#       ),
       tabPanel(HTML("CO<sub>2<sub>"), value = 7,
                a(id = "CO2Help", "Help?", href = "#"),
                hidden (div(id = "CO2HelpText",
