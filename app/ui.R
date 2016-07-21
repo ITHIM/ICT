@@ -120,35 +120,38 @@ shinyUI(fluidPage(
                      radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
     ),
-    conditionalPanel(condition="input.conditionedPanels == 2",
-                     selectInput(inputId = "inTTMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
-                     radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                     radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                     HTML("<hr>"),
-                     selectizeInput("inTTAG", "Age Group:", ag, selected = ag[1], multiple = F),
-                     radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
-                     selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
-                     radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                     #HTML("<hr>"),
-                     #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
-                     
-    ),
-    conditionalPanel(condition="input.conditionedPanels == 3",
-                     selectInput(inputId = "inMSMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                     radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                     radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                     HTML("<hr>"),
-                     selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
-                     radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
-                     selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
-                     radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
-    ),
+    
+    
+#     ,
+#     conditionalPanel(condition="input.conditionedPanels == 2",
+#                      selectInput(inputId = "inTTMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
+#                      radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+#                      radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+#                      HTML("<hr>"),
+#                      selectizeInput("inTTAG", "Age Group:", ag, selected = ag[1], multiple = F),
+#                      radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
+#                      selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+#                      radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+#                      #HTML("<hr>"),
+#                      #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
+#                      
+#     ),
+#     conditionalPanel(condition="input.conditionedPanels == 3",
+#                      selectInput(inputId = "inMSMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+#                      radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+#                      radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+#                      HTML("<hr>"),
+#                      selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
+#                      radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
+#                      selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
+#                      radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
+#     ),
     conditionalPanel(condition="input.conditionedPanels == 4",
                      selectInput(inputId = "inMETMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
                      radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
@@ -165,53 +168,53 @@ shinyUI(fluidPage(
                      radioButtons("phyGuideline", label = "Physical activity outcome measure:", phyGLRButton, inline = TRUE)
     )
     ,
-    conditionalPanel(condition="input.conditionedPanels == 5",
-                     selectInput(inputId = "inHealthMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                     radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                     radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
-                     HTML("<hr>"),
-                     conditionalPanel(
-                       condition = "input.inHealthSwitch == 'Scenario'",
-                       selectInput(inputId = "inHealthMS1", label = "Select Cycling Multiplier:", choices =  uniqueMS),
-                       radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                       radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
-                     ),
-                     HTML("<hr>"),
-                     selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
-                     radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
-                     
-    ),
-    
-    
-    conditionalPanel(condition="input.conditionedPanels == 6",
-                     selectInput(inputId = "inCMMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                     radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                     radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                     HTML("<hr>"),
-                     selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
-                     radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
-                     selectizeInput("inCMSES", "Socio Economic Classification :", ses),
-                     radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-                     
-    ),
-    conditionalPanel(condition="input.conditionedPanels == 7",
-                     selectInput(inputId = "inCO2MS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                     radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-                     radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                     HTML("<hr>"),
-                     selectizeInput("inCO2AG", "Age Group:", ag, multiple = F),
-                     radioButtons("inCO2G", "Gender: ", gender, inline = TRUE),
-                     selectizeInput("inCO2SES", "Socio Economic Classification :", ses),
-                     radioButtons("inCO2Ethnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-    ),
+#     conditionalPanel(condition="input.conditionedPanels == 5",
+#                      selectInput(inputId = "inHealthMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+#                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+#                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
+#                      HTML("<hr>"),
+#                      conditionalPanel(
+#                        condition = "input.inHealthSwitch == 'Scenario'",
+#                        selectInput(inputId = "inHealthMS1", label = "Select Cycling Multiplier:", choices =  uniqueMS),
+#                        radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+#                        radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
+#                      ),
+#                      HTML("<hr>"),
+#                      selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
+#                      radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
+#                      
+#     ),
+#     
+#     
+#     conditionalPanel(condition="input.conditionedPanels == 6",
+#                      selectInput(inputId = "inCMMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+#                      radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+#                      radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+#                      HTML("<hr>"),
+#                      selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
+#                      radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
+#                      selectizeInput("inCMSES", "Socio Economic Classification :", ses),
+#                      radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+#                      
+#     ),
+#     conditionalPanel(condition="input.conditionedPanels == 7",
+#                      selectInput(inputId = "inCO2MS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+#                      radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+#                      radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+#                      HTML("<hr>"),
+#                      selectizeInput("inCO2AG", "Age Group:", ag, multiple = F),
+#                      radioButtons("inCO2G", "Gender: ", gender, inline = TRUE),
+#                      selectizeInput("inCO2SES", "Socio Economic Classification :", ses),
+#                      radioButtons("inCO2Ethnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+#                      HTML("<hr>"),
+#                      radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+#     ),
     conditionalPanel(condition="input.conditionedPanels == 8",
                      radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
                      radioButtons(inputId = "inEB", label = "Select Ebike (EB):", allOnOffRButton, inline = TRUE),
@@ -220,7 +223,7 @@ shinyUI(fluidPage(
                      radioButtons("varname", label = "Plot Variable:", variableRButton),
                      
                      conditionalPanel(
-                       condition = "input.varname == 'Car miles per person per week'",
+                       condition = "input.varname == 'Total Car Miles Cycled (per week)'",
                        radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
                      )
     )
@@ -280,21 +283,21 @@ shinyUI(fluidPage(
                showOutput("plotMET", "highcharts"),
                showOutput("plotScenarioMET", "highcharts")
       ),
-      tabPanel("Health", value = 5,
-               a(id = "HealthHelp", "Help?", href = "#"),
-               hidden (div(id = "HealthHelpText",
-                           helpText(HTML("
-                            Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
-                            YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
-                            YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
-                            A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
-                            this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
-                            age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
-               )),
-               showOutput("plotHealth", "highcharts"),
-               showOutput("plotHealthReduction", "highcharts")
-      ),
-      
+#       tabPanel("Health", value = 5,
+#                a(id = "HealthHelp", "Help?", href = "#"),
+#                hidden (div(id = "HealthHelpText",
+#                            helpText(HTML("
+#                             Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
+#                             YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
+#                             YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
+#                             A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
+#                             this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
+#                             age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
+#                )),
+#                showOutput("plotHealth", "highcharts"),
+#                showOutput("plotHealthReduction", "highcharts")
+#       ),
+#       
 #       
 #       tabPanel("Car Miles", value = 6,
 #                a(id = "CMHelp", "Help?", href = "#"),
@@ -307,16 +310,16 @@ shinyUI(fluidPage(
 #                showOutput("plotFilteredCarMiles", "highcharts"),
 #                showOutput("plotCarMiles", "highcharts")
 #       ),
-      tabPanel(HTML("CO<sub>2<sub>"), value = 7,
-               a(id = "CO2Help", "Help?", href = "#"),
-               hidden (div(id = "CO2HelpText",
-                           helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
-                                                    car/van passenger.  Users can choose to compare CO2 emissions from car travel between selected 
-                                                    sub-populations and the total population, and/or between selected scenarios and baseline."))
-               )),
-               showOutput("plotFilteredCO2", "highcharts"),
-               showOutput("plotCO2", "highcharts")
-      ),
+#       tabPanel(HTML("CO<sub>2<sub>"), value = 7,
+#                a(id = "CO2Help", "Help?", href = "#"),
+#                hidden (div(id = "CO2HelpText",
+#                            helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
+#                                                     car/van passenger.  Users can choose to compare CO2 emissions from car travel between selected 
+#                                                     sub-populations and the total population, and/or between selected scenarios and baseline."))
+#                )),
+#                showOutput("plotFilteredCO2", "highcharts"),
+#                showOutput("plotCO2", "highcharts")
+#       ),
       tabPanel("Summary", value = 8,
                showOutput("plotGenericVariable", "highcharts")
       ),
