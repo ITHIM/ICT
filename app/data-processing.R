@@ -1,8 +1,10 @@
 library(stringr)
 
-idata <- read.csv("data/csv/mmets_var.csv", as.is = T)
+# idata <- read.csv("data/csv/mmets_regional_var.csv", as.is = T)
+# Temporarily reading as an rds file
+idata <- readRDS("data/csv/mmets_regional_var.rds")
 
-sdata <- read.csv("data/csv/ICT_aggr.csv", header = T, check.names=FALSE)
+sdata <- read.csv("data/csv/ICT_aggr_regional.csv", header = T, check.names=FALSE)
 
 baselineSummary <- sdata[1,]
 # Temporarily remove baseline summary
@@ -28,7 +30,11 @@ milesCycled[is.na(milesCycled)] <- 0
 #tripData <- read.csv("data/csv/tripsdf.csv", header = T, as.is = T)
 
 # Read updated Trip data
-tripMode <- read.csv("data/csv/tripsdf_updated.csv", header = T, as.is = T)
+# tripMode <- read.csv("data/csv/tripsdf_regional.csv", header = T, as.is = T)
+# Read trip data as an rds file
+tripMode <- readRDS("data/csv/tripsdf_regional.rds")
+
+
 
 # Read trip time
 tripTime <- read.csv("data/csv/triptime1.csv", header = T, as.is = T)
