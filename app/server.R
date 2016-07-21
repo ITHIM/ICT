@@ -981,7 +981,7 @@ shinyServer(function(input, output, session){
   
   output$plotCycPercent <- renderChart({
     generateScenarioTable()
-    h <- genericPlot("% cyclists in the total population")
+    h <- genericPlot("% Cyclists in the Total Population")
     h$title(text = "% Cyclists in the Total Population")
     h$set(dom = "plotCycPercent")
     return (h)
