@@ -1,6 +1,8 @@
 source("setup.R")
-uniqueMS <- sort(unique(sdata$MS))
-uMS <- append("All", sort(unique(sdata$MS)))
+# Remove MS 0, as it represents baseline values
+uniqueMS <- sort(unique(sdata$MS))[-1]
+# Remove MS 0, as it represents baseline values
+uMS <- append("All", sort(unique(sdata$MS))[-1])
 uEQ <- append("All",sort(unique(sdata$equity)))
 uEB <- append("All", sort(unique(sdata$ebike)))
 
