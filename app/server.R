@@ -809,6 +809,8 @@ shinyServer(function(input, output, session){
     msbl <- count(msbl)
     
     msbl$freq <- round(msbl$freq / sum(msbl$freq) * 100, digit = 1)
+    # Remove NA row from the dataset
+    msbl <- subset(msbl, !is.na(msbl[,1]))
     
     msbl <- appendMissingFrequencies(tp_mode, msbl)
     
@@ -825,6 +827,8 @@ shinyServer(function(input, output, session){
     mssc <- count(mssc)
     
     mssc$freq <- round(mssc$freq / sum(mssc$freq) * 100, digit = 1)
+    # Remove NA row from the dataset
+    mssc <- subset(mssc, !is.na(mssc[,1]))
     
     mssc <- appendMissingFrequencies(tp_mode, mssc)
     
@@ -850,6 +854,8 @@ shinyServer(function(input, output, session){
     names(data1)[names(data1)== columnName] <- "scenario"
     
     data1$freq <- round(data1$freq / sum(data1$freq) * 100, digit = 1)
+    # Remove NA row from the dataset
+    data1 <- subset(data1, !is.na(data1[,1]))
     
     data1 <- appendMissingFrequencies(tp_mode, data1)
     
@@ -861,6 +867,8 @@ shinyServer(function(input, output, session){
     names(data2)[names(data2)== columnName] <- "baseline"
     
     data2$freq <- round(data2$freq / sum(data2$freq) * 100, digit = 1)
+    # Remove NA row from the dataset
+    data2 <- subset(data2, !is.na(data2[,1]))
     
     data2 <- appendMissingFrequencies(tp_mode, data2)
     
