@@ -1,4 +1,5 @@
 source("setup.R")
+regions <- sort(unique(sdata$Region))
 # Remove MS 0, as it represents baseline values
 uniqueMS <- sort(unique(sdata$MS))[-1]
 # Remove MS 0, as it represents baseline values
@@ -59,7 +60,7 @@ healthRButton <- c("Years of Life Lost (YLL)" = "YLL",
                    "Deaths" = "Deaths")
 
 ag <- "All"
-ag <- append(ag, sort(unique(as.character(tripMode$age_group))))
+ag <- append(ag, sort(unique(as.character(tripMode$age_group)))[-1])
 
 healthAG <- c("All", "18 - 39", "40 - 59", "60 - 84")
 
@@ -107,7 +108,10 @@ shinyUI(fluidPage(
              
     ), 
     
-    includeMarkdown("README.md")))),
+    includeMarkdown("README.md"))),
+    selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions)
+    )
+  ,
   sidebarPanel(
     conditionalPanel(condition="input.conditionedPanels == 1",
                      selectInput(inputId = "inBDMS", label = "Select Cycling Multiplier:", choices =  uniqueMS),#, selected = uBDMS[2]),
