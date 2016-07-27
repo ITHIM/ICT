@@ -12,12 +12,12 @@ regions <- c("England"	 = 0,
              "South West" =	9)
 
 #0.05 0.10 0.15 0.25 0.50 0.75 1.00
-uniqueMS <- c("5" = 0.05,
-              "10" = 0.10,
-              "25" = 0.25,
-              "50" = 0.50,
-              "75" = 0.75,
-              "100" = 1.00)
+uniqueMS <- c("5%" = 0.05,
+              "10%" = 0.10,
+              "25%" = 0.25,
+              "50%" = 0.50,
+              "75%" = 0.75,
+              "100%" = 1.00)
 
 
 # Remove MS 0, as it represents baseline values
@@ -132,7 +132,10 @@ shinyUI(fluidPage(
   ,
   sidebarPanel(
     conditionalPanel(condition="input.conditionedPanels == 1",
-                     selectInput(inputId = "inBDMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     tags$div(title="Select Percentage of Population Likely to Cycle Short Trips in the Area of Interest",
+                              selectInput(inputId = "inBDMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
+                     ),
+                     
                      radioButtons(inputId = "inBDEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inBDEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
@@ -177,7 +180,10 @@ shinyUI(fluidPage(
     #                      radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
     #     ),
     conditionalPanel(condition="input.conditionedPanels == 4",
-                     selectInput(inputId = "inMETMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     
+                     tags$div(title="Select Percentage of Population Likely to Cycle Short Trips in the Area of Interest",
+                              selectInput(inputId = "inMETMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
+                     ),
                      radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons("inMETEB", "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      
@@ -228,7 +234,9 @@ shinyUI(fluidPage(
     #                      
     #     ),
     conditionalPanel(condition="input.conditionedPanels == 7",
-                     selectInput(inputId = "inCO2MS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     tags$div(title="Select Percentage of Population Likely to Cycle Short Trips in the Area of Interest",
+                              selectInput(inputId = "inCO2MS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
+                     ),
                      radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
@@ -259,7 +267,7 @@ shinyUI(fluidPage(
                a(id = "MSHelp", "Help?", href = "#"),
                hidden (div(id = "MSHelpText",
                            helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of 
-                                         three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
+                                         three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected 
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                )),
                showOutput("plotBDMode", "highcharts"),
@@ -269,7 +277,7 @@ shinyUI(fluidPage(
       #                a(id = "MTHelp", "Help?", href = "#"),
       #                hidden (div(id = "MTHelpText",
       #                            helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of 
-      #                                          three inputs: Cycling Multiplier, Equity and Ebike. Users can choose to compare mode share between selected 
+      #                                          three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected 
       #                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
       #                ))
       #                ,
@@ -314,7 +322,7 @@ shinyUI(fluidPage(
       #                             Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
       #                             YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
       #                             YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
-      #                             A scenario is selected by a combination of three inputs: Cycling Multiplier, Equity and Ebike &#45; 
+      #                             A scenario is selected by a combination of three inputs: % of Population who are Potential Cyclists, Equity and Ebike &#45; 
       #                             this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
       #                             age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
       #                )),
