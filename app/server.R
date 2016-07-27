@@ -44,6 +44,22 @@ blCO2FilteredData <- NULL
 
 shinyServer(function(input, output, session){
   
+  # Create a session specific placeholder to contain all region specific datasets
+  sessionData <- NULL
+  
+  observe({
+    input$inRegions
+    #idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
+    if (!is.na(input$inRegions)){
+      cat(input$inRegions)
+      #cat("the idata is: ", nrow(subset(idata, HHoldGOR_B02ID == input$inRegions)), "\n")
+      sessionData$sdata <<- subset(sdata, Region == input$inRegions)
+      sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
+      sessionData$tripMode <<- subset(tripMode, HHoldGOR_B02ID == input$inRegions)
+      sessionData$co2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegions)
+    }
+  })
+  
   plotTables <- reactive({
     (input$scenario != 'none')
   })
@@ -158,11 +174,11 @@ shinyServer(function(input, output, session){
   #   })
   
   plotMETDataTable<- reactive({
-    data <- subset(idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline_mmet))
-    data["total_mmet"] <- data$baseline_mmet
+    data <- subset(sessionData$idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline))
+    data["total_mmet"] <- data$baseline
     
-    data1 <- subset(data, select = baseline_mmet)
-    data1["total_mmet"] <- data1$baseline_mmet
+    data1 <- subset(data, select = baseline)
+    data1["total_mmet"] <- data1$baseline
     
     bMETdata <<- data1
     
@@ -187,7 +203,7 @@ shinyServer(function(input, output, session){
     columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMETEB,sep = ""), 
                         paste("eq", input$inMETEQ,sep = ""), sep="_")
     
-    data <- subset(idata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID",columnName))
+    data <- subset(sessionData$idata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID",columnName))
     
     data["total_mmet"] <- data[columnName]
     
@@ -213,14 +229,15 @@ shinyServer(function(input, output, session){
   })
   
   output$plotMET <- renderChart({
+    input$inRegions
     input$flipMETHG
     input$phyGuideline
-    
+    cat("Coming here: ", nrow(sessionData$idata), "\n")
     plotMETDataTable()
     
     extended_title <- ""
     
-    if (!is.null(idata) & !is.null(scMETdata)){
+    if (!is.null(sessionData$idata) & !is.null(scMETdata)){
       if (input$flipMETHG == 'sep'){
         # Keep the data separated
         # scMETdata and scFilteredMETdata
@@ -231,7 +248,7 @@ shinyServer(function(input, output, session){
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Baseline (Sub-Population)"
-        if (nrow(idata) == nrow(pd))
+        if (nrow(sessionData$idata) == nrow(pd))
           secondColName <- "Baseline (Total Population)"
         
         #extended_title <- "Baseline - Marginal MET Hours"
@@ -245,7 +262,7 @@ shinyServer(function(input, output, session){
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Scenario (Sub-Population)"
-        if (nrow(idata) == nrow(scMETdata))
+        if (nrow(sessionData$idata) == nrow(scMETdata))
           secondColName <- "Scenario (Total Population)"
       }
       
@@ -373,6 +390,7 @@ shinyServer(function(input, output, session){
   })
   
   output$plotScenarioMET <- renderChart({
+    input$inRegions
     
     plotMETDataTable()
     if (!is.null(scMETdata)){
@@ -622,10 +640,10 @@ shinyServer(function(input, output, session){
     if (!is.null(tdata)){
       if (input$scenario == 'i'){
         
-        filtered_title <- getFilteredTitle(idata)
-        max_val <- max(idata$total_mmet)
+        filtered_title <- getFilteredTitle(sessionData$idata)
+        max_val <- max(sessionData$idata$total_mmet)
         h <- NULL
-        bc <- table (cut (idata$total_mmet, breaks = c(seq(min(idata$total_mmet), 60, by = 5),max(idata$total_mmet)), xlim = c(min(idata$total_mmet), 60)))
+        bc <- table (cut (sessionData$idata$total_mmet, breaks = c(seq(min(sessionData$idata$total_mmet), 60, by = 5),max(sessionData$idata$total_mmet)), xlim = c(min(sessionData$idata$total_mmet), 60)))
         extended_title <- paste("Marginal MET hours of total population")
         bc <- as.data.frame(bc)
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
@@ -700,7 +718,7 @@ shinyServer(function(input, output, session){
   getMETFilteredTitle <- function(data, src){
     filtered_title <- ""
     if (src == "baseline")
-      dataSource = idata
+      dataSource = sessionData$idata
     else
       dataSource = scMETdata
     
@@ -778,6 +796,8 @@ shinyServer(function(input, output, session){
   }
   
   generateBDScenarioTable <- reactive({
+    # Build a reactive relation with regions dropdown menu
+    input$inRegions
     
     lMS <- input$inBDMS
     lEB <- input$inBDEB
@@ -798,13 +818,13 @@ shinyServer(function(input, output, session){
                         paste("eq", input$inBDEQ,sep = ""), sep="_")
     # cat(columnName, "\n")
     colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "baseline", columnName)
-    data <- tripMode[,colList]
+    data <- sessionData$tripMode[,colList]
     
     #     msbl <- subset(tripData, select = MainMode_Reduced)
     #     msbl <- count(msbl, "MainMode_Reduced")
     #     names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
     
-    msbl <- data.frame(baseline = tripMode$baseline)
+    msbl <- data.frame(baseline = sessionData$tripMode$baseline)
     
     msbl <- count(msbl)
     
@@ -822,7 +842,7 @@ shinyServer(function(input, output, session){
     #     mssc <- count(mssc, columnName)
     #     names(mssc)[names(mssc)== columnName] <- "scenario"
     
-    mssc <- data.frame(scenario = tripMode[[columnName]])
+    mssc <- data.frame(scenario = sessionData$tripMode[[columnName]])
     
     mssc <- count(mssc)
     
@@ -1474,7 +1494,7 @@ shinyServer(function(input, output, session){
     # Get row numbers with NA
     temp <- data.frame(rn = which(tripTime$X %in% data$X))
     
-    locatTripModeData <- tripMode[,c("X","baseline", columnName)]
+    locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
     
     # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
     # Reduce the number of modes to 4
@@ -1509,7 +1529,7 @@ shinyServer(function(input, output, session){
     # Get row numbers with NA
     temp <- data.frame(rn = tripTime$X)
     
-    locatTripModeData <- tripMode[,c("X","baseline", columnName)]
+    locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
     
     # Replace number of modes in each of the scenarios and the baseline to 4
     locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
@@ -2049,7 +2069,7 @@ shinyServer(function(input, output, session){
     secondColData <- NULL
     extended_title <- ""
     subtitle <- ""
-    if (input$inMSG == 'sep'){
+    if (input$inCO2flip == 'sep'){
       # Keep the data separated
       firstColData = scCO2Data
       secondColData = scCO2FilteredData
@@ -2096,7 +2116,8 @@ shinyServer(function(input, output, session){
   
   
   filterCO2Data <- reactive ({
-    data <- co2data
+    input$inRegions
+    data <- sessionData$co2data
     
     if (input$inCO2AG != 'All'){
       data <- subset(data, age_group == input$inCO2AG)
@@ -2111,7 +2132,8 @@ shinyServer(function(input, output, session){
     if (input$inCO2Ethnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID == input$inCO2Ethnicity)
     }
-    #data[is.na(data)] <- 0
+    # Remove all NA rows from the dataset
+    data[is.na(data)] <- 0
     
     columnName <- paste(paste("MS", input$inCO2MS,sep = ""),  paste("ebik", input$inCO2EB,sep = ""), 
                         paste("eq", input$inCO2EQ,sep = ""), sep="_")
@@ -2120,7 +2142,7 @@ shinyServer(function(input, output, session){
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
-    data1 <- data.frame(co2data[,columnName])
+    data1 <- data.frame(sessionData$co2data[,columnName])
     
     data1$data <- data1[,1]
     data1[,1] <- NULL
@@ -2133,10 +2155,12 @@ shinyServer(function(input, output, session){
     scCO2Data <<- data1
     scCO2FilteredData <<- data2
     
-    blCO2Data <<- data.frame(data = co2data[,"baseline_co2"])
-    blCO2FilteredData <<- data.frame(data = data[,"baseline_co2"])
+    blCO2Data <<- data.frame(data = sessionData$co2data[,"baseline"])
+    blCO2FilteredData <<- data.frame(data = data[,"baseline"])
     
-    summary(dim(scCO2Data), " : ",  dim(scCO2FilteredData), "\n")
+    cat(nrow(scCO2Data), " ", nrow(scCO2FilteredData), " ", nrow(blCO2Data), " ", nrow(blCO2FilteredData), "\n")
+    
+    #summary(dim(scCO2Data), " : ",  dim(scCO2FilteredData), "\n")
     
   })
   
