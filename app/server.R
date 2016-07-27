@@ -51,7 +51,7 @@ shinyServer(function(input, output, session){
     input$inRegions
     #idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
     if (!is.na(input$inRegions)){
-      cat(input$inRegions)
+      # cat(input$inRegions)
       #cat("the idata is: ", nrow(subset(idata, HHoldGOR_B02ID == input$inRegions)), "\n")
       sessionData$sdata <<- subset(sdata, Region == input$inRegions)
       sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
@@ -174,6 +174,8 @@ shinyServer(function(input, output, session){
   #   })
   
   plotMETDataTable<- reactive({
+    input$inRegions
+    # cat(" In Met table: ", nrow(sessionData$idata), "\n")
     data <- subset(sessionData$idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline))
     data["total_mmet"] <- data$baseline
     
@@ -232,12 +234,12 @@ shinyServer(function(input, output, session){
     input$inRegions
     input$flipMETHG
     input$phyGuideline
-    cat("Coming here: ", nrow(sessionData$idata), "\n")
+    # cat("Coming here: ", nrow(sessionData$idata), "\n")
     plotMETDataTable()
     
     extended_title <- ""
     
-    if (!is.null(sessionData$idata) & !is.null(scMETdata)){
+    if (!is.null(idata) & !is.null(scMETdata)){
       if (input$flipMETHG == 'sep'){
         # Keep the data separated
         # scMETdata and scFilteredMETdata
@@ -275,8 +277,8 @@ shinyServer(function(input, output, session){
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
-        h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh > 8.75)", 
-                                "Meeting the higher guidelines (METh > 17.5)"), 
+        h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh >= 8.75)", 
+                                "Meeting the higher guidelines (METh >= 17.5)"), 
                  title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         
@@ -2158,7 +2160,7 @@ shinyServer(function(input, output, session){
     blCO2Data <<- data.frame(data = sessionData$co2data[,"baseline"])
     blCO2FilteredData <<- data.frame(data = data[,"baseline"])
     
-    cat(nrow(scCO2Data), " ", nrow(scCO2FilteredData), " ", nrow(blCO2Data), " ", nrow(blCO2FilteredData), "\n")
+    # cat(nrow(scCO2Data), " ", nrow(scCO2FilteredData), " ", nrow(blCO2Data), " ", nrow(blCO2FilteredData), "\n")
     
     #summary(dim(scCO2Data), " : ",  dim(scCO2FilteredData), "\n")
     
