@@ -11,7 +11,7 @@ The scenarios are based around assuming that some non-cyclists become cyclists. 
 
 In modelling scenarios in which some non-cyclists become cyclists, we use three input parameters:
 
-1. The *Cycling Multiplier* is the overall population-level increase in the probability of being a cyclist.
+1. The *% of Population who are Potential Cyclists* refers to the proportion of the total population in the area of interest who are cyclists.  Note that a value of 75% roughly corresponds to the current situation in the Netherlands.
 2. In *Equity* scenarios we assume that men and women and older and younger people are equally likely to become cyclists. Without Equity we assume current inequalities remain in the probability of becoming a cyclist.
 3. In *Ebike* scenarios we assume that new cyclists have got an ebike and so will be willing to cycle longer trips. We assume that with an ebike all population groups have the same probability of cycling a trip of a given length.
 
