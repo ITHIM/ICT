@@ -344,9 +344,9 @@ shinyUI(fluidPage(
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
-      tabPanel("Summary", value = 8,
-               showOutput("plotGenericVariable", "highcharts")
-      ),
+#       tabPanel("Summary", value = 8,
+#                showOutput("plotGenericVariable", "highcharts")
+#       ),
       tabPanel("About", value = 9,
                includeHTML("about.html")
                # includeMarkdown("about.md")
