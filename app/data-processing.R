@@ -2,7 +2,7 @@ library(stringr)
 
 # idata <- read.csv("data/csv/mmets_regional_var.csv", as.is = T)
 # Temporarily reading as an rds file
-idata <- readRDS("data/csv/mmets_regional_var.rds")
+idata <- readRDS("data/csv/mmets_regional.rds")
 
 sdata <- read.csv("data/csv/ICT_aggr_regional.csv", header = T, check.names=FALSE)
 
@@ -34,6 +34,13 @@ milesCycled[is.na(milesCycled)] <- 0
 # tripMode <- read.csv("data/csv/tripsdf_regional.csv", header = T, as.is = T)
 # Read trip data as an rds file
 tripMode <- readRDS("data/csv/tripsdf_regional.rds")
+
+# Rename MainMode_Reduced columns to baseline
+tripMode$baseline <- tripMode$MainMode_Reduced
+tripMode$MainMode_Reduced <- NULL
+tripMode$Cycled <- NULL
+
+
 
 # # names(tripTime)[names(tripTime)=="MainMode_Reduced"] <- "baseline"
 # 
@@ -75,4 +82,7 @@ tripMode <- readRDS("data/csv/tripsdf_regional.rds")
 # names(tripMode)[names(tripMode)=="MainMode_Reduced"] <- "baseline"
 
 #Read CO2 data
-co2data <- read.csv("data/csv/co2.csv", header = T, as.is = T)
+# co2data <- read.csv("data/csv/co2.csv", header = T, as.is = T)
+co2data <- readRDS("data/csv/co2.Rds")
+# Replace NAs with 0
+co2data[is.na(co2data)] <- 0
