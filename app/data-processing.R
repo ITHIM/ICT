@@ -83,6 +83,6 @@ tripMode$Cycled <- NULL
 
 #Read CO2 data
 # co2data <- read.csv("data/csv/co2.csv", header = T, as.is = T)
-co2data <- readRDS("data/csv/co2.Rds")
+co2data <- readRDS("data/csv/co2.rds")
 # Replace NAs with 0
 co2data[is.na(co2data)] <- 0
