@@ -11,10 +11,15 @@ regions <- c("England"	 = 0,
              "South East" =	8,
              "South West" =	9)
 
-# # Use regions from tripsdata for now
-# regions <- sort(unique(tripMode$HHoldGOR_B02ID))
-# Remove MS 0, as it represents baseline values
-uniqueMS <- sort(unique(sdata$MS))[-1]
+#0.05 0.10 0.15 0.25 0.50 0.75 1.00
+uniqueMS <- c("5" = 0.05,
+              "10" = 0.10,
+              "25" = 0.25,
+              "50" = 0.50,
+              "75" = 0.75,
+              "100" = 1.00)
+
+
 # Remove MS 0, as it represents baseline values
 uMS <- append("All", sort(unique(sdata$MS))[-1])
 uEQ <- append("All",sort(unique(sdata$equity)))
