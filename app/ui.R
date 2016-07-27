@@ -349,7 +349,6 @@ shinyUI(fluidPage(
 #       ),
       tabPanel("About", value = 9,
                includeHTML("about.html")
-               # includeMarkdown("about.md")
       ),
       
       id = "conditionedPanels"
