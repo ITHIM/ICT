@@ -179,10 +179,7 @@ shinyServer(function(input, output, session){
     data <- subset(sessionData$idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline))
     data["total_mmet"] <- data$baseline
     
-    data1 <- subset(data, select = baseline)
-    data1["total_mmet"] <- data1$baseline
-    
-    bMETdata <<- data1
+    bMETdata <<- data
     
     
     if (input$mag != 'All'){
@@ -198,7 +195,9 @@ shinyServer(function(input, output, session){
     if (input$methnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID %in% input$methnicity)
     }
-    data[is.na(data)] <- 0
+    #data[is.na(data)] <- 0
+    
+    cat(input$mag != 'All', " : ", (input$mgender != 3), " : ", (input$mses != "All"), " : ", (input$methnicity != "All"), "\n")
     
     pd <<- data
     
