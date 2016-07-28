@@ -195,10 +195,6 @@ shinyServer(function(input, output, session){
     if (input$methnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID %in% input$methnicity)
     }
-    #data[is.na(data)] <- 0
-    
-    cat(input$mag != 'All', " : ", (input$mgender != 3), " : ", (input$mses != "All"), " : ", (input$methnicity != "All"), "\n")
-    
     pd <<- data
     
     columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMETEB,sep = ""), 
