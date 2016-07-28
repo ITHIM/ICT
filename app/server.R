@@ -229,7 +229,6 @@ shinyServer(function(input, output, session){
     input$inRegions
     input$flipMETHG
     input$phyGuideline
-    # cat("Coming here: ", nrow(sessionData$idata), "\n")
     plotMETDataTable()
     
     extended_title <- ""
@@ -247,8 +246,6 @@ shinyServer(function(input, output, session){
         secondColName <- "Baseline (Sub-Population)"
         if (nrow(sessionData$idata) == nrow(pd))
           secondColName <- "Baseline (Total Population)"
-        
-        #extended_title <- "Baseline - Marginal MET Hours"
         
       }else{
         # Keep the data mixed
@@ -277,7 +274,7 @@ shinyServer(function(input, output, session){
                  title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         
-        bc <- createPhyActTable(secondColData)#$total_mmet)
+        bc <- createPhyActTable(secondColData)
         bc$Freq <- round(bc$Freq  / nrow(secondColData) * 100, digits = 1)
         
         h1$series(data = bc$Freq, name = secondColName)
@@ -307,12 +304,6 @@ shinyServer(function(input, output, session){
         bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
         bc1max <- max(bc$Freq, na.rm = T)
-        
-        # h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "> 52.8")), title = list(text = 'Marginal MET Hours'))
-        
-        #         h1$xAxis(categories = c("0", "> 0 and <= 4.4" , "> 4.4 and <= 8.8", "> 4.4 and <= 8.8", "> 8.8 and <= 13.2",
-        #                                 "> 13.2 and <= 17.6" ,"> 17.6 and <= 22", "> 22 and <= 26.4", "> 26.4 and <= 30.8", "> 30.8 and <= 35.2",
-        #                                 "> 35.2 and <= 39.6", "> 39.6 and <= 44" , "> 44 and <= 48.4", "> 48.4 and < 52.8", " > 52.8")
         
         h1$xAxis(categories = c("0",">0 & <=4.4",">4.4 & <=8.8",">8.8 & <=13.2",">13.2 & <=17.6",
                                 ">17.6 & <=22",">22 & <=26.4",">26.4 & <=30.8",">30.8 & <=35.2",
@@ -358,28 +349,7 @@ shinyServer(function(input, output, session){
     }
     
     h1$title(text = extended_title)
-    
-    
-    # h1$tooltip(formatter = "#! function() { return '<b>'+ this.series.name +', age '+ this.point.category +'</b><br/>' + 'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);} !#")
-    # h1$tooltip(formatter = "#! function() { return this.series.name +'<br/>'+ this.x + '<br/>' + this.y; } !#")
-    
     h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
-    # h1$tooltip()
-    
-    
-    #h1$tooltip(formatter = "#! function() {  return 'The value for <b>' + this.x + '</b> is <b>' + this.y + '</b>, in series '+ this.series.name; } !#")
-    
-    #     h1$tooltip(formatter = "#! function() {
-    #       var s = '<b>'+ this.x +'</b>';
-    #       
-    #       $.each(this.points, function(i, point) {
-    #         s += '<br/><span style='color:'+ point.series.color +'>\u25CF</span>: ' + point.series.name + ': ' + point.y;
-    #       });
-    #       
-    #       return s;
-    #     },
-    #     shared: true
-    #     !#")
     
     h1$set(dom = "plotMET")
     h1$exporting(enabled = T)
@@ -460,7 +430,6 @@ shinyServer(function(input, output, session){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
         bc1max <- max(bc$Freq, na.rm = T)
         
-        # h1$xAxis(categories = as.list(append(c(seq(-4.4,52.8, 4.4))[-1], "> 52.8")), title = list(text = 'Marginal MET Hours'))
         h1$xAxis(categories = c("0",">0 & <=4.4",">4.4 & <=8.8",">8.8 & <=13.2",">13.2 & <=17.6",
                                 ">17.6 & <=22",">22 & <=26.4",">26.4 & <=30.8",">30.8 & <=35.2",
                                 ">35.2 & <=39.6",">39.6 & <=44",">44 & <=48.4",">48.4 & <52.8",">52.8"), title = list(text = 'Marginal MET Hours'))
