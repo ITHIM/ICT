@@ -216,6 +216,10 @@ shinyServer(function(input, output, session){
     
     scMETdata <<- data
     
+    
+    #scMETdata
+    #scFilteredMETdata
+    
     if (input$mag != 'All'){
       data <- subset(data, age_group == input$mag)
     }
@@ -230,7 +234,7 @@ shinyServer(function(input, output, session){
       data <- subset(data, EthGroupTS_B02ID %in% input$methnicity)
     }
     
-    data[is.na(data)] <- 0
+    #data[is.na(data)] <- 0
     
     scFilteredMETdata <<- data
   })
@@ -521,6 +525,9 @@ shinyServer(function(input, output, session){
           eb <- "On"
         
         h1$series(data = scYllData1$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        gender = "Male"
+        if (scYllData$gender == 2)
+          gender = "Female"
         h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band))
       }else{
         
@@ -582,7 +589,9 @@ shinyServer(function(input, output, session){
           eb <- "On"
         
         h1$series(data = scYllReductionData1$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
-        
+        gender = "Male"
+        if (scYllReductionData$gender == 2)
+          gender = "Female"
         h1$xAxis(categories = paste(scYllReductionData$gender, scYllReductionData$age.band))
       }else{
         
