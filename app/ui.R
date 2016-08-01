@@ -80,7 +80,7 @@ healthRButton <- c("Years of Life Lost (YLL)" = "YLL",
 ag <- "All"
 ag <- append(ag, sort(unique(as.character(tripMode$age_group))))
 
-healthAG <- c("All", "18 - 39", "40 - 59", "60 - 84")
+healthAG <- c("All", "18 - 39", "40 - 59", "60 - 79")
 
 ses <- c("All" = "All",
          "Managerial and professional occupations" = 1,
@@ -198,26 +198,27 @@ shinyUI(fluidPage(
                      radioButtons("phyGuideline", label = "Physical activity outcome measure:", phyGLRButton, inline = TRUE)
     )
     ,
-    #     conditionalPanel(condition="input.conditionedPanels == 5",
-    #                      selectInput(inputId = "inHealthMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-    #                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      conditionalPanel(
-    #                        condition = "input.inHealthSwitch == 'Scenario'",
-    #                        selectInput(inputId = "inHealthMS1", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),
-    #                        radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                        radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
-    #                      ),
-    #                      HTML("<hr>"),
-    #                      selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
-    #                      radioButtons("inHealthG", "Gender: ", genderForHealthCalculations, inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
-    #                      
-    #     ),
+    conditionalPanel(condition="input.conditionedPanels == 5",
+                     selectInput(inputId = "inHealthMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
+                     HTML("<hr>"),
+                     conditionalPanel(
+                       condition = "input.inHealthSwitch == 'Scenario'",
+                       selectInput(inputId = "inHealthMS1", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),
+                       radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                       radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
+                     ),
+                     HTML("<hr>"),
+                     # Use same age groups for now
+                     selectizeInput("inHealthAG", "Age Group:", healthAG, selected = healthAG[1], multiple = F),
+                     radioButtons("inHealthG", "Gender: ", gender, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
+                     
+    ),
     #     
     #     
     #     conditionalPanel(condition="input.conditionedPanels == 6",
@@ -315,20 +316,20 @@ shinyUI(fluidPage(
                showOutput("plotMET", "highcharts"),
                showOutput("plotScenarioMET", "highcharts")
       ),
-      #       tabPanel("Health", value = 5,
-      #                a(id = "HealthHelp", "Help?", href = "#"),
-      #                hidden (div(id = "HealthHelpText",
-      #                            helpText(HTML("
-      #                             Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
-      #                             YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
-      #                             YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
-      #                             A scenario is selected by a combination of three inputs: % of Population who are Potential Cyclists, Equity and Ebike &#45; 
-      #                             this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
-      #                             age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
-      #                )),
-      #                showOutput("plotHealth", "highcharts"),
-      #                showOutput("plotHealthReduction", "highcharts")
-      #       ),
+      tabPanel("Health", value = 5,
+               a(id = "HealthHelp", "Help?", href = "#"),
+               hidden (div(id = "HealthHelpText",
+                           helpText(HTML("
+                                  Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
+                                  YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
+                                  YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
+                                  A scenario is selected by a combination of three inputs: % of Population who are Potential Cyclists, Equity and Ebike &#45; 
+                                  this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
+                                  age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
+               )),
+               showOutput("plotHealth", "highcharts"),
+               showOutput("plotHealthReduction", "highcharts")
+      ),
       #       
       #       
       #       tabPanel("Car Miles", value = 6,
@@ -352,9 +353,9 @@ shinyUI(fluidPage(
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
-#       tabPanel("Summary", value = 8,
-#                showOutput("plotGenericVariable", "highcharts")
-#       ),
+      #       tabPanel("Summary", value = 8,
+      #                showOutput("plotGenericVariable", "highcharts")
+      #       ),
       tabPanel("About", value = 9,
                includeHTML("about.html")
       ),
