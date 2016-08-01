@@ -21,7 +21,7 @@ tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car P
 # yll_red <- read.csv("data/csv/yll_red_agg_u.csv", header = T, as.is = T)
 
 
-yll <- readRDS("data/csv/yllS.rds")
+yll <- readRDS("data/csv/ylls.rds")
 death <- readRDS("data/csv/deaths.rds")
 yllReduction <- readRDS("data/csv/yll_reduction.rds")
 
