@@ -26,12 +26,12 @@ death <- readRDS("data/csv/deaths.rds")
 yllReduction <- readRDS("data/csv/yll_reduction.rds")
 
 
-#Read Car Miles data
-carMiles <- read.csv("data/csv/carMiles_var1.csv", header = T, as.is = T)
-carMiles[is.na(carMiles)] <- 0
-
-milesCycled <- read.csv("data/csv/milesCycled.pers_var1.csv", header = T, as.is = T)
-milesCycled[is.na(milesCycled)] <- 0
+# #Read Car Miles data
+# carMiles <- read.csv("data/csv/carMiles_var1.csv", header = T, as.is = T)
+# carMiles[is.na(carMiles)] <- 0
+# 
+# milesCycled <- read.csv("data/csv/milesCycled.pers_var1.csv", header = T, as.is = T)
+# milesCycled[is.na(milesCycled)] <- 0
 
 # #Read Trip data
 #tripData <- read.csv("data/csv/tripsdf.csv", header = T, as.is = T)
