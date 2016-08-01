@@ -132,7 +132,7 @@ shinyUI(fluidPage(
   ,
   sidebarPanel(
     conditionalPanel(condition="input.conditionedPanels == 1",
-                     tags$div(title="Select Percentage of Population Likely to Cycle Short Trips in the Area of Interest",
+                     tags$div(title="Select percentage of total regional population who become as likely to cycle based on trip distance as existing cyclists",
                               selectInput(inputId = "inBDMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
                      ),
                      
@@ -181,7 +181,7 @@ shinyUI(fluidPage(
     #     ),
     conditionalPanel(condition="input.conditionedPanels == 4",
                      
-                     tags$div(title="Select Percentage of Population Likely to Cycle Short Trips in the Area of Interest",
+                     tags$div(title="Select percentage of total regional population who become as likely to cycle based on trip distance as existing cyclists",
                               selectInput(inputId = "inMETMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
                      ),
                      radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
@@ -235,7 +235,7 @@ shinyUI(fluidPage(
     #                      
     #     ),
     conditionalPanel(condition="input.conditionedPanels == 7",
-                     tags$div(title="Select Percentage of Population Likely to Cycle Short Trips in the Area of Interest",
+                     tags$div(title="Select percentage of total regional population who become as likely to cycle based on trip distance as existing cyclists",
                               selectInput(inputId = "inCO2MS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
                      ),
                      radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
