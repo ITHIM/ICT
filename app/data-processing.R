@@ -16,9 +16,15 @@ sdata <- read.csv("data/csv/ICT_aggr_regional.csv", header = T, check.names=FALS
 tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"), code = c(1, 2, 2.5, c(3:7)))
 
 # # Read Health Calculations
-yll <- read.csv("data/csv/yll_agg_u.csv", header = T, as.is = T)
-death <- read.csv("data/csv/death_agg_u.csv", header = T, as.is = T)
-yll_red <- read.csv("data/csv/yll_red_agg_u.csv", header = T, as.is = T)
+# yll <- read.csv("data/csv/yll_agg_u.csv", header = T, as.is = T)
+# death <- read.csv("data/csv/death_agg_u.csv", header = T, as.is = T)
+# yll_red <- read.csv("data/csv/yll_red_agg_u.csv", header = T, as.is = T)
+
+
+yll <- readRDS("data/csv/yllS.rds")
+death <- readRDS("data/csv/deaths.rds")
+yllReduction <- readRDS("data/csv/yll_reduction.rds")
+
 
 #Read Car Miles data
 carMiles <- read.csv("data/csv/carMiles_var1.csv", header = T, as.is = T)
