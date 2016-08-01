@@ -57,6 +57,9 @@ shinyServer(function(input, output, session){
       sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
       sessionData$tripMode <<- subset(tripMode, HHoldGOR_B02ID == input$inRegions)
       sessionData$co2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegions)
+      sessionData$yll <<- subset(yll, regions == input$inRegions)
+      sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
+      sessionData$death <<- subset(death, regions == input$inRegions)
     }
   })
   
@@ -85,22 +88,29 @@ shinyServer(function(input, output, session){
   })
   
   filterHealthData <- reactive({
+    
+    
+#     sessionData$yll
+#     sessionData$yllReduction
+#     sessionData$death 
+    input$inRegions
+    
     data1 <- NULL
     if (input$inHealthVarSwitch == "Deaths")
-      data1 <- death
+      data1 <- sessionData$death
     else if (input$inHealthVarSwitch == "YLL")
-      data1 <- yll
+      data1 <- sessionData$yll
     
     # Temporarily removing YLL total values
     data1 <- subset(data1, age.band != "All Ages")
-    data2 <- yll_red
+    data2 <- sessionData$yllReduction
     
     if (input$inHealthAG != 'All'){
       # Temporarily removing YLL total values
       data1 <- subset(data1, age.band == input$inHealthAG)
       data2 <- subset(data2, age.band == input$inHealthAG | age.band == "All Ages")
     }
-    if (input$inHealthG !='All'){
+    if (input$inHealthG != 3){
       # Temporarily removing YLL total values
       data1 <- subset(data1, gender %in% input$inHealthG)
       data2 <- subset(data2, gender %in% input$inHealthG | gender == "Both Gender")
@@ -500,7 +510,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllData$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllData$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -510,15 +520,18 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllData1$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllData1$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
         h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band))
       }else{
         
         # For both gender, create new series
-        ugender <- unique(scYllData$gender)
+        ugender <- sort(unique(scYllData$gender))
         for (i in 1:length(ugender)){
           data <- subset(scYllData, gender == ugender[i])
-          h1$series(data = data$scenario, name = ugender[i])
+          seriesName <- "Male"
+          if (ugender[i] == 2)
+            seriesName <- "Female"
+          h1$series(data = data$scenario, name = seriesName)
         }
         h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Group'))
         if (length(unique(scYllData$age.band)) > 1)
@@ -558,7 +571,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllReductionData$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -568,17 +581,20 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData1$scenario, name = paste(paste("Cycling Multiplier",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllReductionData1$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
         
         h1$xAxis(categories = paste(scYllReductionData$gender, scYllReductionData$age.band))
       }else{
         
         # For both gender, create new series
-        ugender <- unique(scYllReductionData$gender[-1])
+        ugender <- sort(unique(scYllReductionData$gender))
         
         for (i in 1:length(ugender)){
           data <- subset(scYllReductionData, gender == ugender[i])
-          h1$series(data = data$scenario, name = ugender[i])
+          seriesName <- "Male"
+          if (ugender[i] == 2)
+            seriesName <- "Female"
+          h1$series(data = data$scenario, name = seriesName)
         }
         
         h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
