@@ -60,6 +60,8 @@ shinyServer(function(input, output, session){
       sessionData$yll <<- subset(yll, regions == input$inRegions)
       sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
       sessionData$death <<- subset(death, regions == input$inRegions)
+      sessionData$sdata <<- subset(sdata, Region == input$inRegions)
+      sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
     }
   })
   
@@ -925,12 +927,12 @@ shinyServer(function(input, output, session){
   
   
   generateScenarioTable<- reactive({
-    
+    input$inRegions
     #     lMS <- input$inMS
     lEB <- input$inEB
     lEQ <- input$inEQ
     
-    data <- sdata
+    data <- sessionData$sdata
     if (lEQ != "All")
       data <- subset(data, equity == lEQ)
     if (lEB != "All")
@@ -961,36 +963,36 @@ shinyServer(function(input, output, session){
     
     if (input$inEB != "All" & input$inEQ != "All"){
       sub1 <- subset(scdata, ebike == as.numeric(input$inEB) & equity == as.numeric(input$inEQ))
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inEB ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, input$inEB ))
       
     }
     
     if (input$inEB == "All" & input$inEQ != "All"){
       sub1 <- subset(scdata, ebike == 0 & equity == as.numeric(input$inEQ))
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0 ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 0 ))
       sub1 <- subset(scdata, ebike == 1 & equity == as.numeric(input$inEQ))
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1 ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(input$inEQ, 1 ))
       
     }
     
     
     if (input$inEB != "All" & input$inEQ == "All"){
       sub1 <- subset(scdata, equity == 0 & ebike == as.numeric(input$inEB))
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0,  input$inEB ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0,  input$inEB ))
       sub1 <- subset(scdata, equity == 1 & ebike == as.numeric(input$inEB))
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inEB ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, input$inEB ))
       
     }
     
     if (input$inEB == "All" & input$inEQ == "All"){
       sub1 <- subset(scdata, ebike == 0 & equity == 0)
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0 ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 0 ))
       sub1 <- subset(scdata, ebike == 0 & equity == 1)
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0 ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 0 ))
       sub1 <- subset(scdata, ebike == 1 & equity == 0)
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1 ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(0, 1 ))
       sub1 <- subset(scdata, ebike == 1 & equity == 1)
-      h1$series(data = append(baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1 ))
+      h1$series(data = append(sessionData$baselineSummary[[var]], sub1[[var]]), name = getSeriesName(1, 1 ))
       
     }
     
@@ -1009,7 +1011,7 @@ shinyServer(function(input, output, session){
   output$plotGenericVariable <- renderChart({
     generateScenarioTable()
     #retrieveVariableName()
-    if (input$varname != "Car miles per person per week"){
+    if (input$varname != "Car Miles Per person (per week)"){
       h <- genericPlot(input$varname)
       h$title(text = input$varname)
     }else{
