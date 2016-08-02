@@ -7,8 +7,11 @@ idata <- readRDS("data/csv/mmets_regional.rds")
 sdata <- readRDS("data/csv/ICT_aggr_regional.rds")
 
 # Remove the code which discards baseline info from the aggregate summary file
-# baselineSummary <- sdata[1,]
+baselineSummary <- subset(sdata, MS == 0)
 # # Temporarily remove baseline summary
+# Remove baseline rows
+sdata <-subset(sdata, MS != 0)
+
 # sdata <- sdata[-1,]
 # sdata[is.na(sdata)] <- 0
 
