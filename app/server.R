@@ -608,7 +608,7 @@ shinyServer(function(input, output, session){
         
         h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Groups'))
         if (length(unique(scYllReductionData$age.band)) > 2)
-          h1$xAxis(categories = unique(scYllReductionData$age.band[-1]), title = list(text = 'Age and Gender Groups'))
+          h1$xAxis(categories = unique(scYllReductionData$age.band), title = list(text = 'Age and Gender Groups'))
       }
       
       h1$yAxis(title = list(text = 'Percentage of the total population'))
