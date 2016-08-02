@@ -4,7 +4,7 @@ library(stringr)
 # Temporarily reading as an rds file
 idata <- readRDS("data/csv/mmets_regional.rds")
 
-sdata <- read.csv("data/csv/ICT_aggr_regional.csv", header = T, check.names=FALSE)
+sdata <- readRDS("data/csv/ICT_aggr_regional.rds")
 
 # Remove the code which discards baseline info from the aggregate summary file
 # baselineSummary <- sdata[1,]
