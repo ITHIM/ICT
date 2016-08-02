@@ -35,15 +35,15 @@ variableList <- variableList[,7:length(colnames(sdata))]
 # Car Miles
 # CO2
 
-variableRButton <- c("Number of Cyclists" =    "% cyclists in the total population",
-                     "Miles Cycled" = "Miles cycled per person per week",
-                     "Physical Activity" = "Marginal METs per person per week",
+variableRButton <- c("Number of Cyclists" =    "% Cyclists in the Total Population",
+                     "Miles Cycled" = "Total Car Miles Cycled (per week)",
+                     "Physical Activity" = "Marginal METs Per Person (per week)",
                      "Health" = "Years of Life Lost (YLL)",
-                     "Car Miles" = "Car miles per person per week",
-                     "CO2" = "CO2 (kg) from car travel per person per week"
+                     "Car Miles" = "Car Miles Per person (per week)",
+                     "CO2" = "Transport CO2 Per Person (per week)"
 )
-carMilesRButton <- c("Car Miles" = "Car miles per person per week",
-                     "Car Miles Reduced" = "Car miles reduced per person per week")
+carMilesRButton <- c("Car Miles" = "Car Miles Per person (per week)",
+                     "Car Miles Reduced" = "Car Miles Reduced Per person (per week)")
 
 
 # % cyclists in the total population	Miles cycled per person per week	Car miles cycled  per week	Marginal METs per person per week	Car miles per person per week	Car miles reduced per person per week	CO2 from car travel per person per week
@@ -263,7 +263,7 @@ shinyUI(fluidPage(
                      radioButtons("varname", label = "Plot Variable:", variableRButton),
                      
                      conditionalPanel(
-                       condition = "input.varname == 'Total Car Miles Cycled (per week)'",
+                       condition = "input.varname == 'Car Miles Per person (per week)'",
                        radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
                      )
     )
@@ -360,9 +360,9 @@ shinyUI(fluidPage(
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
-#       tabPanel("Summary", value = 8,
-#                showOutput("plotGenericVariable", "highcharts")
-#       ),
+      tabPanel("Summary", value = 8,
+               showOutput("plotGenericVariable", "highcharts")
+      ),
       tabPanel("About", value = 9,
                includeHTML("about.html")
       ),
