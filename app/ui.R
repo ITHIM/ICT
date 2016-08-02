@@ -104,11 +104,18 @@ shinyUI(fluidPage(
   useShinyjs(),
   width="100%", height="100%",
   uiOutput("oSample"),
-  a(bsCollapse(id = "intro", bsCollapsePanel(
-    tags$div(title = "Click here to open an introductory document", 
-             h4("Impacts of Cycling Tool"),
-             h6("(show/hide information)"),
-             tags$style(HTML("
+  tags$head(
+    includeScript("www/assets/extra.js")
+  ),
+  a(bsCollapse(id = "intro", 
+               bsCollapsePanel(
+                 #                  tags$div(title="Show/Hide zone legend",
+                 #                           a(id = "toggle_panel", style="font-size: 80%", span(class="glyphicon glyphicon-circle-arrow-up", "Hide"))
+                 #                  ),
+                 tags$div(title = "Click here to open an introductory document", 
+                          h4("Impacts of Cycling Tool"),
+                          h6("(show/hide information)"),
+                          tags$style(HTML("
                               h4 {
                                 font-size: 25px;
                                 font-weight: bold;
@@ -123,10 +130,10 @@ shinyUI(fluidPage(
                                 //text-decoration:none;
                               }
                             "))
-             
-    ), 
-    
-    includeMarkdown("README.md"))),
+                          
+                 ), 
+                 
+                 includeMarkdown("README.md"))),
     selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions)
   )
   ,
@@ -353,9 +360,9 @@ shinyUI(fluidPage(
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
-      #       tabPanel("Summary", value = 8,
-      #                showOutput("plotGenericVariable", "highcharts")
-      #       ),
+#       tabPanel("Summary", value = 8,
+#                showOutput("plotGenericVariable", "highcharts")
+#       ),
       tabPanel("About", value = 9,
                includeHTML("about.html")
       ),
