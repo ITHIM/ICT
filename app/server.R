@@ -978,7 +978,7 @@ shinyServer(function(input, output, session){
     # types of charts: http://api.highcharts.com/highcharts#plotOptions
     h1$yAxis(title = list(text = var))
     
-    h1$xAxis(categories = append("Baseline", sort(unique(sdata$MS), decreasing = F)), title = list(text = 'Cycling Multiplier'))
+    h1$xAxis(categories = append("Baseline", paste0((sort(unique(sdata$MS), decreasing = F) * 100), "%")), title = list(text = '% of Potential Cyclists'))
     
     
     if (input$inEB != "All" & input$inEQ != "All"){
