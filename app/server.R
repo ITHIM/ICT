@@ -715,6 +715,9 @@ shinyServer(function(input, output, session){
     else
       dataSource = scMETdata
     
+    npeople <- length(unique(data$ID))
+    # cat(npeople, "\n")
+    
     if (nrow(data) != nrow (dataSource)){
       
       displayGender <- "All"
@@ -744,13 +747,14 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       
-      filtered_title <- paste("Age Group: ", str_trim(input$mag), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title <- paste("Sample Size: ", npeople, ", Age Group: ", str_trim(input$mag), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title
   }
   
-  getTripsFilteredTitle <- function(){
+  getTripsFilteredTitle <- function(ldata){
+    npeople <- unique(ldata$total_population)
     filtered_title <- ""
     
     if (input$inBDAG != "All" || input$inBDGender != 3 || input$inBDEthnicity != "All" || input$inBDSES != "All" ){
@@ -782,7 +786,7 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       
-      filtered_title <- paste("Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title <- paste("Sample Size: ", npeople, ", Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title
@@ -821,6 +825,8 @@ shinyServer(function(input, output, session){
     
     msbl <- count(msbl)
     
+    total_population <- sum(msbl$freq, na.rm = T)
+    
     msbl$freq <- round(msbl$freq / sum(msbl$freq) * 100, digit = 1)
     # Remove NA row from the dataset
     msbl <- subset(msbl, !is.na(msbl[,1]))
@@ -828,6 +834,8 @@ shinyServer(function(input, output, session){
     msbl <- appendMissingFrequencies(tp_mode, msbl)
     
     msbl <- arrange(msbl, msbl[,1])
+    
+    msbl$total_population <- total_population
     
     msBaseline <<- msbl
     
@@ -839,6 +847,8 @@ shinyServer(function(input, output, session){
     
     mssc <- count(mssc)
     
+    total_population <- sum(mssc$freq, na.rm = T)
+    
     mssc$freq <- round(mssc$freq / sum(mssc$freq) * 100, digit = 1)
     # Remove NA row from the dataset
     mssc <- subset(mssc, !is.na(mssc[,1]))
@@ -846,6 +856,8 @@ shinyServer(function(input, output, session){
     mssc <- appendMissingFrequencies(tp_mode, mssc)
     
     mssc <- arrange(mssc, mssc[,1])
+    
+    mssc$total_population <- total_population
     
     msScenario <<- mssc
     #tdBaseline
@@ -866,6 +878,8 @@ shinyServer(function(input, output, session){
     data1 <- count(data, columnName)
     names(data1)[names(data1)== columnName] <- "scenario"
     
+    total_population <- sum(data1$freq, na.rm = T)
+    
     data1$freq <- round(data1$freq / sum(data1$freq) * 100, digit = 1)
     # Remove NA row from the dataset
     data1 <- subset(data1, !is.na(data1[,1]))
@@ -874,10 +888,14 @@ shinyServer(function(input, output, session){
     
     data1 <- arrange(data1, data1[,1])
     
+    data1$total_population <- total_population
+    
     tdScenario <<- data1
     
     data2 <- count(data, "baseline")
     names(data2)[names(data2)== columnName] <- "baseline"
+    
+    total_population <- sum(data2$freq, na.rm = T)
     
     data2$freq <- round(data2$freq / sum(data2$freq) * 100, digit = 1)
     # Remove NA row from the dataset
@@ -886,6 +904,8 @@ shinyServer(function(input, output, session){
     data2 <- appendMissingFrequencies(tp_mode, data2)
     
     data2 <- arrange(data2, data2[,1])
+    
+    data2$total_population <- total_population
     
     tdBaseline <<- data2
     
@@ -1029,7 +1049,7 @@ shinyServer(function(input, output, session){
     extended_title <- ""
     firstColData = NULL
     secondColData = NULL
-    filtered_title <- getTripsFilteredTitle()
+    
     if (input$flipMS == 'sep'){
       # Keep the data separated
       # scMETdata and scFilteredMETdata
@@ -1040,6 +1060,7 @@ shinyServer(function(input, output, session){
       secondColName <- "Baseline (Sub-Population)"
       
       extended_title <- "Baseline - Mode Share"
+      filtered_title <- getTripsFilteredTitle(secondColData)
       
       #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
       #         
@@ -1065,6 +1086,7 @@ shinyServer(function(input, output, session){
       #         if (nrow(idata) == nrow(scMETdata))
       #           secondColName <- "Scenario (Total Population)"
     }
+    
     
     h1 <- Highcharts$new()
     h1$chart(type = "column")
@@ -1149,7 +1171,7 @@ shinyServer(function(input, output, session){
     h1$yAxis(title = list(text = 'Percentage of Trips'))
     
     #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
-    filtered_title <- getTripsFilteredTitle()
+    filtered_title <- getTripsFilteredTitle(secondColData)
     
     if (sum(firstColData$freq, na.rm = T) <= 10){
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
@@ -1999,7 +2021,6 @@ shinyServer(function(input, output, session){
     h1$chart(type = "column")
     firstColData <- NULL
     secondColData <- NULL
-    subtitle <- getCO2FilteredTitle()
     extended_title <- ""
     if (input$inCO2flip == 'sep'){
       # Keep the data separated
@@ -2011,6 +2032,7 @@ shinyServer(function(input, output, session){
       
       
       extended_title <- HTML("Baseline - CO<sub>2<sub> (kg) from car travel per person per week")
+      subtitle <- getCO2FilteredTitle(secondColData)
       #extended_title <- "Scenario - Mode Share"
       
     }else{
@@ -2024,6 +2046,7 @@ shinyServer(function(input, output, session){
       subtitle <- ""
       extended_title <- HTML("Total population - CO<sub>2<sub> (kg) from car travel per person per week")
     }
+    
     
     h1$title(text = extended_title)
     
@@ -2083,7 +2106,8 @@ shinyServer(function(input, output, session){
     }
     
     
-    subtitle <- getCO2FilteredTitle()
+    subtitle <- getCO2FilteredTitle(secondColData)
+    
     h1$title(text = extended_title)
     bc <- NULL
     if (max(firstColData$data) > 0 && max(firstColData$data) > 0){
@@ -2158,7 +2182,9 @@ shinyServer(function(input, output, session){
   })
   
   
-  getCO2FilteredTitle <- function(){
+  getCO2FilteredTitle <- function(ldata){
+    npeople <- nrow(ldata)
+    
     filtered_title <- ""
     if (input$inCO2AG != "All" || input$inCO2G != 3 || input$inCO2Ethnicity != "All" || input$inCO2SES != "All" ){
       displayGender <- "All"
@@ -2187,7 +2213,7 @@ shinyServer(function(input, output, session){
       }else if (input$inCO2SES == 5){
         displaySES <- "Not classified (including students)"
       }
-      filtered_title <- paste("Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title <- paste("Sample Size: ", npeople, ", Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title
