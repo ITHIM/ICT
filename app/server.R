@@ -260,8 +260,8 @@ shinyServer(function(input, output, session){
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Baseline (Sub-Population)"
-        if (nrow(sessionData$idata) == nrow(pd))
-          secondColName <- "Baseline (Total Population)"
+        #if (nrow(sessionData$idata) == nrow(pd))
+        #  secondColName <- "Baseline (Total Population)"
         
       }else{
         # Keep the data mixed
@@ -272,8 +272,8 @@ shinyServer(function(input, output, session){
         
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Scenario (Sub-Population)"
-        if (nrow(sessionData$idata) == nrow(scMETdata))
-          secondColName <- "Scenario (Total Population)"
+        #if (nrow(sessionData$idata) == nrow(scMETdata))
+        #  secondColName <- "Scenario (Total Population)"
       }
       
       filtered_title <- getMETFilteredTitle(secondColData, "baseline")
