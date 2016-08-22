@@ -154,38 +154,35 @@ shinyUI(fluidPage(
                      radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
     ),
-    
-    
-    #     ,
-    #     conditionalPanel(condition="input.conditionedPanels == 2",
-    #                      selectInput(inputId = "inTTMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#, selected = uBDMS[2]),
-    #                      radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                      radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      selectizeInput("inTTAG", "Age Group:", ag, selected = ag[1], multiple = F),
-    #                      radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
-    #                      selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
-    #                      radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                      #HTML("<hr>"),
-    #                      #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
-    #                      
-    #     ),
-    #     conditionalPanel(condition="input.conditionedPanels == 3",
-    #                      selectInput(inputId = "inMSMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-    #                      radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                      radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
-    #                      radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
-    #                      selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
-    #                      radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
-    #     ),
+    conditionalPanel(condition="input.conditionedPanels == 2",
+                     selectInput(inputId = "inTTMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inTTAG", "Age Group:", ag, selected = ag[1], multiple = F),
+                     radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
+                     radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     #HTML("<hr>"),
+                     #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
+
+    ),
+    conditionalPanel(condition="input.conditionedPanels == 3",
+                     selectInput(inputId = "inMSMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
+                     radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
+                     radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inMSTotOrCyc", label = "Denominator:", denominatorRButton, inline = TRUE)
+    ),
     conditionalPanel(condition="input.conditionedPanels == 4",
                      
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
@@ -226,21 +223,19 @@ shinyUI(fluidPage(
                      radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
                      
     ),
-    #     
-    #     
-    #     conditionalPanel(condition="input.conditionedPanels == 6",
-    #                      selectInput(inputId = "inCMMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-    #                      radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                      radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
-    #                      radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
-    #                      selectizeInput("inCMSES", "Socio Economic Classification :", ses),
-    #                      radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                      HTML("<hr>"),
-    #                      radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-    #                      
-    #     ),
+    conditionalPanel(condition="input.conditionedPanels == 6",
+                     selectInput(inputId = "inCMMS", label = "Select Cycling Percentage of Population:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
+                     HTML("<hr>"),
+                     selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
+                     radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
+                     selectizeInput("inCMSES", "Socio Economic Classification :", ses),
+                     radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
+
+    ),
     conditionalPanel(condition="input.conditionedPanels == 7",
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
                               selectInput(inputId = "inCO2MS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
@@ -281,31 +276,31 @@ shinyUI(fluidPage(
                showOutput("plotBDMode", "highcharts"),
                showOutput("plotBDSCMode", "highcharts")
       ),
-      #       tabPanel("Journey Time", value = 2,
-      #                a(id = "MTHelp", "Help?", href = "#"),
-      #                hidden (div(id = "MTHelpText",
-      #                            helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of 
-      #                                          three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected 
-      #                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
-      #                ))
-      #                ,
-      #                showOutput("plotTTTotalMode", "highcharts"),
-      #                # HTML("Faster <-> Slower"),
-      #                showOutput("plotTTFilteredMode", "highcharts")
-      #       ),
-      #       tabPanel("Miles Cycled", value = 3,
-      #                a(id = "MCHelp", "Help?", href = "#"),
-      #                hidden (div(id = "MCHelpText",
-      #                            helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with 
-      #                                          the baseline. Note that the bar charts do not include a bar for people with zero cycling. 
-      #                                          In order to see the total number of cyclists in scenarios, please refer to the &#39;Number of Cyclists&#39; in the <i>Summary</i> tab. 
-      #                                          Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the 
-      #                                          total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the 
-      #                                          total population, and/or between selected scenarios and baseline."))
-      #                )),
-      #                showOutput("plotMilesCycled", "highcharts"),
-      #                showOutput("plotFilteredMilesCycled", "highcharts")
-      #       ),
+      tabPanel("Journey Time", value = 2,
+               a(id = "MTHelp", "Help?", href = "#"),
+               hidden (div(id = "MTHelpText",
+                           helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of
+                                         three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected
+                                         sub-populations and the total population, and/or between selected scenarios and baseline."))
+               ))
+               ,
+               showOutput("plotTTTotalMode", "highcharts"),
+               showOutput("plotTTFilteredMode", "highcharts")
+      ),
+      tabPanel("Miles Cycled", value = 3,
+               a(id = "MCHelp", "Help?", href = "#"),
+               hidden (div(id = "MCHelpText",
+                           helpText(HTML("Displays two plots for total miles cycled per cyclist per week, where a selected scenario is compared with
+                                         the baseline. Note that the bar charts do not include a bar for people with zero cycling.
+                                         In order to see the total number of cyclists in scenarios, please refer to the &#39;Number of Cyclists&#39; in the <i>Summary</i> tab.
+                                         Users can use the &#39;Denominator&#39; option to switch between showing percentages relative to a) the
+                                         total population or b) all cyclists.  Users can choose to compare miles cycled between selected sub-populations and the
+                                         total population, and/or between selected scenarios and baseline."))
+               ))
+               ,
+               showOutput("plotMilesCycled", "highcharts"),
+               showOutput("plotFilteredMilesCycled", "highcharts")
+      ),
       tabPanel("Physical Activity", value = 4,
                a(id = "PAHelp", "Help?", href = "#"),
                hidden (div(id = "PAHelpText",
@@ -337,19 +332,18 @@ shinyUI(fluidPage(
                showOutput("plotHealth", "highcharts"),
                showOutput("plotHealthReduction", "highcharts")
       ),
-      #       
-      #       
-      #       tabPanel("Car Miles", value = 6,
-      #                a(id = "CMHelp", "Help?", href = "#"),
-      #                hidden (div(id = "CMHelpText",
-      #                            helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected 
-      #                                                     scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a 
-      #                                                     car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car 
-      #                                                     miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
-      #                )),
-      #                showOutput("plotFilteredCarMiles", "highcharts"),
-      #                showOutput("plotCarMiles", "highcharts")
-      #       ),
+      tabPanel("Car Miles", value = 6,
+               a(id = "CMHelp", "Help?", href = "#"),
+               hidden (div(id = "CMHelpText",
+                           helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected
+                                                    scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a
+                                                    car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car
+                                                    miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
+               ))
+               ,
+               showOutput("plotFilteredCarMiles", "highcharts"),
+               showOutput("plotCarMiles", "highcharts")
+      ),
       tabPanel(HTML("CO<sub>2<sub>"), value = 7,
                a(id = "CO2Help", "Help?", href = "#"),
                hidden (div(id = "CO2HelpText",

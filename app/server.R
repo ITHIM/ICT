@@ -62,6 +62,9 @@ shinyServer(function(input, output, session){
       sessionData$death <<- subset(death, regions == input$inRegions)
       sessionData$sdata <<- subset(sdata, Region == input$inRegions)
       sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
+      sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
+      sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
+      sessionData$tripTime <<- subset(tripTime, HHoldGOR_B02ID == input$inRegions)
     }
   })
   
@@ -1485,7 +1488,9 @@ shinyServer(function(input, output, session){
   
   generateTTData <- reactive({
     
-    data <- tripTime
+    input$inRegions
+    
+    data <- sessionData$tripTime
     
     if (input$inTTAG != 'All'){
       data <- subset(data, age_group == input$inTTAG)
@@ -1507,7 +1512,7 @@ shinyServer(function(input, output, session){
                         paste("eq", input$inTTEQ,sep = ""), sep="_")
     
     # Get row numbers with NA
-    temp <- data.frame(rn = which(tripTime$X %in% data$X))
+    temp <- data.frame(rn = which(sessionData$tripTime[,c("X")] %in% data$X))
     
     locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
     
@@ -1539,10 +1544,10 @@ shinyServer(function(input, output, session){
     localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
     scFilteredTripTimeTraveldata <<- localtripData
     
-    data <- tripTime
+    data <- sessionData$tripTime
     
     # Get row numbers with NA
-    temp <- data.frame(rn = tripTime$X)
+    temp <- data.frame(rn = sessionData$tripTime[,c("X")])
     
     locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
     
@@ -1816,7 +1821,8 @@ shinyServer(function(input, output, session){
   })
   
   filterMilesCycledData <- reactive ({
-    data <- milesCycled
+    input$inRegions
+    data <- sessionData$milesCycled
     
     if (input$inMSAG != 'All'){
       data <- subset(data, age_group == input$inMSAG)
@@ -1839,7 +1845,7 @@ shinyServer(function(input, output, session){
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
-    data1 <- data.frame(milesCycled[,columnName])
+    data1 <- data.frame(sessionData$milesCycled[,columnName])
     
     data1$data <- data1[,1]
     data1[,1] <- NULL
@@ -1852,8 +1858,8 @@ shinyServer(function(input, output, session){
     scMilesCycledData <<- data1
     scMilesCycledFilteredData <<- data2
     
-    blMilesCycledData <<- data.frame(data = milesCycled[,"baseline_milesCycled"])
-    blMilesCycledFilteredData <<- data.frame(data = data[,"baseline_milesCycled"])
+    blMilesCycledData <<- data.frame(data = sessionData$milesCycled[,"baseline"])
+    blMilesCycledFilteredData <<- data.frame(data = data[,"baseline"])
   })
   
   
@@ -1973,7 +1979,8 @@ shinyServer(function(input, output, session){
   
   
   filterCarMilesData <- reactive ({
-    data <- carMiles
+    input$inRegions
+    data <- sessionData$carMiles
     
     if (input$inMSAG != 'All'){
       data <- subset(data, age_group == input$inMSAG)
@@ -1996,7 +2003,7 @@ shinyServer(function(input, output, session){
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
-    data1 <- data.frame(carMiles[,columnName])
+    data1 <- data.frame(sessionData$carMiles[,columnName])
     
     data1$data <- data1[,1]
     data1[,1] <- NULL
@@ -2009,8 +2016,8 @@ shinyServer(function(input, output, session){
     scCarMilesData <<- data1
     scCarMilesFilteredData <<- data2
     
-    blCarMilesData <<- data.frame(data = carMiles[,"baseline_carMiles"])
-    blCarMilesFilteredData <<- data.frame(data = data[,"baseline_carMiles"])
+    blCarMilesData <<- data.frame(data = sessionData$carMiles[,"baseline"])
+    blCarMilesFilteredData <<- data.frame(data = data[,"baseline"])
     
   })
   

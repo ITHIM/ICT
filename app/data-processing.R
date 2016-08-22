@@ -30,11 +30,11 @@ yllReduction <- readRDS("data/csv/yll_reduction.rds")
 
 
 # #Read Car Miles data
-# carMiles <- read.csv("data/csv/carMiles_var1.csv", header = T, as.is = T)
-# carMiles[is.na(carMiles)] <- 0
-# 
-# milesCycled <- read.csv("data/csv/milesCycled.pers_var1.csv", header = T, as.is = T)
-# milesCycled[is.na(milesCycled)] <- 0
+carMiles <- readRDS("data/csv/carMiles_regional.rds")
+carMiles[is.na(carMiles)] <- 0
+
+milesCycled <- readRDS("data/csv/milesCycled.pers_regional.rds")
+milesCycled[is.na(milesCycled)] <- 0
 
 # #Read Trip data
 #tripData <- read.csv("data/csv/tripsdf.csv", header = T, as.is = T)
@@ -65,17 +65,17 @@ tripMode$Cycled <- NULL
 
 
 
-# # Read trip time
-# tripTime <- read.csv("data/csv/triptime1.csv", header = T, as.is = T)
-# 
-# # Get row numbers with NA
-# temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
-# 
-# # Remove all rows with NA in them
-# tripMode <- (subset(tripMode, !(X %in% temp$rn) ))
-# 
-# tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
-# 
+# Read trip time
+tripTime <- readRDS("data/csv/TripTotalTime1_regional.rds")
+
+# Get row numbers with NA
+temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
+
+# Remove all rows with NA in them
+tripMode <- (subset(tripMode, !(X %in% temp$rn) ))
+
+tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
+
 # # # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
 # # # Reduce the number of modes to 4
 # # # walk, bicycle, car, others
@@ -88,7 +88,7 @@ tripMode$Cycled <- NULL
 # 
 # 
 # 
-# names(tripMode)[names(tripMode)=="MainMode_Reduced"] <- "baseline"
+names(tripMode)[names(tripMode)=="MainMode_Reduced"] <- "baseline"
 
 #Read CO2 data
 # co2data <- read.csv("data/csv/co2.csv", header = T, as.is = T)
