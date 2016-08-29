@@ -1511,9 +1511,6 @@ shinyServer(function(input, output, session){
     columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
                         paste("eq", input$inTTEQ,sep = ""), sep="_")
     
-    # Get row numbers with NA
-    temp <- data.frame(rn = which(sessionData$tripTime[,c("X")] %in% data$X))
-    
     locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
     
     # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
@@ -1526,16 +1523,25 @@ shinyServer(function(input, output, session){
     
     # Replace number of modes in each of the scenarios and the baseline to 4
     locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
+    
+    # Get row numbers with NA
+    #temp <- data.frame(rn = which(sessionData$tripTime[,c("X")] %in% data$X))
+    
+    # Get row numbers which fulfil selected conditions
+    
+    temp <- sessionData$tripTime[,c("X")] %in% data$X
+    
+    selectedRows <- sessionData$tripTime[temp, ]
 
     # Remove all rows with NA in them
-    locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
+    locatTripModeData <- (subset(locatTripModeData, (X %in% selectedRows$X) ))
     
-    localtripData <- data[,c("X","baseline", columnName)]
+    localtripData <- data[,c("X","TripTotalTime1", columnName)]
     
-    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$baseline) / localtripData$baseline ) * 100)
+    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
     
     #localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
-    
+
     locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
     
     names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
@@ -1560,9 +1566,9 @@ shinyServer(function(input, output, session){
     # Remove all rows with NA in them
     locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
     
-    localtripData <- data[,c("X","baseline", columnName)]
+    localtripData <- data[,c("X","TripTotalTime1", columnName)]
     
-    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$baseline) / localtripData$baseline ) * 100)
+    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
     
     locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
     
