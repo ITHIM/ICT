@@ -71,10 +71,16 @@ tripTime <- readRDS("data/csv/TripTotalTime1_regional.rds")
 # Get row numbers with NA
 temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
 
+tripMode$X <- c(1:nrow(tripMode))
+
+tripTime$X <- c(1:nrow(tripTime))
+
 # Remove all rows with NA in them
 tripMode <- (subset(tripMode, !(X %in% temp$rn) ))
 
 tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
+
+rm(temp)
 
 # # # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
 # # # Reduce the number of modes to 4
