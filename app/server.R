@@ -51,6 +51,9 @@ shinyServer(function(input, output, session){
     input$inRegions
     #idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
     if (!is.na(input$inRegions)){
+      # regenerate list with MS/DP for selected region (filtering out cases when observed # of cyclists > DP)
+      setMSValues()
+      
       # cat(input$inRegions)
       #cat("the idata is: ", nrow(subset(idata, HHoldGOR_B02ID == input$inRegions)), "\n")
       sessionData$sdata <<- subset(sdata, Region == input$inRegions)
@@ -66,6 +69,18 @@ shinyServer(function(input, output, session){
       sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
       sessionData$tripTime <<- subset(tripTime, HHoldGOR_B02ID == input$inRegions)
     }
+  })
+  
+  setMSValues <- reactive({
+    
+    updateSelectInput(session, inputId = "inBDMS", label = "Select % of Population who are Potential Cyclists:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inTTMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inMSMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inMETMS", label = "Select % of Population who are Potential Cyclists:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inHealthMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inCMMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inCO2MS", label = "Select % of Population who are Potential Cyclists:", choices =  generateUniqueMS(input$inRegions))
+    
   })
   
   plotTables <- reactive({
@@ -916,8 +931,7 @@ shinyServer(function(input, output, session){
     
     bd <<- data2
   })
-  
-  
+
   generateFasterTripsTable <- reactive({
     
     lMS <- input$inFTMS

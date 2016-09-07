@@ -85,3 +85,22 @@ getModeSpecificTrips <- function(data1, data2, columnName, mn){
   
   
 }
+
+generateUniqueMS <- function(region){
+  
+  # default values
+  
+  uniqueMS <- data.frame(labels=c("5%", "10%", "25%", "50%", "75%", "100%"),
+                         values=c(0.05, 0.10, 0.25, 0.50, 0.75, 1.00), stringsAsFactors=F)
+  
+  # check if there are cases observed > DP for selected region
+  
+  DPCasesRegion <- unique(directProbCasesAboveGivenPerc[directProbCasesAboveGivenPerc$region == region, 'MS'])
+  
+  # remove observed > DP cases
+  
+  withoutRemovedObservedDPCases <- uniqueMS[uniqueMS$values %in% setdiff(uniqueMS$values, DPCasesRegion), ]
+  
+  output <- structure(withoutRemovedObservedDPCases$values, names=withoutRemovedObservedDPCases$labels)
+  
+}
