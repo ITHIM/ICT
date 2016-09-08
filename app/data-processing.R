@@ -101,3 +101,7 @@ names(tripMode)[names(tripMode)=="MainMode_Reduced"] <- "baseline"
 co2data <- readRDS("data/csv/co2.rds")
 # Replace NAs with 0
 co2data[is.na(co2data)] <- 0
+
+# Read directProbCasesAboveGivenPerc which main role is to store info of every case in which Observed > DP
+
+directProbCasesAboveGivenPerc <- readRDS("data/csv/dp_cases_above_given.rds")
