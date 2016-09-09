@@ -129,10 +129,15 @@ shinyUI(fluidPage(
                  ), 
                  
                  includeMarkdown("README.md"))),
-    selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions)
+    
+    selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions)#,
+    #selectInput(inputId = "inbaselineRate", label = "Baseline:", choices =  regions)
+    
   )
   ,
   sidebarPanel(
+    uiOutput("inBaselineCycling"),
+    HTML("<hr>"),
     conditionalPanel(condition="input.conditionedPanels == 1",
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
                               selectInput(inputId = "inBDMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
