@@ -63,11 +63,11 @@ shinyServer(function(input, output, session){
       sessionData$yll <<- subset(yll, regions == input$inRegions)
       sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
       sessionData$death <<- subset(death, regions == input$inRegions)
-      sessionData$sdata <<- subset(sdata, Region == input$inRegions)
       sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
       sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
       sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
       sessionData$tripTime <<- subset(tripTime, HHoldGOR_B02ID == input$inRegions)
+      # cat(sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
     }
   })
   
@@ -83,6 +83,13 @@ shinyServer(function(input, output, session){
     
   })
   
+  output$inBaselineCycling <- renderUI({
+
+    #input$inRegions
+    #idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
+    HTML("Baseline Cycling (%): ", sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
+  })
+
   plotTables <- reactive({
     (input$scenario != 'none')
   })
