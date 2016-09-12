@@ -85,7 +85,7 @@ shinyServer(function(input, output, session){
   
   output$inBaselineCycling <- renderUI({
 
-    #input$inRegions
+    input$inRegions
     #idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
     HTML("Baseline Cycling (%): ", sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
   })
