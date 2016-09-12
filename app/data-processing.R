@@ -97,12 +97,12 @@ temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
 
 tripMode$X <- c(1:nrow(tripMode))
 
-tripTime$X <- c(1:nrow(tripTime))
+# tripTime$X <- c(1:nrow(tripTime))
 
 # Remove all rows with NA in them
 tripMode <- (subset(tripMode, !(X %in% temp$rn) ))
 
-tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
+# tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
 
 rm(temp)
 

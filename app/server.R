@@ -66,7 +66,7 @@ shinyServer(function(input, output, session){
       sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
       sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
       sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
-      sessionData$tripTime <<- subset(tripTime, HHoldGOR_B02ID == input$inRegions)
+      # sessionData$tripTime <<- subset(tripTime, HHoldGOR_B02ID == input$inRegions)
       # cat(sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
     }
   })
@@ -1511,65 +1511,65 @@ shinyServer(function(input, output, session){
     
     input$inRegions
     
-    data <- sessionData$tripTime
-    
-    if (input$inTTAG != 'All'){
-      data <- subset(data, age_group == input$inTTAG)
-    }
-    if (input$inTTGender != 3)
-      data <- subset(data, Sex_B01ID %in% input$inTTGender)
-    
-    if (input$inTTSES != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inTTSES)
-    }
-    
-    if (input$inTTEthnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inTTEthnicity)
-    }
-    data[is.na(data)] <- 0
-    
-    
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
-                        paste("eq", input$inTTEQ,sep = ""), sep="_")
-    
-    locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
-    
-    # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
-    # Reduce the number of modes to 4
-    # walk, bicycle, car, others
-    lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
-    
-    # Replace number of modes in each of the scenarios and the baseline to 4
-    locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
-    
-    # Replace number of modes in each of the scenarios and the baseline to 4
-    locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
-    
-    # Get row numbers with NA
-    #temp <- data.frame(rn = which(sessionData$tripTime[,c("X")] %in% data$X))
-    
-    # Get row numbers which fulfil selected conditions
-    
-    temp <- sessionData$tripTime[,c("X")] %in% data$X
-    
-    selectedRows <- sessionData$tripTime[temp, ]
-
-    # Remove all rows with NA in them
-    locatTripModeData <- (subset(locatTripModeData, (X %in% selectedRows$X) ))
-    
-    localtripData <- data[,c("X","TripTotalTime1", columnName)]
-    
-    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
-    
-    #localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
-
-    locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
-    
-    names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
-    localtripData <- inner_join(localtripData, locatTripModeData, by = "rn")
-    
-    localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
-    scFilteredTripTimeTraveldata <<- localtripData
+    # data <- sessionData$tripTime
+    # 
+    # if (input$inTTAG != 'All'){
+    #   data <- subset(data, age_group == input$inTTAG)
+    # }
+    # if (input$inTTGender != 3)
+    #   data <- subset(data, Sex_B01ID %in% input$inTTGender)
+    # 
+    # if (input$inTTSES != "All"){
+    #   data <- subset(data, NSSec_B03ID %in% input$inTTSES)
+    # }
+    # 
+    # if (input$inTTEthnicity != "All"){
+    #   data <- subset(data, EthGroupTS_B02ID %in% input$inTTEthnicity)
+    # }
+    # data[is.na(data)] <- 0
+    # 
+    # 
+    # columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""), 
+    #                     paste("eq", input$inTTEQ,sep = ""), sep="_")
+    # 
+    # locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
+    # 
+    # # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
+    # # Reduce the number of modes to 4
+    # # walk, bicycle, car, others
+    # lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
+    # 
+    # # Replace number of modes in each of the scenarios and the baseline to 4
+    # locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
+    # 
+    # # Replace number of modes in each of the scenarios and the baseline to 4
+    # locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
+    # 
+    # # Get row numbers with NA
+    # #temp <- data.frame(rn = which(sessionData$tripTime[,c("X")] %in% data$X))
+    # 
+    # # Get row numbers which fulfil selected conditions
+    # 
+    # temp <- sessionData$tripTime[,c("X")] %in% data$X
+    # 
+    # selectedRows <- sessionData$tripTime[temp, ]
+    # 
+    # # Remove all rows with NA in them
+    # locatTripModeData <- (subset(locatTripModeData, (X %in% selectedRows$X) ))
+    # 
+    # localtripData <- data[,c("X","TripTotalTime1", columnName)]
+    # 
+    # localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
+    # 
+    # #localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
+    # 
+    # locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
+    # 
+    # names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
+    # localtripData <- inner_join(localtripData, locatTripModeData, by = "rn")
+    # 
+    # localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
+    # scFilteredTripTimeTraveldata <<- localtripData
     
     data <- sessionData$tripTime
     
