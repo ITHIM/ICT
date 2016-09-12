@@ -63,10 +63,34 @@ tripMode$Cycled <- NULL
 #   tripMode[,i] <- lookup$red_mode[match(tripMode[,i], lookup$mode)]
 # }
 
+# if (!file.exists(readRDS("data/csv/TripTotalTime1_regional.rds"))){
+#   
+#   library(RCurl)
+#   myfile <- getURL('https://github.com/ITHIM/ICT/releases/download/v0.1-beta/TripTotalTime1_regional.rds', ssl.verifyhost=FALSE, ssl.verifypeer=FALSE)
+#   
+#   tripTime <- readRDS(url("https://github.com/ITHIM/ICT/releases/download/v0.1-beta/TripTotalTime1_regional.rds"))
+#   library(RCurl)
+#   #
+#   f = CFILE("TripTotalTime1_regional.rds", mode="wb")
+#   curlPerform(url = "https://github.com/ITHIM/ICT/releases/download/v0.1-beta/TripTotalTime1_regional.rds", writedata = f@ref)
+#   close(f)
+#   
+# }
+  
+# con <- gzfile("https://github.com/ITHIM/ICT/releases/download/v0.1-beta/TripTotalTime1_regional.rds")
+# url1 <- "https://github.com/ITHIM/ICT/releases/download/v0.1-beta/TripTotalTime1_regional.rds"
+# 
+# fn <- tempfile()
+# 
+# con <- download.file(url1,tempfile(),mode="wb",quiet = T)
+# 
+# con <- gzcon(url(paste("github.com/ITHIM/ICT/releases/download/v0.1-beta/TripTotalTime1_regional.rds", sep="")))
+# td <- readRDS(con)
+# close(con)
 
-
+# Comment out trip dataset
 # Read trip time
-tripTime <- readRDS("data/csv/TripTotalTime1_regional.rds")
+# tripTime <- readRDS("data/csv/TripTotalTime1_regional.rds")
 
 # Get row numbers with NA
 temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
