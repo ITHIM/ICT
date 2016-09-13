@@ -73,13 +73,13 @@ shinyServer(function(input, output, session){
   
   setMSValues <- reactive({
     
-    updateSelectInput(session, inputId = "inBDMS", label = "Select % of Population who are Potential Cyclists:", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inTTMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inMSMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inMETMS", label = "Select % of Population who are Potential Cyclists:", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inHealthMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inCMMS", label = "Select Cycling Percentage of Population:", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inCO2MS", label = "Select % of Population who are Potential Cyclists:", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inBDMS", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inTTMS", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inMSMS",  choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inMETMS", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inHealthMS",  choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inCMMS",  choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inCO2MS", choices =  generateUniqueMS(input$inRegions))
     
   })
   
