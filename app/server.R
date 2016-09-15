@@ -1764,16 +1764,20 @@ shinyServer(function(input, output, session){
         h1$yAxis(title = list(text = 'Percentage of the total population'))
       }
       h1$series(data = bc$Freq[-1], name = secondColName)
+      
+      h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
+      h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
+      h1$exporting(enabled = T)
+      
     }else{
+      
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$exporting(enabled = F)
+      
     }
-    h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
-    h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     h1$set(dom = "plotFilteredMilesCycled")
-    # h1$yAxis(title = list(text = 'Percentage %'))
-    h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
-    h1$exporting(enabled = T)
     return (h1)
   })
   
