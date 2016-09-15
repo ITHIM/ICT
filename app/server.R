@@ -580,9 +580,9 @@ shinyServer(function(input, output, session){
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
     }
     if (input$inHealthVarSwitch == "YLL")
-      h1$title(text = "Reduction in Years of Life Lost (YLL) for the English Population")
+      h1$title(text = "Reduction in Years of Life Lost (YLL) for the Selected Region")
     else
-      h1$title(text = "Averted number of Deaths for the English Population")
+      h1$title(text = "Averted number of Deaths for the Selected Region")
     h1$set(dom = "plotHealth")
     h1$exporting(enabled = T)
     return(h1)
@@ -644,9 +644,9 @@ shinyServer(function(input, output, session){
     }
     
     if (input$inHealthVarSwitch == "YLL")
-      h1$title(text = "Reduction in percentage of Years of Life Lost (YLL) for the English Population")
+      h1$title(text = "Reduction in percentage of Years of Life Lost (YLL) for the Selected Region")
     else
-      h1$title(text = "Reduction in percentage of Deaths for the English Population")
+      h1$title(text = "Reduction in percentage of Deaths for the Selected Region")
     h1$tooltip(valueSuffix= '%')
     h1$set(dom = "plotHealthReduction")
     h1$exporting(enabled = T)
