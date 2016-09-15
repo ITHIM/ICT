@@ -972,11 +972,15 @@ shinyServer(function(input, output, session){
   
   generateScenarioTable<- reactive({
     input$inRegions
-    #     lMS <- input$inMS
+    
     lEB <- input$inEB
     lEQ <- input$inEQ
     
     data <- sessionData$sdata
+    
+    # Update MS
+    data <- subset(data, MS %in% generateUniqueMS(input$inRegions))
+    
     if (lEQ != "All")
       data <- subset(data, equity == lEQ)
     if (lEB != "All")
@@ -984,7 +988,7 @@ shinyServer(function(input, output, session){
     
     data[is.na(data)] <- 0
     data <- arrange(data, MS)
-    # data[order(Age),]
+    
     scdata <<- data
   })
   
@@ -1002,7 +1006,8 @@ shinyServer(function(input, output, session){
     # types of charts: http://api.highcharts.com/highcharts#plotOptions
     h1$yAxis(title = list(text = var))
     
-    h1$xAxis(categories = append("Baseline", paste0((sort(unique(sdata$MS), decreasing = F) * 100), "%")), title = list(text = '% of Potential Cyclists'))
+    # Read updated MS according to the selected region
+    h1$xAxis(categories = append("Baseline", paste0((sort(unique(generateUniqueMS(input$inRegions)), decreasing = F) * 100), "%")), title = list(text = '% of Potential Cyclists'))
     
     
     if (input$inEB != "All" & input$inEQ != "All"){
