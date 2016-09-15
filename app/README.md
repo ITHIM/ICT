@@ -5,7 +5,7 @@ The ICT is designed to do two things:
 1. As a data visualisation tool to look at how people travel in England and how active they are
 2. To look at how things would change under different scenarios in which the probability of being a cyclist increases
 
-The starting point for the ICT is weekly data from the National Travel Survey for England 2012. This allows us to look at how different groups in the population travel. To estimate physical activity we use both travel activity and also non-travel physical activity &#45; the latter comes from combining the National Travel Survey data with data on similar people from the Health Survey for England 2012.
+The starting point for the ICT is weekly data from the National Travel Survey for England from 2004 till 2014. This allows us to look at how different groups in the population travel. To estimate physical activity we use both travel activity and also non-travel physical activity &#45; the latter comes from combining the National Travel Survey data with data on similar people from the Health Survey for England 2012.
 
 The scenarios are based around assuming that some non-cyclists become cyclists. By this we mean they have the same probability of cycling each trip as current cyclists. Note that if someone becomes a cyclist then that doesn&#39;t mean they cycle all or even most of their trips - people are more likely to cycle short trips than long ones, and our analysis indicates that the distance people are willing to cycle falls more quickly for women and older people. For this reason we probabilistically model which of the trips are cycled based on the trip distances and the person&#39;s age and gender. This process means that some people who become cyclists may not cycle any trips in a given week.
 
