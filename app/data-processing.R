@@ -90,19 +90,19 @@ tripMode$Cycled <- NULL
 
 # Comment out trip dataset
 # Read trip time
-tripTime <- readRDS("data/csv/TripTotalTime1_regional.rds")
+# tripTime <- readRDS("data/csv/TripTotalTime1_regional.rds")
 
 # Get row numbers with NA
 temp <- data.frame(rn = which( is.na(tripMode$MainMode_Reduced), arr.ind=TRUE))
 
 tripMode$X <- c(1:nrow(tripMode))
 
-tripTime$X <- c(1:nrow(tripTime))
+# tripTime$X <- c(1:nrow(tripTime))
 
 # Remove all rows with NA in them
 tripMode <- (subset(tripMode, !(X %in% temp$rn) ))
 
-tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
+# tripTime <- (subset(tripTime, !(X %in% temp$rn) ))
 
 rm(temp)
 
@@ -153,7 +153,7 @@ TripTotalTimeFreq <- function(tripTime, tripMode){
   
   # all possible scenarios - not very elegant way
   
-  aaScenarios <- colnames(tripTime)[10:length(colnames(tripTime))-1][c(4,5)]
+  aaScenarios <- colnames(tripTime)[10:length(colnames(tripTime))-1]
   
   # all possible regions
   
@@ -401,7 +401,7 @@ TripTotalTimeFreq <- function(tripTime, tripMode){
 }
 
 
-testTripTotalTimeFreq <- TripTotalTimeFreq(tripTime, tripMode)
+# testTripTotalTimeFreq <- TripTotalTimeFreq(tripTime, tripMode)
 
 # rm(tripTime)
 # gc()
