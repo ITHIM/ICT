@@ -89,7 +89,7 @@ shinyServer(function(input, output, session){
     input$conditionedPanels
     
     if (input$conditionedPanels < 8)
-      HTML("Baseline Cycling (%): ", sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
+      HTML("Baseline Cycling, Total Population (%): ", sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
     else
       HTML("")
   })
