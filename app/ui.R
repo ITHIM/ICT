@@ -136,7 +136,7 @@ shinyUI(fluidPage(
   ,
   sidebarPanel(
     
-    tags$div(title="Shows % of population cycling weekly at baseline for the selected region",
+    tags$div(title="Shows % of the total population for the selected region who cycle at least weekly at baseline",
              uiOutput("inBaselineCycling")
     ),
     
