@@ -66,7 +66,6 @@ shinyServer(function(input, output, session){
       sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
       sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
       sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
-      # sessionData$tripTime <<- subset(tripTime, HHoldGOR_B02ID == input$inRegions)
       # cat(sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
     }
   })
@@ -1254,7 +1253,8 @@ shinyServer(function(input, output, session){
   
   output$plotTTFilteredMode <- renderChart({
     input$flipTTPlot
-    generateTTData()
+    input$inRegions
+    # generateTTData()  # use precalculated values which are in TripTotalTime1_regional folder
     h1 <- Highcharts$new()
     h1$chart(type = "column", style = list(fontFamily = 'Verdana, sans-serif', fontSize = '12px'))
     h1$yAxis(title = list(text = 'Percentage %'))
@@ -1271,35 +1271,50 @@ shinyServer(function(input, output, session){
                                                  style = list(fontSize = '9px'),
                                                  formatter = format_function)))
     
+    # construct scenario name + filename
+    
+    scenarioName <- paste(paste0("MS", input$inTTMS), paste0("ebik", input$inTTEB), paste0("eq", input$inTTEQ), sep="_")
+    
+    scenarioFilename <- paste0(scenarioName, '.rds')
+    
+    mname <- c("Walk", "Car", "Public Transport")
     
     if (input$flipTTPlot == "histogram"){
       
-      if (!is.null(scFilteredTripTimeTraveldata) && nrow(scFilteredTripTimeTraveldata) > 0){
+      # read histogram data for selected scenario
+      
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/filtered/", input$inRegions, "/histogram/", scenarioFilename))
+      
+      # filter data
+      
+      chartData <- subset(chartData, agegroup == input$inTTAG & gender == input$inTTGender & ses == input$inTTSES & ethnicity == input$inTTEthnicity)
+      
+      # TODO: na check?
+      
+      if (!is.null(chartData) && nrow(chartData) > 0){
         
-        mname <- c("Walk", "Car", "Public Transport")
-        
-        total_col <- "baseline"
-        umode <- sort(unique(scFilteredTripTimeTraveldata[,total_col]))
-        # Exclude bicycle mode
-        umode <- umode[umode != 2]
         h1$title(text = "Sub-population - Histogram of Relative Changes in Trip Durations")
-        if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
-          h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
-
-        xdf <- data.frame(breaks = seq(-60,200, 20), count = 0)
-        xlab <- ""
-        for (i in 1:length(umode)){
-          ldata <- subset(scFilteredTripTimeTraveldata, scFilteredTripTimeTraveldata[,total_col] == umode[i])
+        
+        # TODO: below if
+        # if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
+        #   h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+        
+        availableUmodes <- unique(chartData[["umode"]])
+        
+        # iterate over umodes
+        
+        for (i in 1:length(availableUmodes)){
           
-          bc <- as.data.frame(table (cut (ldata$diff, breaks = c(-100, -50, -20, 0, 20, 50, 100, Inf))))
-          # bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-          bc$Freq <- round(bc$Freq  / nrow(scFilteredTripTimeTraveldata) * 100, digits = 1)
+          # add serie of umode data
           
-          h1$series(data =  bc$Freq, name = mname[i]) #"Time Difference from Baseline (%)
-          xlab <- bc$Var1
+          h1$series(data = as.numeric(unlist(chartData[chartData$umode == availableUmodes[i], c(scenarioName)])), name = mname[i]) #"Time Difference from Baseline (%)
+          
         }
-        if (nrow(scFilteredTripTimeTraveldata) == 1){
-          xlabel <- data$breaks
+        
+        # TODO: check below condition - previously scTripTimeTraveldata
+        
+        if (length(availableUmodes) == 1){
+          
           h1$xAxis(categories = c("%") , labels = list(padding = 10,
                                                        style = list(fontSize = '10px',
                                                                     whiteSpace = 'nowrap'))
@@ -1307,9 +1322,7 @@ shinyServer(function(input, output, session){
           
         }else{
           
-          # h1$xAxis(categories = c("(-100,-50]", "(-50,-20]","(-20,0]","(0,20]","(20,50]","(50,100]","(100,Inf]" ))
-          # h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
-          h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower"))
+          h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
@@ -1327,50 +1340,53 @@ shinyServer(function(input, output, session){
       
     }else{
       
-      if (!is.null(scFilteredTripTimeTraveldata) && nrow(scFilteredTripTimeTraveldata) > 0){
+      # read other data for selected scenario
+      
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/filtered/", input$inRegions, "/other/", scenarioFilename))
+      
+      # filter data
+      
+      chartData <- subset(chartData, agegroup == input$inTTAG & gender == input$inTTGender & ses == input$inTTSES & ethnicity == input$inTTEthnicity)
+      
+      # TODO: na check?
+      
+      if (!is.null(chartData) && nrow(chartData) > 0){
         
-        mname <- c("Walk", "Car", "Public Transport")
-        
-        #total_col <- ncol(scFilteredTripTimeTraveldata)
-        total_col <- "baseline"
-        umode <- sort(unique(scFilteredTripTimeTraveldata[,total_col]))
-        # Exclude bicycle mode
-        umode <- umode[umode != 2]
         h1$title(text = "Sub-population - Proportion of Faster/Slower Trips")
-
-        if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
-          h1$title(text = "Total population - Proportion of Faster/Slower Trips")
         
-        #Remove unchanged trips
-        scFilteredTripTimeTraveldata <- subset(scFilteredTripTimeTraveldata, diff != 0)
+        # TODO: below if
+        # if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
+        #   h1$title(text = "Total population - Proportion of Faster/Slower Trips")
         
-        for (i in 1:length(umode)){
-          ldata <- subset(scFilteredTripTimeTraveldata, scFilteredTripTimeTraveldata[,total_col] == umode[i])
+        availableUmodes <- unique(chartData[["umode"]])
+        
+        # iterate over umodes
+        
+        for (i in 1:length(availableUmodes)){
           
+          # add serie of umode data
           
-          data <- data.frame(counts = c(nrow(subset(ldata, diff < 0)),
-                                        #nrow(subset(ldata, diff == 0)),
-                                        nrow(subset(ldata, diff > 0))))
-          data$counts <- round(data$counts / nrow(scFilteredTripTimeTraveldata) * 100, 2)
-          h1$series(data =  data$counts, name = mname[i]) #"Time Difference from Baseline (%)
+          h1$series(data = as.numeric(unlist(chartData[chartData$umode == availableUmodes[i], c(scenarioName)])), name = mname[i]) #"Time Difference from Baseline (%)
+          
         }
         
-        if (nrow(data) == 1){
-          xlabel <- data$breaks
-          h1$xAxis(categories = c("%"), labels = list(padding = 10,
-                                                      style = list(fontSize = '10px',
-                                                                   whiteSpace = 'nowrap'
-                                                                   ))
+        # TODO: check below condition - previously scTripTimeTraveldata
+        
+        if (length(availableUmodes) == 1){
+          
+          h1$xAxis(categories = c("%") , labels = list(padding = 40,
+                                                       style = list(fontSize = '10px',
+                                                                    whiteSpace = 'nowrap'))
           )
           
         }else{
+          
           h1$xAxis(categories = c("Faster", "Slower"))
         }
         
         h1$tooltip(valueSuffix= '%')
         st <- getModeTimeFilteredTitle()
         h1$subtitle(text = st, style = list(fontSize = '12px'))
-        
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
@@ -1389,7 +1405,8 @@ shinyServer(function(input, output, session){
   })
   
   output$plotTTTotalMode <- renderChart({
-    generateTTData()
+    input$inRegions
+    # generateTTData() # use precalculated values which are in TripTotalTime1_regional folder
     h1 <- Highcharts$new()
     h1$chart(type = "column", style = list(fontFamily = 'Verdana, sans-serif', fontSize = '12px'))
     h1$yAxis(title = list(text = 'Percentage %'))
@@ -1406,31 +1423,42 @@ shinyServer(function(input, output, session){
                                                  style = list(fontSize = '9px'),
                                                  formatter = format_function)))
     
+    # construct scenario name + filename
+    
+    scenarioName <- paste(paste0("MS", input$inTTMS), paste0("ebik", input$inTTEB), paste0("eq", input$inTTEQ), sep="_")
+    
+    scenarioFilename <- paste0(scenarioName, '.rds')
+    
+    mname <- c("Walk", "Car", "Public Transport")
+    
     if (input$flipTTPlot == "histogram"){
       
-      if (!is.null(scTripTimeTraveldata) && nrow(scTripTimeTraveldata) > 0){
+      # read histogram data for selected scenario
+      
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/baseline/", input$inRegions, "/histogram/", scenarioFilename))
+      
+      # TODO: na check?
+      
+      if (!is.null(chartData) && nrow(chartData) > 0){
         
-        mname <- c("Walk", "Car", "Public Transport")
-        
-        total_col <- "baseline"
-        umode <- sort(unique(scTripTimeTraveldata[,total_col]))
-        # Exclude bicycle mode
-        umode <- umode[umode != 2]
         h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
-        xdf <- data.frame(breaks = seq(-60,200, 20), count = 0)
-        xlab <- ""
-        for (i in 1:length(umode)){
-          ldata <- subset(scTripTimeTraveldata, scTripTimeTraveldata[,total_col] == umode[i])
+        
+        availableUmodes <- unique(chartData[["umode"]])
+        
+        # iterate over umodes
+        
+        for (i in 1:length(availableUmodes)){
           
-          bc <- as.data.frame(table (cut (ldata$diff, breaks = c(-100, -50, -20, 0, 20, 50, 100, Inf))))
-          # bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
-          bc$Freq <- round(bc$Freq  / nrow(scTripTimeTraveldata) * 100, digits = 1)
+          # add serie of umode data
           
-          h1$series(data =  bc$Freq, name = mname[i]) #"Time Difference from Baseline (%)
-          xlab <- bc$Var1
+          h1$series(data = as.numeric(unlist(chartData[chartData$umode == availableUmodes[i], c(scenarioName)])), name = mname[i]) #"Time Difference from Baseline (%)
+          
         }
-        if (nrow(scTripTimeTraveldata) == 1){
-          xlabel <- data$breaks
+        
+        # TODO: check below condition - previously scTripTimeTraveldata
+        
+        if (length(availableUmodes) == 1){
+ 
           h1$xAxis(categories = c("%") , labels = list(padding = 10,
                                                        style = list(fontSize = '10px',
                                                                     whiteSpace = 'nowrap'))
@@ -1438,15 +1466,11 @@ shinyServer(function(input, output, session){
           
         }else{
           
-          # h1$xAxis(categories = c("(-100,-50]", "(-50,-20]","(-20,0]","(0,20]","(20,50]","(50,100]","(100,Inf]" ))
-          # h1$xAxis(categories = c("> -50", ">= -50 & < -20",">= -20 & <= 0",">= 0 & < 20",">= 20 & < 50",">= 50 & <= 100",">= 100" ))
           h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
         st <- getModeTimeFilteredTitle()
-        
-        #h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
@@ -1457,43 +1481,44 @@ shinyServer(function(input, output, session){
       
     }else{
       
-      if (!is.null(scTripTimeTraveldata) && nrow(scTripTimeTraveldata) > 0){
+      # read other data for selected scenario
+      
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/baseline/", input$inRegions, "/other/", scenarioFilename))
+      
+      # TODO: na check?
+      
+      if (!is.null(chartData) && nrow(chartData) > 0){
         
-        mname <- c("Walk", "Car", "Public Transport")
-        
-        #total_col <- ncol(scFilteredTripTimeTraveldata)
-        total_col <- "baseline"
-        umode <- sort(unique(scTripTimeTraveldata[,total_col]))
-        
-        scTripTimeTraveldata <- subset(scTripTimeTraveldata, diff != 0)
-        # Exclude bicycle mode
-        umode <- umode[umode != 2]
         h1$title(text = "Total population - Proportion of Faster/Slower Trips")
-        for (i in 1:length(umode)){
-          ldata <- subset(scTripTimeTraveldata, scTripTimeTraveldata[,total_col] == umode[i])
+        
+        availableUmodes <- unique(chartData[["umode"]])
+        
+        # iterate over umodes
+        
+        for (i in 1:length(availableUmodes)){
           
+          # add serie of umode data
           
-          data <- data.frame(counts = c(nrow(subset(ldata, diff < 0)),
-                                        #nrow(subset(ldata, diff == 0)),
-                                        nrow(subset(ldata, diff > 0))))
-          data$counts <- round(data$counts / nrow(scTripTimeTraveldata) * 100, 2)
-          h1$series(data =  data$counts, name = mname[i]) #"Time Difference from Baseline (%)
+          h1$series(data = as.numeric(unlist(chartData[chartData$umode == availableUmodes[i], c(scenarioName)])), name = mname[i]) #"Time Difference from Baseline (%)
+          
         }
-        if (nrow(data) == 1){
-          xlabel <- data$breaks
+        
+        # TODO: check below condition - previously scTripTimeTraveldata
+        
+        if (length(availableUmodes) == 1){
+          
           h1$xAxis(categories = c("%") , labels = list(padding = 40,
                                                        style = list(fontSize = '10px',
                                                                     whiteSpace = 'nowrap'))
           )
           
         }else{
+          
           h1$xAxis(categories = c("Faster", "Slower"))
         }
         
         h1$tooltip(valueSuffix= '%')
         st <- getModeTimeFilteredTitle()
-        #h1$subtitle(text = st, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
-        
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
@@ -1511,102 +1536,6 @@ shinyServer(function(input, output, session){
                                      xAxis = list(labels = list(style = list(fontSize = '8px')))))
     return(h1)
   })
-  
-  generateTTData <- reactive({
-    
-    input$inRegions
-    
-    data <- sessionData$tripTime
-
-    if (input$inTTAG != 'All'){
-      data <- subset(data, age_group == input$inTTAG)
-    }
-    if (input$inTTGender != 3)
-      data <- subset(data, Sex_B01ID %in% input$inTTGender)
-
-    if (input$inTTSES != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inTTSES)
-    }
-
-    if (input$inTTEthnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inTTEthnicity)
-    }
-    data[is.na(data)] <- 0
-
-
-    columnName <- paste(paste("MS", input$inTTMS,sep = ""),  paste("ebik", input$inTTEB,sep = ""),
-                        paste("eq", input$inTTEQ,sep = ""), sep="_")
-
-    locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
-
-    # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
-    # Reduce the number of modes to 4
-    # walk, bicycle, car, others
-    lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
-
-    # Replace number of modes in each of the scenarios and the baseline to 4
-    locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
-
-    # Replace number of modes in each of the scenarios and the baseline to 4
-    locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
-
-    # Get row numbers with NA
-    #temp <- data.frame(rn = which(sessionData$tripTime[,c("X")] %in% data$X))
-
-    # Get row numbers which fulfil selected conditions
-
-    temp <- sessionData$tripTime[,c("X")] %in% data$X
-
-    selectedRows <- sessionData$tripTime[temp, ]
-
-    # Remove all rows with NA in them
-    locatTripModeData <- (subset(locatTripModeData, (X %in% selectedRows$X) ))
-
-    localtripData <- data[,c("X","TripTotalTime1", columnName)]
-
-    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
-
-    #localtripData <- subset(localtripData, diff <= 200 & diff >= -200 )
-
-    locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
-
-    names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
-    localtripData <- inner_join(localtripData, locatTripModeData, by = "rn")
-
-    localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
-    scFilteredTripTimeTraveldata <<- localtripData
-    
-    data <- sessionData$tripTime
-    
-    # Get row numbers with NA
-    temp <- data.frame(rn = sessionData$tripTime[,c("X")])
-    
-    locatTripModeData <- sessionData$tripMode[,c("X","baseline", columnName)]
-    
-    # Replace number of modes in each of the scenarios and the baseline to 4
-    locatTripModeData[["baseline"]] <- lookup$red_mode[match(locatTripModeData[["baseline"]], lookup$mode)]
-    
-    # Replace number of modes in each of the scenarios and the baseline to 4
-    locatTripModeData[[columnName]] <- lookup$red_mode[match(locatTripModeData[[columnName]], lookup$mode)]
-    
-    # Remove all rows with NA in them
-    locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
-    
-    localtripData <- data[,c("X","TripTotalTime1", columnName)]
-    
-    localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
-    
-    locatTripModeData <- subset(locatTripModeData, (X %in% localtripData$rn) )
-    
-    names(locatTripModeData)[names(locatTripModeData)=="X"] <- "rn"
-    localtripData <- inner_join(localtripData, locatTripModeData, by = "rn")
-    
-    localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
-    
-    scTripTimeTraveldata <<- localtripData
-    
-  })
-  
   
   output$plotBDFasterTrips <- renderChart({
     generateFasterTripsTable()
