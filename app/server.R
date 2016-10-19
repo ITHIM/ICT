@@ -1483,7 +1483,25 @@ shinyServer(function(input, output, session){
           
         }else{
           
-          h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
+          h1$xAxis(categories = c(">=50%", ">=20 and <50%",">=0 and <20%",">0 and <=20%",">20 and <=50%",">50 and <=100%",">100%" ),
+                   plotBands = list(
+                     list(
+                       from = -0.5,
+                       to = 2.5,
+                       color = 'rgba(21, 155, 12, .1)',
+                       label = list(
+                         text = "Faster"
+                       )
+                     ),
+                     list(
+                       from = 2.5,
+                       to = 6.5,
+                       color = 'rgba(135, 13, 13, .1)',
+                       label = list(
+                         text = "Slower"
+                       )
+                     )
+                   ))
         }
         
         h1$tooltip(valueSuffix= '%')
@@ -1629,6 +1647,7 @@ shinyServer(function(input, output, session){
         }else{
           
           h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
+          h1$xAxis(categories = c(">=50% faster", ">=20 and <50% faster",">=0 and <20% faster",">0 and <=20% slower",">20 and <=50% slower",">50 and <=100% slower",">100% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
