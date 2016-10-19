@@ -1455,9 +1455,10 @@ shinyServer(function(input, output, session){
         
         h1$title(text = "Sub-population - Histogram of Relative Changes in Trip Durations")
         
-        # TODO: below if
-        # if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
-        #   h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+        if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
+           
+          h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+        }
         
         availableUmodes <- unique(chartData[["umode"]])
         
@@ -1514,9 +1515,10 @@ shinyServer(function(input, output, session){
         
         h1$title(text = "Sub-population - Proportion of Faster/Slower Trips")
         
-        # TODO: below if
-        # if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
-        #   h1$title(text = "Total population - Proportion of Faster/Slower Trips")
+        if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
+          
+          h1$title(text = "Total population - Proportion of Faster/Slower Trips")
+        }
         
         availableUmodes <- unique(chartData[["umode"]])
         
