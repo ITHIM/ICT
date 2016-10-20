@@ -21,8 +21,11 @@ scYllReductionData1 <- NULL
 
 msBaseline <- NULL
 msScenario <- NULL
+msAltRegionScenario <- NULL
 tdBaseline <- NULL
 tdScenario <- NULL
+tdAltRegionScenario <- NULL
+
 
 scMilesCycledData <- NULL
 scMilesCycledFilteredData <- NULL
@@ -54,6 +57,10 @@ shinyServer(function(input, output, session){
       # regenerate list with MS/DP for selected region (filtering out cases when observed # of cyclists > DP)
       setMSValues()
       
+      # regenerate list with alternative regions in "Mode share" tab (could be replaced with function)
+      
+      updateSelectInput(session, inputId = "inBDRegion", choices =  generateRegionsList(input$inRegions))
+      
       # cat(input$inRegions)
       #cat("the idata is: ", nrow(subset(idata, HHoldGOR_B02ID == input$inRegions)), "\n")
       sessionData$sdata <<- subset(sdata, Region == input$inRegions)
@@ -67,6 +74,15 @@ shinyServer(function(input, output, session){
       sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
       sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
       # cat(sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
+    }
+  })
+  
+  observe({
+    input$inBDRegion
+    
+    if (!is.na(input$inRegions)){
+      
+      sessionData$BDtripModeRegion <<- subset(tripMode, HHoldGOR_B02ID == input$inBDRegion)
     }
   })
   
@@ -845,10 +861,27 @@ shinyServer(function(input, output, session){
     colList <- c("ID","age_group", "Sex_B01ID","NSSec_B03ID",  "EthGroupTS_B02ID", "baseline", columnName)
     data <- sessionData$tripMode[,colList]
     
+    # To save time process this var only if comparision of alt region is selected
+    
+    if (input$inBDSwitch == "Region"){
+      
+      # change region data
+      
+      input$inBDRegion
+      
+      # get alternative region data
+      
+      dataAltRegionScenario <- sessionData$BDtripModeRegion
+      
+      # subset selected scenario data
+      
+      dataAltRegionScenario <- dataAltRegionScenario[,colList]
+    }
+    
     #     msbl <- subset(tripData, select = MainMode_Reduced)
     #     msbl <- count(msbl, "MainMode_Reduced")
     #     names(msbl)[names(msbl)== "MainMode_Reduced"] <- "baseline"
-    
+      
     msbl <- data.frame(baseline = sessionData$tripMode$baseline)
     
     msbl <- count(msbl)
@@ -888,19 +921,65 @@ shinyServer(function(input, output, session){
     mssc$total_population <- total_population
     
     msScenario <<- mssc
+    
+    # msAltRegionScenario
+    # To save time process this var only if comparision of alt region is selected
+    if (input$inBDSwitch == "Region"){
+      
+      msaltregsc <- data.frame(scenario = dataAltRegionScenario[[columnName]])
+      
+      msaltregsc <- count(msaltregsc)
+      
+      total_population <- sum(msaltregsc$freq, na.rm = T)
+      
+      msaltregsc$freq <- round(msaltregsc$freq / sum(msaltregsc$freq) * 100, digit = 1)
+      # Remove NA row from the dataset
+      msaltregsc <- subset(msaltregsc, !is.na(msaltregsc[,1]))
+      
+      msaltregsc <- appendMissingFrequencies(tp_mode, msaltregsc)
+      
+      msaltregsc <- arrange(msaltregsc, msaltregsc[,1])
+      
+      msaltregsc$total_population <- total_population
+      
+      msAltRegionScenario <<- msaltregsc
+    
+    }
+    
     #tdBaseline
     if (input$inBDAG != 'All'){
       data <- subset(data, age_group == input$inBDAG)
+      
+      # To save time process this var only if comparision of alt region is selected
+      if (input$inBDSwitch == "Region"){
+        dataAltRegionScenario <- subset(dataAltRegionScenario, age_group == input$inBDAG)
+      }
     }
-    if (input$inBDGender != 3)
+    if (input$inBDGender != 3){
       data <- subset(data, Sex_B01ID %in% input$inBDGender)
+      
+      # To save time process this var only if comparision of alt region is selected
+      if (input$inBDSwitch == "Region"){
+        dataAltRegionScenario <- subset(dataAltRegionScenario, Sex_B01ID %in% input$inBDGender)
+      }
+    }
     
     if (input$inBDSES != "All"){
       data <- subset(data, NSSec_B03ID %in% input$inBDSES)
+      
+      # To save time process this var only if comparision of alt region is selected
+      if (input$inBDSwitch == "Region"){
+        dataAltRegionScenario <- subset(dataAltRegionScenario, NSSec_B03ID %in% input$inBDSES)
+      }
     }
     
     if (input$inBDEthnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID %in% input$inBDEthnicity)
+      
+      # To save time process this var only if comparision of alt region is selected
+      if (input$inBDSwitch == "Region"){
+        dataAltRegionScenario <- subset(dataAltRegionScenario, EthGroupTS_B02ID %in% input$inBDEthnicity)
+      }
     }
     
     data1 <- count(data, columnName)
@@ -940,6 +1019,30 @@ shinyServer(function(input, output, session){
     
     
     bd <<- data2
+    
+    # tdAltRegionScenario
+    # To save time process this var only if comparision of alt region is selected
+    if (input$inBDSwitch == "Region"){
+      
+      dataAltRegionSc <- count(dataAltRegionScenario, columnName)
+      names(dataAltRegionSc)[names(dataAltRegionSc)== columnName] <- "scenario"
+      
+      total_population <- sum(dataAltRegionSc$freq, na.rm = T)
+      
+      dataAltRegionSc$freq <- round(dataAltRegionSc$freq / sum(dataAltRegionSc$freq) * 100, digit = 1)
+      # Remove NA row from the dataset
+      dataAltRegionSc <- subset(dataAltRegionSc, !is.na(dataAltRegionSc[,1]))
+      
+      dataAltRegionSc <- appendMissingFrequencies(tp_mode, dataAltRegionSc)
+      
+      dataAltRegionSc <- arrange(dataAltRegionSc, dataAltRegionSc[,1])
+      
+      dataAltRegionSc$total_population <- total_population
+      
+      tdAltRegionScenario <<- dataAltRegionSc
+      
+    }
+      
   })
 
   generateFasterTripsTable <- reactive({
@@ -1082,16 +1185,38 @@ shinyServer(function(input, output, session){
     firstColData = NULL
     secondColData = NULL
     
+    # Check in which form chart should be presented
+    # "Scenario versus Baseline" = "comp",
+    # "Sub-population versus total population" = "sep"
+    
     if (input$flipMS == 'sep'){
-      # Keep the data separated
-      # scMETdata and scFilteredMETdata
-      firstColData = msBaseline # msScenario
-      secondColData = tdBaseline
       
-      firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
-      secondColName <- "Baseline (Sub-Population)"
+      # check if comparision with alternative region is selected
       
-      extended_title <- "Baseline - Mode Share"
+      if (input$inBDSwitch == "Region"){
+        
+        firstColData = msAltRegionScenario
+        secondColData = tdAltRegionScenario
+        
+        firstColName <- "Scenario - alternative Region (Total Population)" 
+        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        
+        extended_title <- "Scenario - alternative Region - Mode Share"
+        
+      } else {
+        
+        # Keep the data separated
+        # scMETdata and scFilteredMETdata
+        firstColData = msBaseline # msScenario
+        secondColData = tdBaseline
+        
+        firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
+        secondColName <- "Baseline (Sub-Population)"
+        
+        extended_title <- "Baseline - Mode Share"
+        
+      }
+      
       filtered_title <- getTripsFilteredTitle(secondColData)
       
       #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
@@ -1103,10 +1228,25 @@ shinyServer(function(input, output, session){
       #         
     }else{
       
-      firstColData = msBaseline
-      secondColData = msScenario
-      firstColName <- "Baseline (Total Population)"
-      secondColName <- "Scenario (Total Population)"
+      # check if comparision with alternative region is selected
+      
+      if (input$inBDSwitch == "Region"){
+        
+        firstColData = msAltRegionScenario
+        secondColData = msScenario
+        
+        firstColName <- "Scenario - alternative Region (Total Population)" 
+        secondColName <- "Scenario (Total Population)"
+        
+      } else {
+        
+        firstColData = msBaseline
+        secondColData = msScenario
+        
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Scenario (Total Population)"
+      
+      }
       
       extended_title <- "Total Population - Mode Share"
       filtered_title <- ""
@@ -1154,6 +1294,7 @@ shinyServer(function(input, output, session){
   output$plotBDSCMode <- renderChart({
     generateBDScenarioTable()
     if (input$flipMS == 'sep'){
+      
       # Keep the data separated
       # scMETdata and scFilteredMETdata
       
@@ -1172,12 +1313,27 @@ shinyServer(function(input, output, session){
       #           secondColName <- "Baseline (Total Population)"
       #         
     }else{
-      # Keep the data mixed
-      firstColData = tdBaseline
-      secondColData = tdScenario
       
-      firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      # check if comparision with alternative region is selected
+      
+      if (input$inBDSwitch == "Region"){
+        
+        firstColData = tdAltRegionScenario
+        secondColData = tdScenario
+        
+        firstColName <- "Scenario - alternative Region (Sub-Population)" # "Scenario (Total Population)"
+        secondColName <- "Scenario (Sub-Population)"
+        
+      } else {
+        
+        # Keep the data mixed
+        firstColData = tdBaseline
+        secondColData = tdScenario
+        
+        firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
+        secondColName <- "Scenario (Sub-Population)"
+      
+      }
       
       extended_title <- "Sub-population - Mode Share"
       
@@ -1299,9 +1455,10 @@ shinyServer(function(input, output, session){
         
         h1$title(text = "Sub-population - Histogram of Relative Changes in Trip Durations")
         
-        # TODO: below if
-        # if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
-        #   h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+        if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
+           
+          h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+        }
         
         availableUmodes <- unique(chartData[["umode"]])
         
@@ -1326,7 +1483,25 @@ shinyServer(function(input, output, session){
           
         }else{
           
-          h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
+          h1$xAxis(categories = c(">=50%", ">=20 and <50%",">=0 and <20%",">0 and <=20%",">20 and <=50%",">50 and <=100%",">100%" ),
+                   plotBands = list(
+                     list(
+                       from = -0.5,
+                       to = 2.5,
+                       color = 'rgba(21, 155, 12, .1)',
+                       label = list(
+                         text = "Faster"
+                       )
+                     ),
+                     list(
+                       from = 2.5,
+                       to = 6.5,
+                       color = 'rgba(135, 13, 13, .1)',
+                       label = list(
+                         text = "Slower"
+                       )
+                     )
+                   ))
         }
         
         h1$tooltip(valueSuffix= '%')
@@ -1358,9 +1533,10 @@ shinyServer(function(input, output, session){
         
         h1$title(text = "Sub-population - Proportion of Faster/Slower Trips")
         
-        # TODO: below if
-        # if (nrow(scFilteredTripTimeTraveldata) == nrow(scTripTimeTraveldata))
-        #   h1$title(text = "Total population - Proportion of Faster/Slower Trips")
+        if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
+          
+          h1$title(text = "Total population - Proportion of Faster/Slower Trips")
+        }
         
         availableUmodes <- unique(chartData[["umode"]])
         
@@ -1471,6 +1647,7 @@ shinyServer(function(input, output, session){
         }else{
           
           h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
+          h1$xAxis(categories = c(">=50% faster", ">=20 and <50% faster",">=0 and <20% faster",">0 and <=20% slower",">20 and <=50% slower",">50 and <=100% slower",">100% slower" ))
         }
         
         h1$tooltip(valueSuffix= '%')
