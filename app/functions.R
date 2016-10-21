@@ -104,20 +104,3 @@ generateUniqueMS <- function(region){
   output <- structure(withoutRemovedObservedDPCases$values, names=withoutRemovedObservedDPCases$labels)
   
 }
-
-generateRegionsList <- function(region){
-  
-  regions <- c("England"	 = 0,
-               "North East" =	1,
-               "North West" = 2,
-               "Yorkshire and the Humber" = 3,
-               "East Midlands"	 = 4,
-               "West Midlands"	= 5,
-               "East of England"	= 6,
-               "London" = 7,
-               "South East" =	8,
-               "South West" =	9)
-  
-  output <- regions[regions %in% setdiff(regions, region)]
-  
-}

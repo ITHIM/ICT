@@ -46,7 +46,7 @@ scenarios <- c("Trip Mode Share" = "t",
 METSwitchRButton <- c("Baseline and Scenario" = "sep",
                       "Scenario versus Baseline" =    "comp")
 
-switchRButton <- c("Scenario versus Baseline/alternative Scenario" =    "comp",
+switchRButton <- c("Scenario versus Baseline" =    "comp",
                    "Sub-population versus total population" = "sep")
 
 denominatorRButton <- c("Total Population" = "pop",
@@ -93,10 +93,6 @@ genderForHealthCalculations <- c("All",
 # default MS/DP values are: 0.05 0.10 0.15 0.25 0.50 0.75 1.00
 # for init use the first (default) region from the list
 uniqueMS <- generateUniqueMS(region=unname(regions[1]))
-
-# for init use the first (default) region from the list
-# used in "Mode Share" in alternative region
-regionsList <- generateRegionsList(region=unname(regions[1]))
 
 shinyUI(fluidPage(
   list(tags$title(HTML('Impacts of Cycling Tool'))),
@@ -157,13 +153,6 @@ shinyUI(fluidPage(
                      radioButtons("inBDGender", "Gender: ", gender, inline = TRUE),
                      selectizeInput("inBDSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
                      radioButtons("inBDEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-                     HTML("<hr>"),
-                     radioButtons("inBDSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative Region"= "Region"), inline = TRUE),
-                     HTML("<hr>"),
-                     conditionalPanel(
-                       condition = "input.inBDSwitch == 'Region'",
-                       selectInput(inputId = "inBDRegion", label = "Select Region", choices = regionsList)
-                     ),
                      HTML("<hr>"),
                      radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
