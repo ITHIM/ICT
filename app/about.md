@@ -21,7 +21,7 @@
 
 ## Welcome to the Impacts of Cycling Tool (ICT)
 
-Impacts of Cycling Tool (ICT) is released under a <a href="https://github.com/ITHIM/ICT/blob/regional/LICENSE" target = '_blank'>Affero GPL</a> and we accept no liability, included but not limited to loss or damages. The code of which is hosted on <a href="https://www.github.com/ITHIM/ICT" target="_blank">GitHub</a>.
+Impacts of Cycling Tool (ICT) is released under a <a href="https://github.com/ITHIM/ICT/blob/regional/LICENSE" target = '_blank'>Affero GPL</a> and we accept no liability, included but not limited to loss or damages. The code of which is hosted on <a href="https://github.com/ITHIM/ICT/tree/regional" target="_blank">GitHub</a>.
 
 This site is a Department for Transport funded project created by <a href = "http://www.cedar.iph.cam.ac.uk/" target = "_blank">CEDAR</a>. The ICT academic project members include:
 
