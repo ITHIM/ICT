@@ -25,12 +25,13 @@ Impacts of Cycling Tool (ICT) is released under a <a href="http://geo8.webarch.n
 
 This site is a Department for Transport funded project created by <a href = "http://www.cedar.iph.cam.ac.uk/" target = "_blank">CEDAR</a>. The ICT academic project members include:
 
-* James Woodcock
-* Anna Goodman
-* Ali Abbas
-* Alvaro Ullrich
-* Rachel Aldred
-* Robin Lovelace
+* <a href="http://www.cedar.iph.cam.ac.uk/people/leads/james-woodcock/" target = "_blank">James Woodcock</a> 
+* <a href="http://www.lshtm.ac.uk/aboutus/people/goodman.anna" target = "_blank">Anna Goodman</a>
+* <a href="http://www.cedar.iph.cam.ac.uk/people/cdfs/ali-abbas/" target = "_blank">Ali Abbas</a>
+* <a href="http://www.cedar.iph.cam.ac.uk/people/support/alvaro-ullrich/" target = "_blank">Alvaro Ullrich</a> 
+* Tomasz Szreniawski
+* <a href="http://rachelaldred.org/" target = "_blank">Rachel Aldred</a> 
+* <a href="http://robinlovelace.net/" target = "_blank">Robin Lovelace</a>
     
 The Impacts of Cycling Tool (ICT) was designed to do two main things:
 
