@@ -45,15 +45,16 @@ getSeriesName <- function( EQ, EB){
   
 }
 
-appendMissingFrequencies <- function( df1, df2){
-  missingModes <- setdiff(df1[,2], df2[,1])
-  if (nrow(df2) < 8){
-    for (i in (1:length(missingModes))){
-      df2 = rbind(df2,c(missingModes[i], 0))
-    }
-  }
-  df2
-}
+# since tripMode is precalculated this function is not used
+# appendMissingFrequencies <- function( df1, df2){
+#   missingModes <- setdiff(df1[,2], df2[,1])
+#   if (nrow(df2) < 8){
+#     for (i in (1:length(missingModes))){
+#       df2 = rbind(df2,c(missingModes[i], 0))
+#     }
+#   }
+#   df2
+# }
 
 
 #(tripTime, tripMode, "MS64_ebik1_eq1", 2)

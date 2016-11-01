@@ -46,8 +46,7 @@ co2data[is.na(co2data)] <- 0
 
 directProbCasesAboveGivenPerc <- readRDS("data/csv/dp_cases_above_given.rds")
 
-# Read trip data as an rds file
-
-tripMode <- readRDS("data/csv/tripsdf_regional.rds")
-
 # Trip time data - prev TripTotalTime is now read on the fly as separate files
+
+# Trip data - prev tripsdf_regional is now read on the fly as separate files
+
