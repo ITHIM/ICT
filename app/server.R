@@ -54,27 +54,42 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inRegions
-    #idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
     if (!is.na(input$inRegions)){
       # regenerate list with MS/DP for selected region (filtering out cases when observed # of cyclists > DP)
-      setMSValues()
       
-      # regenerate list with alternative regions in "Mode share" tab (could be replaced with function)
+      withProgress(message = 'Loading data', value = 0, {
+        # Number of times we'll go through the loop
+        n <- 10
+        
+        for (i in 1:n) {
+        if (i == 1)
+          setMSValues()
+        if(i == 2)
+          sessionData$sdata <<- subset(sdata, Region == input$inRegions)
+        if(i == 3)
+          sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
+        if(i == 4)
+          sessionData$co2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegions)
+        if(i == 5)
+          sessionData$yll <<- subset(yll, regions == input$inRegions)
+        if(i == 6)
+          sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
+        if(i == 7)
+          sessionData$death <<- subset(death, regions == input$inRegions)
+        if(i == 8)
+          sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
+        if(i == 9)
+          sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
+        if(i == 10)
+          sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
+        
+        # Increment the progress bar, and update the detail text.
+        incProgress(1/n, detail = paste(i, "out of", n))
+        
+        }
+        
+      })
       
-      updateSelectInput(session, inputId = "inRegionSelected", choices = generateRegionsList(input$inRegions))
-      
-      # cat(input$inRegions)
-      #cat("the idata is: ", nrow(subset(idata, HHoldGOR_B02ID == input$inRegions)), "\n")
-      sessionData$sdata <<- subset(sdata, Region == input$inRegions)
-      sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
-      sessionData$co2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegions)
-      sessionData$yll <<- subset(yll, regions == input$inRegions)
-      sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
-      sessionData$death <<- subset(death, regions == input$inRegions)
-      sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
-      sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
-      sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
-      # cat(sessionData$baselineSummary[["% Cyclists in the Total Population"]], "\n")
     }
   })
   
