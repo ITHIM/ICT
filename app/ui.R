@@ -46,7 +46,7 @@ scenarios <- c("Trip Mode Share" = "t",
 METSwitchRButton <- c("Baseline and Scenario" = "sep",
                       "Scenario versus Baseline" =    "comp")
 
-switchRButton <- c("Scenario versus Baseline" =    "comp",
+switchRButton <- c("Scenario versus Baseline/alternative Scenario" =    "comp",
                    "Sub-population versus total population" = "sep")
 
 denominatorRButton <- c("Total Population" = "pop",
@@ -68,8 +68,7 @@ allOnOffRButton <- c("All" = "All",
 healthRButton <- c("Years of Life Lost (YLL)" = "YLL", 
                    "Deaths" = "Deaths")
 
-ag <- "All"
-ag <- append(ag, sort(unique(as.character(tripMode$age_group))))
+ag <- c("All", "18 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69", "70 - 79")
 
 healthAG <- c("All", "18 - 39", "40 - 59", "60 - 79")
 
@@ -93,6 +92,10 @@ genderForHealthCalculations <- c("All",
 # default MS/DP values are: 0.05 0.10 0.15 0.25 0.50 0.75 1.00
 # for init use the first (default) region from the list
 uniqueMS <- generateUniqueMS(region=unname(regions[1]))
+
+# for init use the first (default) region from the list
+# used in "Mode Share" in alternative region
+regionsList <- generateRegionsList(region=unname(regions[1]))
 
 shinyUI(fluidPage(
   list(tags$title(HTML('Impacts of Cycling Tool'))),
@@ -153,6 +156,13 @@ shinyUI(fluidPage(
                      radioButtons("inBDGender", "Gender: ", gender, inline = TRUE),
                      selectizeInput("inBDSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
                      radioButtons("inBDEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
+                     HTML("<hr>"),
+                     radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
+                     HTML("<hr>"),
+                     conditionalPanel(
+                       condition = "input.inRegionSwitch == 'Region'",
+                       selectInput(inputId = "inRegionSelected", label = "Select Region", choices = regionsList)
+                     ),
                      HTML("<hr>"),
                      radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
