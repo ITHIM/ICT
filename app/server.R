@@ -107,6 +107,33 @@ shinyServer(function(input, output, session){
     
   })
   
+  # observe Comparision with alternative region -> add warning if observed # cyclist in pop is > DP/MS value
+  
+  observe({
+    
+    # observe both, in case if selected region (this on the top of list) should show warning
+    input$inRegionSelected
+    input$inRegionSwitch
+    
+    casesOfDP <- subset(directProbCasesAboveGivenPerc, MS == as.numeric(input$inBDMS) & ebikes == as.numeric(input$inBDEB) & equity == as.numeric(input$inBDEQ) & region == as.numeric(input$inRegionSelected))
+    
+    if (input$inRegionSwitch == "Region" & nrow(casesOfDP) > 0){
+      
+      show('region-switch-warning')
+      shinyjs::html('region-switch-warning', 'Warning: in selected alternative region number of observed cyclists in a population is greater than "Select % of Population who are Potential Cyclists"')
+      
+    } else {
+      
+      # hide <p> with warning + remove content
+      
+      hide('region-switch-warning')
+      shinyjs::html('region-switch-warning', '')
+      
+    }
+  })
+  
+
+  
   output$inBaselineCycling <- renderUI({
 
     input$inRegions

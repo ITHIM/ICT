@@ -1,15 +1,6 @@
 source("setup.R")
 
-regions <- c("England"	 = 0,
-             "North East" =	1,
-             "North West" = 2,
-             "Yorkshire and the Humber" = 3,
-             "East Midlands"	 = 4,
-             "West Midlands"	= 5,
-             "East of England"	= 6,
-             "London" = 7,
-             "South East" =	8,
-             "South West" =	9)
+regions <- generateRegionsList()
 
 # Remove MS 0, as it represents baseline values
 uMS <- append("All", sort(unique(sdata$MS))[-1])
@@ -168,7 +159,8 @@ shinyUI(fluidPage(
                      HTML("<hr>"),
                      conditionalPanel(
                        condition = "input.inRegionSwitch == 'Region'",
-                       selectInput(inputId = "inRegionSelected", label = "Select Region", choices = regionsList)
+                       selectInput(inputId = "inRegionSelected", label = "Select Region:", choices = regionsList),
+                       hidden(p(id = "region-switch-warning", class = "region-switch-warnings", ""))
                      ),
                      HTML("<hr>"),
                      radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)

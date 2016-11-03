@@ -106,7 +106,7 @@ generateUniqueMS <- function(region){
   
 }
 
-generateRegionsList <- function(region){
+generateRegionsList <- function(region = -1){
   
   regions <- c("England"	 = 0,
                "North East" =	1,

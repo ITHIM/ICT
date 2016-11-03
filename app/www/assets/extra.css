@@ -35,3 +35,7 @@
   border-color: #ddd;
   margin: 0px 0px 10px;
 }
+
+.region-switch-warnings{
+  color: red;
+}
