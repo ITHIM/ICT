@@ -103,40 +103,47 @@ shinyUI(fluidPage(
   width="100%", height="100%",
   uiOutput("oSample"),
   tags$head(
-    includeScript("www/assets/extra.js")
+    includeScript("www/assets/extra.js"),
+    includeCSS("www/assets/extra.css")
   ),
-  a(bsCollapse(id = "intro", 
-               bsCollapsePanel(
-                 #                  tags$div(title="Show/Hide zone legend",
-                 #                           a(id = "toggle_panel", style="font-size: 80%", span(class="glyphicon glyphicon-circle-arrow-up", "Hide"))
-                 #                  ),
-                 tags$div(title = "Click here to open an introductory document", 
-                          h4("Impacts of Cycling Tool"),
-                          h6("(show/hide information)"),
-                          tags$style(HTML("
-                              h4 {
-                                font-size: 25px;
-                                font-weight: bold;
-                                line-height: 1.1;
-                                //text-decoration:underline;
-                              }
-                              h4:hover {
-                                background-color: #C0C0C0;
-                              }
-                              h6 {
-                                color: #6495ED;
-                                //text-decoration:none;
-                              }
-                            "))
-                          
-                 ), 
-                 
-                 includeMarkdown("README.md"))),
-    
-    selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions)
-    
-  )
-  ,
+  a(id = "mainIntro", list(h4("Impacts of Cycling Tool"), h6("(show/hide information)")), href = "#", title = "Click here to open an introductory document"),
+  hidden (div(id = "mainIntroText",
+              includeMarkdown("README.md")
+  )),
+  selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions),
+  # there is an issue with bsCollapse - it doesn't close
+  # a(bsCollapse(id = "intro",
+  #              bsCollapsePanel(
+  #                #                  tags$div(title="Show/Hide zone legend",
+  #                #                           a(id = "toggle_panel", style="font-size: 80%", span(class="glyphicon glyphicon-circle-arrow-up", "Hide"))
+  #                #                  ),
+  #                tags$div(title = "Click here to open an introductory document",
+  #                         h4("Impacts of Cycling Tool"),
+  #                         h6("(show/hide information)"),
+  #                         tags$style(HTML("
+  #                             h4 {
+  #                               font-size: 25px;
+  #                               font-weight: bold;
+  #                               line-height: 1.1;
+  #                               //text-decoration:underline;
+  #                             }
+  #                             h4:hover {
+  #                               background-color: #C0C0C0;
+  #                             }
+  #                             h6 {
+  #                               color: #6495ED;
+  #                               //text-decoration:none;
+  #                             }
+  #                           "))
+  # 
+  #                ),
+  # 
+  #                includeMarkdown("README.md")))
+  # 
+  # 
+  # 
+  # )
+  # ,
   sidebarPanel(
     
     tags$div(title="Shows % of the total population for the selected region who cycle at least weekly at baseline",

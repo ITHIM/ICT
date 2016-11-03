@@ -61,29 +61,29 @@ shinyServer(function(input, output, session){
         n <- 10
         
         for (i in 1:n) {
-        if (i == 1)
-          setMSValues()
-        if(i == 2)
-          sessionData$sdata <<- subset(sdata, Region == input$inRegions)
-        if(i == 3)
-          sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
-        if(i == 4)
-          sessionData$co2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegions)
-        if(i == 5)
-          sessionData$yll <<- subset(yll, regions == input$inRegions)
-        if(i == 6)
-          sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
-        if(i == 7)
-          sessionData$death <<- subset(death, regions == input$inRegions)
-        if(i == 8)
-          sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
-        if(i == 9)
-          sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
-        if(i == 10)
-          sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
-        
-        # Increment the progress bar, and update the detail text.
-        incProgress(1/n, detail = paste(i, "out of", n))
+          if (i == 1)
+            setMSValues()
+          if(i == 2)
+            sessionData$sdata <<- subset(sdata, Region == input$inRegions)
+          if(i == 3)
+            sessionData$idata <<- subset(idata, HHoldGOR_B02ID == input$inRegions)
+          if(i == 4)
+            sessionData$co2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegions)
+          if(i == 5)
+            sessionData$yll <<- subset(yll, regions == input$inRegions)
+          if(i == 6)
+            sessionData$yllReduction <<- subset(yllReduction, regions == input$inRegions)
+          if(i == 7)
+            sessionData$death <<- subset(death, regions == input$inRegions)
+          if(i == 8)
+            sessionData$baselineSummary <<- subset(baselineSummary, Region == input$inRegions)
+          if(i == 9)
+            sessionData$milesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegions)
+          if(i == 10)
+            sessionData$carMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegions)
+          
+          # Increment the progress bar, and update the detail text.
+          incProgress(1/n, detail = paste(i, "out of", n))
         
         }
         
@@ -2963,6 +2963,8 @@ shinyServer(function(input, output, session){
   shinyjs::onclick("MCHelp", shinyjs::toggle(id = "MCHelpText", anim = FALSE))
   shinyjs::onclick("CMHelp", shinyjs::toggle(id = "CMHelpText", anim = FALSE))
   shinyjs::onclick("CO2Help", shinyjs::toggle(id = "CO2HelpText", anim = FALSE))
+  shinyjs::onclick("mainIntro", shinyjs::toggle(id = "mainIntroText", anim = FALSE))
+  
   
   # Experiment with nvd3 library
   #   output$myChart <- renderChart({
