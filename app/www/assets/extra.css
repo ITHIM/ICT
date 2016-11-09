@@ -1,0 +1,41 @@
+#mainIntro{
+  display: block;
+  padding: 10px 15px;
+  border: 1px solid;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  box-sizing: border-box;
+  border-color: #ddd;
+  background-color: #f5f5f5;
+  color: #333333;
+  margin: 10px 0;
+  text-decoration: none;
+}
+
+#mainIntro:hover {
+  background-color: #C0C0C0;
+}
+
+#mainIntro h4 {
+  font-size: 25px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+#mainIntro h6 {
+  color: #6495ED;
+}
+
+#mainIntroText{
+  padding: 15px;
+  border: 1px solid;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  box-sizing: border-box;
+  border-color: #ddd;
+  margin: 0px 0px 10px;
+}
+
+.region-switch-warnings{
+  color: red;
+}
