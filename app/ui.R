@@ -155,14 +155,6 @@ shinyUI(fluidPage(
                      selectizeInput("inBDSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
                      radioButtons("inBDEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
                      HTML("<hr>"),
-                     radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
-                     HTML("<hr>"),
-                     conditionalPanel(
-                       condition = "input.inRegionSwitch == 'Region'",
-                       selectInput(inputId = "inRegionSelected", label = "Select Region:", choices = regionsList),
-                       hidden(p(id = "region-switch-warning", class = "region-switch-warnings", ""))
-                     ),
-                     HTML("<hr>"),
                      radioButtons("flipMS", label = "Flip Histogram:", switchRButton, inline = TRUE)
                      
     ),
@@ -273,8 +265,18 @@ shinyUI(fluidPage(
                        condition = "input.varname == 'Car Miles Per person (per week)'",
                        radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
                      )
+    ),
+    # for now only "Mode Share", "Physical Activity", "Car Miles"
+    conditionalPanel(condition="input.conditionedPanels == 4 || input.conditionedPanels == 1 || input.conditionedPanels == 6",
+                      HTML("<hr>"),
+                      radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
+                      conditionalPanel(
+                        condition = "input.inRegionSwitch == 'Region'",
+                        HTML("<hr>"),
+                        selectInput(inputId = "inRegionSelected", label = "Select Region:", choices = regionsList),
+                        hidden(p(id = "region-switch-warning", class = "region-switch-warnings", ""))
+                      )
     )
-    
   ),
   mainPanel(
     tabsetPanel(
