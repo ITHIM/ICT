@@ -57,6 +57,20 @@ shinyServer(function(input, output, session){
   
   observe({
     input$inRegions
+    
+    # temp solution
+    
+    if (input$conditionedPanels == 2){
+      
+      updateSelectInput(session, inputId = "inRegions", choices = generateRegionsList())
+      hide("inRegions")
+       
+    } else {
+      show("inRegions")
+    }
+    
+    # end of temp solution
+    
     if (!is.na(input$inRegions)){
       
       withProgress(message = 'Loading data', value = 0, {
