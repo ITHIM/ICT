@@ -40,8 +40,11 @@ METSwitchRButton <- c("Baseline and Scenario" = "sep",
 switchRButton <- c("Scenario versus Baseline/alternative Scenario" =    "comp",
                    "Sub-population versus total population" = "sep")
 
-denominatorRButton <- c("Total Population" = "pop",
-                        "Total Cyclists" = "cyc")
+# denominatorRButton <- c("Total Population" = "pop",
+#                         "Total Cyclists" = "cyc")
+
+denominatorRButton <- c("Total Cyclists" = "cyc")
+
 
 phyGLRButton <- c("Marginal MET hours" =    "off",
                   "% meeting WHO physical activity guidelines" = "on")
