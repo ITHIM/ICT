@@ -51,6 +51,8 @@ blCO2FilteredData <- NULL
 regions <- generateRegionsList()
 
 nameOfTheSelectedRegion <- NULL
+# name of the alternative region
+scenarioAltRegion <- NULL
 
 tripsdfRegionalInputData <- 'data/csv/tripsdf_regional/'
 
@@ -65,10 +67,10 @@ shinyServer(function(input, output, session){
     # temp solution
     
     if (input$conditionedPanels == 2){
-      
+
       updateSelectInput(session, inputId = "inRegions", choices = generateRegionsList())
       hide("inRegions")
-       
+
     } else {
       show("inRegions")
     }
@@ -114,11 +116,10 @@ shinyServer(function(input, output, session){
       
       updateSelectInput(session, inputId = "inRegionSelected", choices = generateRegionsList(input$inRegions))
       
-      # 
+      # set name of the selected main region
       
       nameOfTheSelectedRegion <<- names(regions[regions == as.integer(input$inRegions)])
       
-      print(nameOfTheSelectedRegion)
     }
   })
   
@@ -157,6 +158,11 @@ shinyServer(function(input, output, session){
       shinyjs::html('region-switch-warning', '')
       
     }
+    
+    # set name of the alternative region
+    
+    scenarioAltRegion <<- names(regions[regions == as.integer(input$inRegionSelected)])
+    
   })
   
   # observe inRegionSelected for tabs which don't use precalculated data, but subsetting happens on-the-fly
@@ -426,10 +432,6 @@ shinyServer(function(input, output, session){
           firstColData = scMETdataAltRegFull
           secondColData = scMETdataAltRegFiltered
           
-          # get name of the alternative region
-          
-          scenarioAltRegion <- names(regions[regions == as.integer(input$inRegionSelected)])
-          
           extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Marginal MET Hours")
           
           firstColName <- "Scenario - alternative Region (Total Population)"
@@ -464,10 +466,6 @@ shinyServer(function(input, output, session){
           secondColData = scMETdata
           
           extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
-          
-          # get name of the alternative region
-          
-          scenarioAltRegion <- names(regions[regions == as.integer(input$inRegionSelected)])
           
           # set columns names
           
@@ -635,10 +633,6 @@ shinyServer(function(input, output, session){
           firstColData = scMETdataAltRegFiltered
           secondColData = scFilteredMETdata
           extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
-          
-          # get name of the alternative region
-          
-          scenarioAltRegion <- names(regions[regions == as.integer(input$inRegionSelected)])
           
           firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
           secondColName <- "Scenario (Sub-population)"
@@ -1054,7 +1048,7 @@ shinyServer(function(input, output, session){
       filtered_title
   }
   
-  getTripsFilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL){
+  getTripsFilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL){
     
     npeople <- unique(firstData$total_population)
     
@@ -1076,6 +1070,12 @@ shinyServer(function(input, output, session){
       secondDataNPeople <- unique(secondData$total_population)
       secondExtraSep <- " "
       
+    }
+    
+    if(!is.null(titlePrefix)){
+      titlePrefixOutput <- titlePrefix
+    } else {
+      titlePrefixOutput <- "Sample Size: "
     }
     
     if (input$inBDAG != "All" || input$inBDGender != 3 || input$inBDEthnicity != "All" || input$inBDSES != "All" ){
@@ -1107,7 +1107,7 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       
-      filtered_title <- paste("Sample Size (trips): ", firstDataTitle, ' ', npeople, secondExtraSep, secondDataTitleOutput, secondExtraSep, secondDataNPeople, ", Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title <- paste(titlePrefixOutput, firstDataTitle, ' ', npeople, secondExtraSep, secondDataTitleOutput, secondExtraSep, secondDataNPeople, ", Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title
@@ -1321,14 +1321,14 @@ shinyServer(function(input, output, session){
         firstColData = msAltRegionScenario
         secondColData = tdAltRegionScenario
         
+        extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Mode Share")
+        
         firstColName <- "Scenario - alternative Region (Total Population)" 
         secondColName <- "Scenario - alternative Region (Sub-Population)"
         
-        extended_title <- "Scenario - alternative Region - Mode Share"
-        
         # set proper subtitle
         
-        filtered_title <- getTripsFilteredTitle("", secondColData)
+        filtered_title <- getTripsFilteredTitle("", secondColData, titlePrefix = "Sample Size (trips): ")
         
       } else {
         
@@ -1337,26 +1337,17 @@ shinyServer(function(input, output, session){
         firstColData = msBaseline # msScenario
         secondColData = tdBaseline
         
+        extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Mode Share")
+        
         firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
         secondColName <- "Baseline (Sub-Population)"
         
-        extended_title <- "Baseline - Mode Share"
-        
         # set proper subtitle
         
-        filtered_title <- getTripsFilteredTitle("", secondColData)
+        filtered_title <- getTripsFilteredTitle("", secondColData, titlePrefix = "Sample Size (trips): ")
         
       }
       
-      
-      
-      #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
-      #         
-      #         firstColName <- "Baseline (Total Population)"
-      #         secondColName <- "Baseline (Sub-Population)"
-      #         if (nrow(idata) == nrow(pd))
-      #           secondColName <- "Baseline (Total Population)"
-      #         
     }else{
       
       # check if comparision with alternative region is selected
@@ -1366,24 +1357,28 @@ shinyServer(function(input, output, session){
         firstColData = msAltRegionScenario
         secondColData = msScenario
         
-        firstColName <- "Scenario - alternative Region (Total Population)" 
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        
+        firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)") 
         secondColName <- "Scenario (Total Population)"
         
-        filtered_title <- ""
+        filtered_title <- getTripsFilteredTitle(paste0("Scenario - alternative Region [", scenarioAltRegion, "]:"), firstColData, paste0(", Scenario:"), secondColData, titlePrefix = "Total Size (trips): ")
         
       } else {
         
         firstColData = msBaseline
         secondColData = msScenario
         
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Scenario (Total Population)"
         
-        filtered_title <- ""
+        filtered_title <- getTripsFilteredTitle("", secondColData, titlePrefix = "Total Size (trips): ")
       
       }
       
-      extended_title <- "Total Population - Mode Share"
+      
       
       #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
       #         
@@ -1395,7 +1390,8 @@ shinyServer(function(input, output, session){
     
     
     h1 <- Highcharts$new()
-    h1$chart(type = "column", style = list(fontFamily = 'Verdana, sans-serif', fontSize = '12px'))
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
     h1$plotOptions(column=list(animation=FALSE))
     
     
@@ -1412,7 +1408,10 @@ shinyServer(function(input, output, session){
     #h1$subtitle(text = paste("Scenario: ", filtered_title), style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
     
     if (sum(firstColData$freq, na.rm = T) <= 10){
-      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(fontFamily = 'Arial, sans-serif',
+                                                                                                                               fontSize = '14px',
+                                                                                                                               fontWeight: 'bold',
+                                                                                                                               color = "#f00"))
     }else{
       h1$subtitle(text= filtered_title)
     }
@@ -1443,14 +1442,14 @@ shinyServer(function(input, output, session){
       firstColData = msScenario
       secondColData = tdScenario
       
+      extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Mode Share")
+      
       firstColName <- "Scenario (Total Population)" # "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
       
-      extended_title <- "Scenario - Mode Share"
-      
       # set proper subtitle
         
-      filtered_title <- getTripsFilteredTitle("", secondColData)
+      filtered_title <- getTripsFilteredTitle("", secondColData, titlePrefix = "Sample Size (trips): ")
       
       #         extended_title <- paste("Baseline - Marginal MET Hours", sep = "")
       #         
@@ -1467,12 +1466,14 @@ shinyServer(function(input, output, session){
         firstColData = tdAltRegionScenario
         secondColData = tdScenario
         
-        firstColName <- "Scenario - alternative Region (Sub-Population)" # "Scenario (Total Population)"
+        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        
+        firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
         secondColName <- "Scenario (Sub-Population)"
         
         # set proper subtitle
         
-        filtered_title <- getTripsFilteredTitle("Scenario - alternative Region:", firstColData, ", Scenario:", secondColData)
+        filtered_title <- getTripsFilteredTitle(paste0("Scenario - alternative Region [", scenarioAltRegion, "]: "), firstColData, ", Scenario:", secondColData, titlePrefix = "Sample Size (trips): ")
         
       } else {
         
@@ -1480,16 +1481,16 @@ shinyServer(function(input, output, session){
         firstColData = tdBaseline
         secondColData = tdScenario
         
+        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        
         firstColName <- "Baseline (Sub-Population)" # "Scenario (Total Population)"
         secondColName <- "Scenario (Sub-Population)"
         
         # set proper subtitle
         
-        filtered_title <- getTripsFilteredTitle("", firstColData)
+        filtered_title <- getTripsFilteredTitle("", firstColData, titlePrefix = "Sample Size (trips): ")
       
       }
-      
-      extended_title <- "Sub-population - Mode Share"
       
       #         extended_title <- paste("Baseline Versus Scenario - Marginal MET Hours", sep = "")
       #         
@@ -1499,7 +1500,8 @@ shinyServer(function(input, output, session){
     }
     
     h1 <- Highcharts$new()
-    h1$chart(type = "column", style = list(fontFamily = 'Verdana, sans-serif', fontSize = '12px'))
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
     h1$plotOptions(column=list(animation=FALSE))
     
     #filtered_title <- getFilteredBDTitle("BD")
@@ -1513,7 +1515,10 @@ shinyServer(function(input, output, session){
     h1$yAxis(title = list(text = 'Percentage of Trips'))
     
     if (sum(firstColData$freq, na.rm = T) <= 10){
-      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(fontFamily = 'Arial, sans-serif',
+                                                                                                                               fontSize = '14px',
+                                                                                                                               fontWeight: 'bold',
+                                                                                                                               color = "#f00"))
     }else{
       h1$subtitle(text= filtered_title)
     }
