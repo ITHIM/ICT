@@ -64,19 +64,6 @@ shinyServer(function(input, output, session){
   observe({
     input$inRegions
     
-    # temp solution
-    
-    if (input$conditionedPanels == 2){
-
-      updateSelectInput(session, inputId = "inRegions", choices = generateRegionsList())
-      hide("inRegions")
-
-    } else {
-      show("inRegions")
-    }
-    
-    # end of temp solution
-    
     if (!is.na(input$inRegions)){
       
       withProgress(message = 'Loading data', value = 0, {
@@ -1778,7 +1765,7 @@ shinyServer(function(input, output, session){
       
       # read histogram data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/baseline/", input$inRegions, "/histogram/", scenarioFilename))
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/full/", input$inRegions, "/histogram/", scenarioFilename))
       
       # TODO: na check?
       
@@ -1846,7 +1833,7 @@ shinyServer(function(input, output, session){
       
       # read other data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/baseline/", input$inRegions, "/other/", scenarioFilename))
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/full/", input$inRegions, "/other/", scenarioFilename))
       
       # TODO: na check?
       
