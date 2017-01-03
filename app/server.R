@@ -64,19 +64,6 @@ shinyServer(function(input, output, session){
   observe({
     input$inRegions
     
-    # temp solution
-    
-    if (input$conditionedPanels == 2){
-
-      updateSelectInput(session, inputId = "inRegions", choices = generateRegionsList())
-      hide("inRegions")
-
-    } else {
-      show("inRegions")
-    }
-    
-    # end of temp solution
-    
     if (!is.na(input$inRegions)){
       
       withProgress(message = 'Loading data', value = 0, {
@@ -462,22 +449,22 @@ shinyServer(function(input, output, session){
         if(input$inRegionSwitch == 'Region'){
           
           # Keep the data mixed
-          firstColData = scMETdataAltRegFull
-          secondColData = scMETdata
+          firstColData = scMETdata
+          secondColData = scMETdataAltRegFull
           
           extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
           
           # set columns names
           
-          firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)")
-          secondColName <- "Scenario (Total Population)"
+          firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
+          secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)")
           
           # TODO: below 'if' is not applicable in alternative region comparision?
           # secondColName <- "Scenario (Sub-Population)"
           # if (nrow(sessionData$idata) == nrow(scMETdata))
           #   secondColName <- "Scenario (Total Population)"
           
-          filtered_title <- getMETFilteredTitle(paste0("Scenario - alternative Region [", scenarioAltRegion, "]:"), firstColData, paste0(", Scenario:"), secondColData, titlePrefix = "Total Size: ")
+          filtered_title <- getMETFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]:"), secondColData, titlePrefix = "Total Size: ")
           
         } else {
           
@@ -630,14 +617,14 @@ shinyServer(function(input, output, session){
         
         if(input$inRegionSwitch == 'Region'){ 
           
-          firstColData = scMETdataAltRegFiltered
-          secondColData = scFilteredMETdata
+          firstColData = scFilteredMETdata
+          secondColData = scMETdataAltRegFiltered
           extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
           
-          firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
-          secondColName <- "Scenario (Sub-population)"
+          firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
+          secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
           
-          filtered_title <- getMETFilteredTitle(paste0("Scenario - alternative Region [", scenarioAltRegion, "]: "), firstColData, ", Scenario:", secondColData)
+          filtered_title <- getMETFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
           
         } else {
         
@@ -1107,7 +1094,7 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       
-      filtered_title <- paste(titlePrefixOutput, firstDataTitle, ' ', npeople, secondExtraSep, secondDataTitleOutput, secondExtraSep, secondDataNPeople, ", Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title <- paste(titlePrefixOutput, firstDataTitle, ' ', npeople, secondDataTitleOutput, secondExtraSep, secondDataNPeople, ", Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title
@@ -1354,15 +1341,15 @@ shinyServer(function(input, output, session){
       
       if (input$inRegionSwitch == "Region"){
         
-        firstColData = msAltRegionScenario
-        secondColData = msScenario
+        firstColData = msScenario
+        secondColData = msAltRegionScenario
         
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Mode Share")
         
-        firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)") 
-        secondColName <- "Scenario (Total Population)"
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)") 
         
-        filtered_title <- getTripsFilteredTitle(paste0("Scenario - alternative Region [", scenarioAltRegion, "]:"), firstColData, paste0(", Scenario:"), secondColData, titlePrefix = "Total Size (trips): ")
+        filtered_title <- getTripsFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]:"), secondColData, titlePrefix = "Total Size (trips): ")
         
       } else {
         
@@ -1463,17 +1450,17 @@ shinyServer(function(input, output, session){
       
       if (input$inRegionSwitch == "Region"){
         
-        firstColData = tdAltRegionScenario
-        secondColData = tdScenario
+        firstColData = tdScenario
+        secondColData = tdAltRegionScenario
         
         extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Mode Share")
         
-        firstColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
         
         # set proper subtitle
         
-        filtered_title <- getTripsFilteredTitle(paste0("Scenario - alternative Region [", scenarioAltRegion, "]: "), firstColData, ", Scenario:", secondColData, titlePrefix = "Sample Size (trips): ")
+        filtered_title <- getTripsFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData, titlePrefix = "Sample Size (trips): ")
         
       } else {
         
@@ -1778,7 +1765,7 @@ shinyServer(function(input, output, session){
       
       # read histogram data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/baseline/", input$inRegions, "/histogram/", scenarioFilename))
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/full/", input$inRegions, "/histogram/", scenarioFilename))
       
       # TODO: na check?
       
@@ -1846,7 +1833,7 @@ shinyServer(function(input, output, session){
       
       # read other data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/baseline/", input$inRegions, "/other/", scenarioFilename))
+      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/full/", input$inRegions, "/other/", scenarioFilename))
       
       # TODO: na check?
       
