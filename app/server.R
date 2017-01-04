@@ -2333,7 +2333,7 @@ shinyServer(function(input, output, session){
         
         extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Car Miles per person per week")
         
-        subtitle <- getCarMilesFilteredTitle("", "", titlePrefix = "")
+        subtitle <- getCarMilesFilteredTitle("", secondColData)
         
       } else {
         
@@ -2346,7 +2346,7 @@ shinyServer(function(input, output, session){
         
         extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
-        subtitle <- getCarMilesFilteredTitle("", "", titlePrefix="")
+        subtitle <- getCarMilesFilteredTitle("", secondColData)
         
       }
       
@@ -2357,31 +2357,30 @@ shinyServer(function(input, output, session){
       if (input$inRegionSwitch == "Region"){
         
         # Keep the data mixed
-        firstColData = scCarMilesData
-        secondColData = scCarMilesDataAltRegFull
+        firstColData = scCarMilesFilteredData
+        secondColData = scCarMilesDataAltRegFiltered
         
-        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)") 
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
         
-        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
-        subtitle <- getCarMilesFilteredTitle("", "", titlePrefix="")
+        subtitle <- getCarMilesFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
         
       } else {
         
         # Keep the data mixed
-        firstColData = blCarMilesData
-        secondColData = scCarMilesData
+        firstColData = blCarMilesFilteredData
+        secondColData = scCarMilesFilteredData
         
-        firstColName <- "Baseline (Total Population)"
-        secondColName <- "Scenario (Total Population)"
+        firstColName <- "Baseline (Sub-Population)"
+        secondColName <- "Scenario (Sub-Population)"
         
-        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
-        subtitle <- getCarMilesFilteredTitle("", "", titlePrefix="")
+        subtitle <- getCarMilesFilteredTitle("", secondColData)
         
       }
-      
     }
     
     h1 <- Highcharts$new()
@@ -2442,7 +2441,7 @@ shinyServer(function(input, output, session){
       
       extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
       
-      subtitle <- getCarMilesFilteredTitle("", "", titlePrefix="")
+      subtitle <- getCarMilesFilteredTitle("", secondColData)
       
     }else{
       
@@ -2451,28 +2450,28 @@ shinyServer(function(input, output, session){
       if (input$inRegionSwitch == "Region"){
         
         # Keep the data mixed
-        firstColData = scCarMilesFilteredData
-        secondColData = scCarMilesDataAltRegFiltered
+        firstColData = scCarMilesData
+        secondColData = scCarMilesDataAltRegFull
         
-        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-Population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)") 
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
-        subtitle <- getCarMilesFilteredTitle("", "", titlePrefix="")
+        subtitle <- getCarMilesFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]:"), secondColData, titlePrefix = "Total Size (trips): ", showingTotal = TRUE)
         
       } else {
         
         # Keep the data mixed
-        firstColData = blCarMilesFilteredData
-        secondColData = scCarMilesFilteredData
+        firstColData = blCarMilesData
+        secondColData = scCarMilesData
         
-        firstColName <- "Baseline (Sub-Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Scenario (Total Population)"
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
-        subtitle <- getCarMilesFilteredTitle("", "", titlePrefix="")
+        subtitle <- getCarMilesFilteredTitle("", secondColData, titlePrefix = "Total Size (trips): ", showingTotal = TRUE)
         
       }
     }
@@ -2506,7 +2505,13 @@ shinyServer(function(input, output, session){
     h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     
-    h1$exporting(enabled = T)
+    h1$exporting(enabled = T,
+                 chartOptions = list(
+                   legend = list(
+                     itemDistance = 80,
+                     itemMarginBottom = 5
+                   )
+                 ))
     return (h1)
   })
   
@@ -2999,11 +3004,11 @@ shinyServer(function(input, output, session){
       filtered_title
   }
   
-  getCarMilesFilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL){
+  getCarMilesFilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL, showingTotal = FALSE){
     
     filtered_title <- ""
     
-    npeople <- ""
+    npeople <- nrow(firstData)
     
     secondDataNPeople <- ""
     secondDataTitleOutput <- ""
@@ -3020,7 +3025,7 @@ shinyServer(function(input, output, session){
     
     if(!is.null(secondData)){
       
-      secondDataNPeople <- ""
+      secondDataNPeople <- nrow(secondData)
       secondExtraSep <- " "
       
     }
@@ -3028,7 +3033,7 @@ shinyServer(function(input, output, session){
     if(!is.null(titlePrefix)){
       titlePrefixOutput <- titlePrefix
     } else {
-      titlePrefixOutput <- "Sample Size: "
+      titlePrefixOutput <- "Sample Size (trips): "
     }
     
     if (input$inCMAG != "All" || input$inCMG != 3 || input$inCMEthnicity != "All" || input$inCMSES != "All" ){
@@ -3058,7 +3063,25 @@ shinyServer(function(input, output, session){
       }else if (input$inCMSES == 5){
         displaySES <- "Not classified (including students)"
       }
-      filtered_title <- paste(titlePrefixOutput, firstDataTitle, ' ', npeople, secondDataTitleOutput, secondExtraSep, secondDataNPeople, "Age Group: ", str_trim(input$inCMAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      
+      if(showingTotal){
+        
+        filters_info <- ""
+        
+      } else {
+        
+        filters_info <- paste0(", Age Group: ", str_trim(input$inCMAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        
+      }
+      
+      filtered_title <- paste0(titlePrefixOutput,
+                              firstDataTitle,
+                              ' ',
+                              npeople,
+                              secondDataTitleOutput,
+                              secondExtraSep,
+                              secondDataNPeople, 
+                              filters_info)
       filtered_title
     }else
       filtered_title
