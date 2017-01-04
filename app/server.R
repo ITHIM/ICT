@@ -2625,7 +2625,7 @@ shinyServer(function(input, output, session){
         secondColName <- "Scenario - alternative Region (Sub-Population)"
         
         subtitle <- getCO2FilteredTitle("", secondColData)
-        extended_title <- HTML(paste0("Scenario - alternative Region [", scenarioAltRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        extended_title <- HTML(paste0("Scenario - alternative Region [", scenarioAltRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
         
       } else {
         
@@ -2636,7 +2636,7 @@ shinyServer(function(input, output, session){
         firstColName <- "Baseline (Total Population)"
         secondColName <- "Baseline (Sub-Population)"
         
-        extended_title <- HTML(paste0("Baseline [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        extended_title <- HTML(paste0("Baseline [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
         subtitle <- getCO2FilteredTitle("", secondColData)
         
       }
@@ -2648,26 +2648,26 @@ shinyServer(function(input, output, session){
       if (input$inRegionSwitch == "Region"){
         
         # Keep the data mixed
-        firstColData = scCO2Data
-        secondColData = scCO2DataAltRegionFull
+        firstColData = scCO2FilteredData
+        secondColData = scCO2DataAltRegionFiltered
         
-        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)")
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
         
-        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
-        subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]:"), secondColData, titlePrefix = "Total Size: ")
+        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
         
       } else {
         
         # Keep the data mixed
-        firstColData = blCO2Data
-        secondColData = scCO2Data
+        firstColData = blCO2FilteredData
+        secondColData = scCO2FilteredData
         
-        firstColName <- "Baseline (Total Population)"
-        secondColName <- "Scenario (Total Population)"
+        firstColName <- "Baseline (Sub-Population)"
+        secondColName <- "Scenario (Sub-Population)"
         
-        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
-        subtitle <- getCO2FilteredTitle("", secondColData, titlePrefix = "Total Size: ")
+        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle("", secondColData)
         
       }
     }
@@ -2676,7 +2676,8 @@ shinyServer(function(input, output, session){
     h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
                                            fontSize = '12px'))
     
-    h1$title(text = extended_title)
+    h1$title(text = extended_title,
+             useHTML = TRUE)
     
     # cat(" first : ", max(firstColData$data), "\n")
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
@@ -2706,6 +2707,7 @@ shinyServer(function(input, output, session){
     # h1$tooltip(valueSuffix= '%')
     h1$exporting(enabled = T,
                  chartOptions = list(
+                   title = list(useHTML = FALSE),
                    legend = list(
                      itemDistance = 80,
                      itemMarginBottom = 5
@@ -2737,7 +2739,7 @@ shinyServer(function(input, output, session){
       firstColName <- "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
       
-      extended_title <- HTML(paste0("Scenario [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+      extended_title <- HTML(paste0("Scenario [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
       subtitle <- getCO2FilteredTitle("", secondColData)
       
     }else{
@@ -2747,26 +2749,26 @@ shinyServer(function(input, output, session){
       if (input$inRegionSwitch == "Region"){
         
         # Keep the data mixed
-        firstColData = scCO2FilteredData
-        secondColData = scCO2DataAltRegionFiltered
+        firstColData = scCO2Data
+        secondColData = scCO2DataAltRegionFull
         
-        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)")
         
-        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
-        subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
+        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]:"), secondColData, titlePrefix = "Total Size: ", showingTotal = TRUE)
         
       } else {
         
         # Keep the data mixed
-        firstColData = blCO2FilteredData
-        secondColData = scCO2FilteredData
+        firstColData = blCO2Data
+        secondColData = scCO2Data
         
-        firstColName <- "Baseline (Sub-Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Scenario (Total Population)"
         
-        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
-        subtitle <- getCO2FilteredTitle("", secondColData)
+        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle("", secondColData, titlePrefix = "Total Size: ", showingTotal = TRUE)
         
       }
     }
@@ -2775,7 +2777,8 @@ shinyServer(function(input, output, session){
     h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
                                            fontSize = '12px'))
     
-    h1$title(text = extended_title)
+    h1$title(text = extended_title,
+             useHTML = TRUE)
     bc <- NULL
     if (max(firstColData$data) > 0 && max(firstColData$data) > 0){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(firstColData$data)))))
@@ -2800,6 +2803,7 @@ shinyServer(function(input, output, session){
     h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     h1$exporting(enabled = T,
                  chartOptions = list(
+                   title = list(useHTML = FALSE),
                    legend = list(
                      itemDistance = 80,
                      itemMarginBottom = 5
@@ -2904,7 +2908,7 @@ shinyServer(function(input, output, session){
   })
   
   
-  getCO2FilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL){
+  getCO2FilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL, showingTotal = FALSE){
     
     npeople <- nrow(firstData)
     
@@ -2961,7 +2965,25 @@ shinyServer(function(input, output, session){
       }else if (input$inCO2SES == 5){
         displaySES <- "Not classified (including students)"
       }
-      filtered_title <- paste(titlePrefixOutput, firstDataTitle, ' ', npeople, secondDataTitleOutput, secondExtraSep, secondDataNPeople, ", Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      
+      if(showingTotal){
+        
+        filters_info <- ""
+        
+      } else {
+        
+        filters_info <- paste0(", Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        
+      }
+      
+      filtered_title <- paste0(titlePrefixOutput,
+                              firstDataTitle,
+                              ' ',
+                              npeople,
+                              secondDataTitleOutput,
+                              secondExtraSep,
+                              secondDataNPeople,
+                              filters_info)
       filtered_title
     }else
       filtered_title
