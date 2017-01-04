@@ -270,7 +270,7 @@ shinyUI(fluidPage(
                      )
     ),
     # for now only "Mode Share", "Physical Activity", "Car Miles"
-    conditionalPanel(condition="input.conditionedPanels == 4 || input.conditionedPanels == 1 || input.conditionedPanels == 6",
+    conditionalPanel(condition="[1, 4, 6].indexOf(parseInt(input.conditionedPanels)) > -1",
                       HTML("<hr>"),
                       radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
                       conditionalPanel(
