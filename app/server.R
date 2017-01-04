@@ -68,9 +68,13 @@ nameOfTheSelectedRegion <- NULL
 
 scenarioAltRegion <- NULL
 
-# directory with precalculated data for tripsdf
+# directory with precalculated data for "Mode Share"
 
 tripsdfRegionalInputData <- 'data/csv/tripsdf_regional/'
+
+# directory with precalculated data for "Journey Time"
+
+tripTotalTimePrecalculated <- 'data/csv/TripTotalTime1_regional/'
 
 # server part
 
@@ -1575,9 +1579,36 @@ shinyServer(function(input, output, session){
     
   })
   
-  getModeTimeFilteredTitle <- function(){
+  getModeTimeFilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL, showingTotal = FALSE){
+    
+    npeople <- unique(firstData$total_population)
     
     filtered_title <- ""
+    
+    secondDataNPeople <- ""
+    secondDataTitleOutput <- ""
+    secondExtraSep <- ""
+    
+    if(!is.null(secondDataTitle)){
+      
+      secondDataTitleOutput <- secondDataTitle
+      secondExtraSep <- " "
+      
+    }
+    
+    if(!is.null(secondData)){
+      
+      secondDataNPeople <- unique(secondData$total_population)
+      secondExtraSep <- " "
+      
+    }
+    
+    if(!is.null(titlePrefix)){
+      titlePrefixOutput <- titlePrefix
+    } else {
+      titlePrefixOutput <- "Sample Size: "
+    }
+    
     if (input$inTTAG != "All" || input$inTTGender != 3 || input$inTTEthnicity != "All" || input$inTTSES != "All" ){
       displayGender <- "All"
       if (input$inTTGender == 1){
@@ -1605,19 +1636,37 @@ shinyServer(function(input, output, session){
       }else if (input$inTTSES == 5){
         displaySES <- "Not classified (including students)"
       }
-      filtered_title <- paste("Age Group: ", str_trim(input$inTTAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      
+      if(showingTotal){
+        
+        filters_info <- ""
+        
+      } else {
+        
+        filters_info <- paste0(", Age Group: ", str_trim(input$inTTAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        
+      }
+      
+      filtered_title <- paste0(titlePrefixOutput,
+                              firstDataTitle,
+                              ' ',
+                              npeople,
+                              secondDataTitleOutput,
+                              secondExtraSep,
+                              secondDataNPeople,
+                              filters_info)
       filtered_title
     }else
       filtered_title
   }
   
   output$plotTTFilteredMode <- renderChart({
-    input$flipTTPlot
     input$inRegions
-    # generateTTData()  # use precalculated values which are in TripTotalTime1_regional folder
+    
     h1 <- Highcharts$new()
     h1$chart(type = "column",
-             style = list(fontFamily = 'Arial, sans-serif', fontSize = '12px'))
+             style = list(fontFamily = 'Arial, sans-serif', 
+                          fontSize = '12px'))
     h1$yAxis(title = list(text = 'Percentage %'))
     
     h1$plotOptions(column=list(animation=FALSE, 
@@ -1644,7 +1693,7 @@ shinyServer(function(input, output, session){
       
       # read histogram data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/filtered/", input$inRegions, "/histogram/", scenarioFilename))
+      chartData <- readRDS(paste0(tripTotalTimePrecalculated, "filtered/", input$inRegions, "/histogram/", scenarioFilename))
       
       # filter data
       
@@ -1654,11 +1703,11 @@ shinyServer(function(input, output, session){
       
       if (!is.null(chartData) && nrow(chartData) > 0){
         
-        h1$title(text = "Sub-population - Histogram of Relative Changes in Trip Durations")
+        h1$title(text = paste0("Sub-population [", nameOfTheSelectedRegion, "] - Histogram of Relative Changes in Trip Durations"))
         
         if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
            
-          h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+          h1$title(text = paste0("Total population [", nameOfTheSelectedRegion, "] - Histogram of Relative Changes in Trip Durations"))
         }
         
         availableUmodes <- unique(chartData[["umode"]])
@@ -1706,15 +1755,15 @@ shinyServer(function(input, output, session){
         }
         
         h1$tooltip(valueSuffix= '%')
-        st <- getModeTimeFilteredTitle()
+        st <- getModeTimeFilteredTitle("", chartData)
         
-        h1$subtitle(text = st, style = list(fontSize = '12px',
-                                            fontWeight = 'bold'))
+        h1$subtitle(text = st)
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
-                    style = list(fontSize = '14px',
-                                 fontWeight = 'bold',
+                    style = list(fontFamily = 'Arial, sans-serif',
+                                 fontSize = '14px',
+                                 fontWeight: 'bold',
                                  color = "#f00"))
       }
       
@@ -1722,7 +1771,7 @@ shinyServer(function(input, output, session){
       
       # read other data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/filtered/", input$inRegions, "/other/", scenarioFilename))
+      chartData <- readRDS(paste0(tripTotalTimePrecalculated, "filtered/", input$inRegions, "/other/", scenarioFilename))
       
       # filter data
       
@@ -1732,11 +1781,11 @@ shinyServer(function(input, output, session){
       
       if (!is.null(chartData) && nrow(chartData) > 0){
         
-        h1$title(text = "Sub-population - Proportion of Faster/Slower Trips")
+        h1$title(text = paste0("Sub-population [", nameOfTheSelectedRegion, "] - Proportion of Faster/Slower Trips"))
         
         if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
           
-          h1$title(text = "Total population - Proportion of Faster/Slower Trips")
+          h1$title(text = paste0("Total population [", nameOfTheSelectedRegion, "] - Proportion of Faster/Slower Trips"))
         }
         
         availableUmodes <- unique(chartData[["umode"]])
@@ -1766,13 +1815,14 @@ shinyServer(function(input, output, session){
         }
         
         h1$tooltip(valueSuffix= '%')
-        st <- getModeTimeFilteredTitle()
-        h1$subtitle(text = st, style = list(fontSize = '12px'))
+        st <- getModeTimeFilteredTitle("", chartData)
+        h1$subtitle(text = st)
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
-                    style = list(fontSize = '14px',
-                                 fontWeight = 'bold',
+                    style = list(fontFamily = 'Arial, sans-serif',
+                                 fontSize = '14px',
+                                 fontWeight: 'bold',
                                  color = "#f00"))
       }
       
@@ -1780,16 +1830,17 @@ shinyServer(function(input, output, session){
     
     h1$set(dom = 'plotTTFilteredMode')
     h1$exporting(enabled = T,
-                 chartOptions = list(chart = list(style = list(fontFamily = 'Arial')),
+                 chartOptions = list(chart = list(style = list(fontFamily = 'Arial, sans-serif')),
                                      xAxis = list(labels = list(style = list(fontSize = '8px')))))
     return(h1)
   })
   
   output$plotTTTotalMode <- renderChart({
     input$inRegions
-    # generateTTData() # use precalculated values which are in TripTotalTime1_regional folder
+    
     h1 <- Highcharts$new()
-    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif', fontSize = '12px'))
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
     h1$yAxis(title = list(text = 'Percentage %'))
     
     h1$plotOptions(column=list(animation=FALSE, 
@@ -1816,13 +1867,13 @@ shinyServer(function(input, output, session){
       
       # read histogram data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/full/", input$inRegions, "/histogram/", scenarioFilename))
+      chartData <- readRDS(paste0(tripTotalTimePrecalculated, "full/", input$inRegions, "/histogram/", scenarioFilename))
       
       # TODO: na check?
       
       if (!is.null(chartData) && nrow(chartData) > 0){
         
-        h1$title(text = "Total population - Histogram of Relative Changes in Trip Durations")
+        h1$title(text = paste0("Total population [", nameOfTheSelectedRegion, "] - Histogram of Relative Changes in Trip Durations"))
         
         availableUmodes <- unique(chartData[["umode"]])
         
@@ -1847,8 +1898,6 @@ shinyServer(function(input, output, session){
           
         }else{
           
-          #h1$xAxis(categories = c(">=50% faster", "[20-50%) faster","[0-20%) faster","(0-20%] slower","(20-50%] slower","(50-100%] slower",">=100% slower" ))
-          #h1$xAxis(categories = c(">=50% faster", ">=20 and <50% faster",">=0 and <20% faster",">0 and <=20% slower",">20 and <=50% slower",">50 and <=100% slower",">100% slower" ))
           h1$xAxis(categories = c(">=50% faster", ">=20 and <50% faster",">=0 and <20% faster",">0 and <=20% slower",">20 and <=50% slower",">50 and <=100% slower",">100% slower" ),
                    plotBands = list(
                      list(
@@ -1871,12 +1920,15 @@ shinyServer(function(input, output, session){
         }
         
         h1$tooltip(valueSuffix= '%')
-        st <- getModeTimeFilteredTitle()
+        st <- getModeTimeFilteredTitle("", chartData, titlePrefix="Total Size: ", showingTotal = TRUE)
+        
+        h1$subtitle(text = st)
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
-                    style = list(fontSize = '14px',
-                                 fontWeight = 'bold',
+                    style = list(fontFamily = 'Arial, sans-serif',
+                                 fontSize = '14px',
+                                 fontWeight: 'bold',
                                  color = "#f00"))
       }
       
@@ -1884,13 +1936,13 @@ shinyServer(function(input, output, session){
       
       # read other data for selected scenario
       
-      chartData <- readRDS(paste0("data/csv/TripTotalTime1_regional/full/", input$inRegions, "/other/", scenarioFilename))
+      chartData <- readRDS(paste0(tripTotalTimePrecalculated, "full/", input$inRegions, "/other/", scenarioFilename))
       
       # TODO: na check?
       
       if (!is.null(chartData) && nrow(chartData) > 0){
         
-        h1$title(text = "Total population - Proportion of Faster/Slower Trips")
+        h1$title(text = paste0("Total population [", nameOfTheSelectedRegion, "] - Proportion of Faster/Slower Trips"))
         
         availableUmodes <- unique(chartData[["umode"]])
         
@@ -1919,12 +1971,15 @@ shinyServer(function(input, output, session){
         }
         
         h1$tooltip(valueSuffix= '%')
-        st <- getModeTimeFilteredTitle()
+        st <- getModeTimeFilteredTitle("", chartData, titlePrefix="Total Size: ", showingTotal = TRUE)
+        
+        h1$subtitle(text = st)
         
       }else{
         h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
-                    style = list(fontSize = '14px',
-                                 fontWeight = 'bold',
+                    style = list(fontFamily = 'Arial, sans-serif',
+                                 fontSize = '14px',
+                                 fontWeight: 'bold',
                                  color = "#f00"))
       }
       
@@ -1933,7 +1988,7 @@ shinyServer(function(input, output, session){
 
     h1$set(dom = 'plotTTTotalMode')
     h1$exporting(enabled = T,
-                 chartOptions = list(chart = list(style = list(fontFamily = 'Arial')),
+                 chartOptions = list(chart = list(style = list(fontFamily = 'Arial, sans-serif')),
                                      xAxis = list(labels = list(style = list(fontSize = '8px')))))
     return(h1)
   })
@@ -2854,7 +2909,6 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    filtered_title <- ""
     if (input$inCO2AG != "All" || input$inCO2G != 3 || input$inCO2Ethnicity != "All" || input$inCO2SES != "All" ){
       displayGender <- "All"
       if (input$inCO2G == 1){
