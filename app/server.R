@@ -36,6 +36,8 @@ scMilesCycledFilteredData <- NULL
 blMilesCycledData <- NULL
 blMilesCycledFilteredData <- NULL
 
+# "Car Miles"
+
 scCarMilesData <- NULL
 scCarMilesFilteredData <- NULL
 scCarMilesDataAltRegFull <- NULL
@@ -44,19 +46,33 @@ scCarMilesDataAltRegFiltered <- NULL
 blCarMilesData <- NULL
 blCarMilesFilteredData <- NULL
 
+# "CO2"
+
 scCO2Data <- NULL
 scCO2FilteredData <- NULL
+scCO2DataAltRegionFull <- NULL
+scCO2DataAltRegionFiltered  <- NULL
 
 blCO2Data <- NULL
 blCO2FilteredData <- NULL
 
+# available regions
+
 regions <- generateRegionsList()
 
+# name of the "main" selected region
+
 nameOfTheSelectedRegion <- NULL
+
 # name of the alternative region
+
 scenarioAltRegion <- NULL
 
+# directory with precalculated data for tripsdf
+
 tripsdfRegionalInputData <- 'data/csv/tripsdf_regional/'
+
+# server part
 
 shinyServer(function(input, output, session){
   
@@ -180,6 +196,14 @@ shinyServer(function(input, output, session){
         print('subset6')
         
         sessionData$RegioncarMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegionSelected)
+        
+      # "CO2"
+        
+      } else if (input$conditionedPanels == 7){
+        
+        print('subset7')
+        
+        sessionData$Regionco2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegionSelected)
         
       }
     }
@@ -617,11 +641,11 @@ shinyServer(function(input, output, session){
         # scMETdata and scFilteredMETdata
         firstColData = scMETdata
         secondColData = scFilteredMETdata
-        extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
         
         firstColName <- "Scenario (Total Population)"
         secondColName <- "Scenario (Sub-population)"
         
+        extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
         filtered_title <- getMETFilteredTitle("", secondColData)
         
       }else{
@@ -2496,36 +2520,81 @@ shinyServer(function(input, output, session){
   
   output$plotFilteredCO2 <- renderChart ({
     filterCO2Data()
-    h1 <- Highcharts$new()
-    h1$chart(type = "column")
+    
     firstColData <- NULL
     secondColData <- NULL
+    
+    subtitle <- ""
     extended_title <- ""
+    
+    # Check in which form chart should be presented
+    # "Scenario versus Baseline" = "comp",
+    # "Sub-population versus total population" = "sep"
+    
     if (input$inCO2flip == 'sep'){
-      # Keep the data separated
-      firstColData = blCO2Data
-      secondColData = blCO2FilteredData
       
-      firstColName <- "Baseline (Total Population)"
-      secondColName <- "Baseline (Sub-Population)"
+      # check if comparision with alternative region is selected
       
+      if (input$inRegionSwitch == "Region"){
+        
+        # Keep the data separated
+        firstColData = scCO2DataAltRegionFull
+        secondColData = scCO2DataAltRegionFiltered
+        
+        firstColName <- "Scenario - alternative Region (Total Population)"
+        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        
+        subtitle <- getCO2FilteredTitle("", secondColData)
+        extended_title <- HTML(paste0("Scenario - alternative Region [", scenarioAltRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        
+      } else {
+        
+        # Keep the data separated
+        firstColData = blCO2Data
+        secondColData = blCO2FilteredData
+        
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Baseline (Sub-Population)"
+        
+        extended_title <- HTML(paste0("Baseline [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle("", secondColData)
+        
+      }
       
-      extended_title <- HTML("Baseline - CO<sub>2<sub> (kg) from car travel per person per week")
-      subtitle <- getCO2FilteredTitle(secondColData)
-      #extended_title <- "Scenario - Mode Share"
+    } else {
       
-    }else{
-      # Keep the data mixed
-      firstColData = blCO2Data
-      secondColData = scCO2Data
+      # check if comparision with alternative region is selected
       
-      firstColName <- "Baseline (Total Population)"
-      secondColName <- "Scenario (Total Population)"
-      
-      subtitle <- ""
-      extended_title <- HTML("Total population - CO<sub>2<sub> (kg) from car travel per person per week")
+      if (input$inRegionSwitch == "Region"){
+        
+        # Keep the data mixed
+        firstColData = scCO2Data
+        secondColData = scCO2DataAltRegionFull
+        
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Total Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)")
+        
+        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]:"), secondColData, titlePrefix = "Total Size: ")
+        
+      } else {
+        
+        # Keep the data mixed
+        firstColData = blCO2Data
+        secondColData = scCO2Data
+        
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Scenario (Total Population)"
+        
+        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle("", secondColData, titlePrefix = "Total Size: ")
+        
+      }
     }
     
+    h1 <- Highcharts$new()
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
     
     h1$title(text = extended_title)
     
@@ -2542,28 +2611,44 @@ shinyServer(function(input, output, session){
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
       h1$series(data = bc$Freq, name = secondColName)
     }else{
-      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"),
+                  style = list(fontFamily = 'Arial, sans-serif',
+                               fontSize = '14px',
+                               fontWeight: 'bold',
+                               color = "#f00"))
     }
     h1$xAxis(categories = c("0", "> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
-    h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+    h1$subtitle(text = subtitle)
     
     h1$set(dom = "plotFilteredCO2")
     h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     # h1$tooltip(valueSuffix= '%')
-    h1$exporting(enabled = T)
+    h1$exporting(enabled = T,
+                 chartOptions = list(
+                   legend = list(
+                     itemDistance = 80,
+                     itemMarginBottom = 5
+                   ),
+                   xAxis = list(
+                     title = list(
+                       y = 10
+                     )
+                   )
+                 ))
     return (h1)
   })
   
   
   output$plotCO2 <- renderChart ({
     filterCO2Data()
-    h1 <- Highcharts$new()
-    h1$chart(type = "column")
+    
     firstColData <- NULL
     secondColData <- NULL
+    
     extended_title <- ""
     subtitle <- ""
+    
     if (input$inCO2flip == 'sep'){
       # Keep the data separated
       firstColData = scCO2Data
@@ -2571,21 +2656,44 @@ shinyServer(function(input, output, session){
       
       firstColName <- "Scenario (Total Population)"
       secondColName <- "Scenario (Sub-Population)"
-      extended_title <- HTML("Scenario - CO<sub>2<sub> (kg) from car travel per person per week")
+      
+      extended_title <- HTML(paste0("Scenario [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+      subtitle <- getCO2FilteredTitle("", secondColData)
       
     }else{
-      # Keep the data mixed
-      firstColData = blCO2FilteredData
-      secondColData = scCO2FilteredData
       
-      firstColName <- "Baseline (Sub-Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      # check if comparision with alternative region is selected
       
-      extended_title <- HTML("Sub population - CO<sub>2<sub> (kg) from car travel per person per week")
+      if (input$inRegionSwitch == "Region"){
+        
+        # Keep the data mixed
+        firstColData = scCO2FilteredData
+        secondColData = scCO2DataAltRegionFiltered
+        
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
+        
+        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
+        
+      } else {
+        
+        # Keep the data mixed
+        firstColData = blCO2FilteredData
+        secondColData = scCO2FilteredData
+        
+        firstColName <- "Baseline (Sub-Population)"
+        secondColName <- "Scenario (Sub-Population)"
+        
+        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2<sub> (kg) from car travel per person per week"))
+        subtitle <- getCO2FilteredTitle("", secondColData)
+        
+      }
     }
     
-    
-    subtitle <- getCO2FilteredTitle(secondColData)
+    h1 <- Highcharts$new()
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
     
     h1$title(text = extended_title)
     bc <- NULL
@@ -2597,22 +2705,39 @@ shinyServer(function(input, output, session){
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(secondColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
       h1$series(data = bc$Freq, name = secondColName)
-      h1$subtitle(text = subtitle, style = list(font = 'bold 12px "Trebuchet MS", Verdana, sans-serif'))
+      h1$subtitle(text = subtitle)
     }else{
-      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"),
+                  style = list(fontFamily = 'Arial, sans-serif',
+                               fontSize = '14px',
+                               fontWeight: 'bold',
+                               color = "#f00"))
     }
     
     h1$xAxis(categories = c("0", "> 0 and <= 10", "> 10 and <= 20", "> 20 and <= 50", "> 50 and <= 100","> 100 and <= 200", "> 200"))
     h1$set(dom = "plotCO2")
     h1$yAxis(title = list(text = 'Percentage of the total population'))
     h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
-    h1$exporting(enabled = T)
+    h1$exporting(enabled = T,
+                 chartOptions = list(
+                   legend = list(
+                     itemDistance = 80,
+                     itemMarginBottom = 5
+                   ),
+                   xAxis = list(
+                     title = list(
+                       y = 10
+                     )
+                   )
+                 ))
     return (h1)
   })
   
   
   filterCO2Data <- reactive ({
     input$inRegions
+    input$inRegionSelected
+    
     data <- sessionData$co2data
     
     if (input$inCO2AG != 'All'){
@@ -2654,15 +2779,80 @@ shinyServer(function(input, output, session){
     blCO2Data <<- data.frame(data = sessionData$co2data[,"baseline"])
     blCO2FilteredData <<- data.frame(data = data[,"baseline"])
     
-    # cat(nrow(scCO2Data), " ", nrow(scCO2FilteredData), " ", nrow(blCO2Data), " ", nrow(blCO2FilteredData), "\n")
+    # to save time only if comparision with alternative region is selected
     
-    #summary(dim(scCO2Data), " : ",  dim(scCO2FilteredData), "\n")
+    if(input$inRegionSwitch == 'Region'){
+      
+      print('filterCarMilesData - reg changed!')
+      
+      # full data
+      
+      dataAltRegFull <- data.frame(data = sessionData$Regionco2data[[columnName]])
+      
+      scCO2DataAltRegionFull <<- dataAltRegFull
+      
+      # filtered data
+      
+      dataAltRegFiltered <- sessionData$Regionco2data
+      
+      if (input$inCO2AG != 'All'){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inCO2AG)
+      }
+      
+      if (input$inCO2G != 3){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inCO2G)
+      }
+      
+      if (input$inCO2SES != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID == input$inCO2SES)
+      }
+      
+      if (input$inCO2Ethnicity != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID == input$inCO2Ethnicity)
+      }
+      
+      # Remove all NA rows from the dataset just like it is for selected (not alternative) region
+      
+      dataAltRegFiltered[is.na(dataAltRegFiltered)] <- 0
+      
+      dataAltRegFiltered <- data.frame(data = dataAltRegFiltered[[columnName]])
+      
+      scCO2DataAltRegionFiltered <<- dataAltRegFiltered
+      
+    }
     
   })
   
   
-  getCO2FilteredTitle <- function(ldata){
-    npeople <- nrow(ldata)
+  getCO2FilteredTitle <- function(firstDataTitle, firstData, secondDataTitle = NULL, secondData = NULL, titlePrefix = NULL){
+    
+    npeople <- nrow(firstData)
+    
+    filtered_title <- ""
+    
+    secondDataNPeople <- ""
+    secondDataTitleOutput <- ""
+    secondExtraSep <- ""
+    
+    if(!is.null(secondDataTitle)){
+      
+      secondDataTitleOutput <- secondDataTitle
+      secondExtraSep <- " "
+      
+    }
+    
+    if(!is.null(secondData)){
+      
+      secondDataNPeople <- nrow(secondData)
+      secondExtraSep <- " "
+      
+    }
+    
+    if(!is.null(titlePrefix)){
+      titlePrefixOutput <- titlePrefix
+    } else {
+      titlePrefixOutput <- "Sample Size: "
+    }
     
     filtered_title <- ""
     if (input$inCO2AG != "All" || input$inCO2G != 3 || input$inCO2Ethnicity != "All" || input$inCO2SES != "All" ){
@@ -2692,7 +2882,7 @@ shinyServer(function(input, output, session){
       }else if (input$inCO2SES == 5){
         displaySES <- "Not classified (including students)"
       }
-      filtered_title <- paste("Sample Size: ", npeople, ", Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
+      filtered_title <- paste(titlePrefixOutput, firstDataTitle, ' ', npeople, secondDataTitleOutput, secondExtraSep, secondDataNPeople, ", Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity, sep = "" )
       filtered_title
     }else
       filtered_title
