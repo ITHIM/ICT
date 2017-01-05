@@ -1,3 +1,5 @@
+# "Physical Activity"
+
 pd <- idata$total_mmet
 bMETdata <- NULL
 scMETdata <- NULL
@@ -5,11 +7,15 @@ scFilteredMETdata <- NULL
 scMETdataAltRegFull <- NULL
 scMETdataAltRegFiltered <- NULL
 
+# not used
+
 scTimeTraveldata <- NULL
 scFilteredTimeTraveldata <- NULL
 scFilteredTripTimeTraveldata <- NULL
 scTripTimeTraveldata <- NULL
 scFilteredTripModeTraveldata <- NULL
+
+# "Health"
 
 ftdata <- NULL
 swdata <- NULL
@@ -22,6 +28,8 @@ scYllReductionData <- NULL
 scYllData1 <- NULL
 scYllReductionData1 <- NULL
 
+# "Mode Share"
+
 msBaseline <- NULL
 msScenario <- NULL
 msAltRegionScenario <- NULL
@@ -29,6 +37,7 @@ tdBaseline <- NULL
 tdScenario <- NULL
 tdAltRegionScenario <- NULL
 
+# "Miles Cycled"
 
 scMilesCycledData <- NULL
 scMilesCycledFilteredData <- NULL
