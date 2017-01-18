@@ -1410,39 +1410,20 @@ shinyServer(function(input, output, session){
     
     if (input$flipMS == 'sep'){
       
-      # check if comparision with alternative region is selected
+      # Keep the data separated
+      # scMETdata and scFilteredMETdata
       
-      if (input$inRegionSwitch == "Region"){
-        
-        firstColData = msAltRegionScenario
-        secondColData = tdAltRegionScenario
-        
-        extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Mode Share")
-        
-        firstColName <- "Scenario - alternative Region (Total Population)" 
-        secondColName <- "Scenario - alternative Region (Sub-Population)"
-        
-        # set proper subtitle
-        
-        filtered_title <- getTripsFilteredTitle("", secondColData)
-        
-      } else {
-        
-        # Keep the data separated
-        # scMETdata and scFilteredMETdata
-        firstColData = msBaseline # msScenario
-        secondColData = tdBaseline
-        
-        extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Mode Share")
-        
-        firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
-        secondColName <- "Baseline (Sub-Population)"
-        
-        # set proper subtitle
-        
-        filtered_title <- getTripsFilteredTitle("", secondColData)
-        
-      }
+      firstColData = msScenario
+      secondColData = tdScenario
+      
+      extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Mode Share")
+      
+      firstColName <- "Scenario (Total Population)" # "Scenario (Total Population)"
+      secondColName <- "Scenario (Sub-Population)"
+      
+      # set proper subtitle
+      
+      filtered_title <- getTripsFilteredTitle("", secondColData)
       
     }else{
       
@@ -1524,20 +1505,39 @@ shinyServer(function(input, output, session){
     generateBDScenarioTable()
     if (input$flipMS == 'sep'){
       
-      # Keep the data separated
-      # scMETdata and scFilteredMETdata
+      # check if comparision with alternative region is selected
       
-      firstColData = msScenario
-      secondColData = tdScenario
-      
-      extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Mode Share")
-      
-      firstColName <- "Scenario (Total Population)" # "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
-      
-      # set proper subtitle
+      if (input$inRegionSwitch == "Region"){
         
-      filtered_title <- getTripsFilteredTitle("", secondColData)
+        firstColData = msAltRegionScenario
+        secondColData = tdAltRegionScenario
+        
+        extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Mode Share")
+        
+        firstColName <- "Scenario - alternative Region (Total Population)" 
+        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        
+        # set proper subtitle
+        
+        filtered_title <- getTripsFilteredTitle("", secondColData)
+        
+      } else {
+        
+        # Keep the data separated
+        # scMETdata and scFilteredMETdata
+        firstColData = msBaseline # msScenario
+        secondColData = tdBaseline
+        
+        extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Mode Share")
+        
+        firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
+        secondColName <- "Baseline (Sub-Population)"
+        
+        # set proper subtitle
+        
+        filtered_title <- getTripsFilteredTitle("", secondColData)
+        
+      }
       
     }else{
       
