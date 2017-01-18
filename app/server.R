@@ -462,36 +462,16 @@ shinyServer(function(input, output, session){
     if (!is.null(idata) & !is.null(scMETdata)){
       if (input$flipMETHG == 'sep'){
         
-        # if comparision with alternative region is selected
+        # Keep the data separated
+        # scMETdata and scFilteredMETdata
+        firstColData = scMETdata
+        secondColData = scFilteredMETdata
         
-        if(input$inRegionSwitch == 'Region'){
-          
-          # Keep the data separated
-          firstColData = scMETdataAltRegFull
-          secondColData = scMETdataAltRegFiltered
-          
-          extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Marginal MET Hours")
-          
-          firstColName <- "Scenario - alternative Region (Total Population)"
-          secondColName <- "Scenario - alternative Region (Sub-Population)"
-          
-          filtered_title <- getMETFilteredTitle("", secondColData)
-          
-        } else {
+        firstColName <- "Scenario (Total Population)"
+        secondColName <- "Scenario (Sub-population)"
         
-          # Keep the data separated
-          # scMETdata and scFilteredMETdata
-          firstColData = bMETdata
-          secondColData = pd
-          
-          extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
-          
-          firstColName <- "Baseline (Total Population)"
-          secondColName <- "Baseline (Sub-Population)"
-          
-          filtered_title <- getMETFilteredTitle("", secondColData)
-        
-        }
+        extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+        filtered_title <- getMETFilteredTitle("", secondColData)
         
       }else{
         
@@ -640,6 +620,8 @@ shinyServer(function(input, output, session){
   
   output$plotScenarioMET <- renderChart({
     input$inRegions
+    input$flipMETHG
+    input$phyGuideline
     
     plotMETDataTable()
     
@@ -653,16 +635,36 @@ shinyServer(function(input, output, session){
       
       if (input$flipMETHG == 'sep'){
         
-        # Keep the data separated
-        # scMETdata and scFilteredMETdata
-        firstColData = scMETdata
-        secondColData = scFilteredMETdata
+        # if comparision with alternative region is selected
         
-        firstColName <- "Scenario (Total Population)"
-        secondColName <- "Scenario (Sub-population)"
-        
-        extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
-        filtered_title <- getMETFilteredTitle("", secondColData)
+        if(input$inRegionSwitch == 'Region'){
+          
+          # Keep the data separated
+          firstColData = scMETdataAltRegFull
+          secondColData = scMETdataAltRegFiltered
+          
+          extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Marginal MET Hours")
+          
+          firstColName <- "Scenario - alternative Region (Total Population)"
+          secondColName <- "Scenario - alternative Region (Sub-Population)"
+          
+          filtered_title <- getMETFilteredTitle("", secondColData)
+          
+        } else {
+          
+          # Keep the data separated
+          # scMETdata and scFilteredMETdata
+          firstColData = bMETdata
+          secondColData = pd
+          
+          extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          
+          firstColName <- "Baseline (Total Population)"
+          secondColName <- "Baseline (Sub-Population)"
+          
+          filtered_title <- getMETFilteredTitle("", secondColData)
+          
+        }
         
       }else{
         
