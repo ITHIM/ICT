@@ -2331,35 +2331,16 @@ shinyServer(function(input, output, session){
     
     if (input$inCMflip == 'sep'){
       
-      # check if comparision with alternative region is selected
+      # Keep the data separated
+      firstColData = scCarMilesData
+      secondColData = scCarMilesFilteredData
       
-      if (input$inRegionSwitch == "Region"){
-        
-        # Keep the data separated
-        firstColData = scCarMilesDataAltRegFull
-        secondColData = scCarMilesDataAltRegFiltered
-        
-        firstColName <- "Scenario - alternative Region (Total Population)" 
-        secondColName <- "Scenario - alternative Region (Sub-Population)"
-        
-        extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Car Miles per person per week")
-        
-        subtitle <- getCarMilesFilteredTitle("", secondColData)
-        
-      } else {
-        
-        # Keep the data separated
-        firstColData = blCarMilesData
-        secondColData = blCarMilesFilteredData
-        
-        firstColName <- "Baseline (Total Population)"
-        secondColName <- "Baseline (Sub-Population)"
-        
-        extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
-        
-        subtitle <- getCarMilesFilteredTitle("", secondColData)
-        
-      }
+      firstColName <- "Scenario (Total Population)"
+      secondColName <- "Scenario (Sub-Population)"
+      
+      extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+      
+      subtitle <- getCarMilesFilteredTitle("", secondColData)
       
     }else{
       
@@ -2443,16 +2424,36 @@ shinyServer(function(input, output, session){
     subtitle <- ""
     
     if (input$inCMflip == 'sep'){
-      # Keep the data separated
-      firstColData = scCarMilesData
-      secondColData = scCarMilesFilteredData
       
-      firstColName <- "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      # check if comparision with alternative region is selected
       
-      extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
-      
-      subtitle <- getCarMilesFilteredTitle("", secondColData)
+      if (input$inRegionSwitch == "Region"){
+        
+        # Keep the data separated
+        firstColData = scCarMilesDataAltRegFull
+        secondColData = scCarMilesDataAltRegFiltered
+        
+        firstColName <- "Scenario - alternative Region (Total Population)" 
+        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        
+        extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Car Miles per person per week")
+        
+        subtitle <- getCarMilesFilteredTitle("", secondColData)
+        
+      } else {
+        
+        # Keep the data separated
+        firstColData = blCarMilesData
+        secondColData = blCarMilesFilteredData
+        
+        firstColName <- "Baseline (Total Population)"
+        secondColName <- "Baseline (Sub-Population)"
+        
+        extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        
+        subtitle <- getCarMilesFilteredTitle("", secondColData)
+        
+      }
       
     }else{
       
@@ -2494,7 +2495,7 @@ shinyServer(function(input, output, session){
     h1$title(text = extended_title)
     
     bc <- NULL
-    if (max(firstColData$data) > 0 && max(firstColData$data) > 0){
+    if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 10, 20, 50, 100, 200), max(firstColData$data)))))
       bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
       
