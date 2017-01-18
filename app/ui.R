@@ -301,8 +301,8 @@ shinyUI(fluidPage(
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                ))
       ,
-      showOutput("plotTTTotalMode", "highcharts"),
-      showOutput("plotTTFilteredMode", "highcharts")
+      showOutput("plotTTFilteredMode", "highcharts"),
+      showOutput("plotTTTotalMode", "highcharts")
       ),
       tabPanel("Miles Cycled", value = 3,
                a(id = "MCHelp", "Help?", href = "#"),
