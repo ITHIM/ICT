@@ -269,8 +269,8 @@ shinyUI(fluidPage(
                        radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
                      )
     ),
-    # for now only "Mode Share", "Physical Activity", "Car Miles", "CO2"
-    conditionalPanel(condition="[1, 4, 6, 7].indexOf(parseInt(input.conditionedPanels)) > -1",
+    # for now only "Mode Share", "Miles Cycled", "Physical Activity", "Car Miles", "CO2"
+    conditionalPanel(condition="[1, 3, 4, 6, 7].indexOf(parseInt(input.conditionedPanels)) > -1",
                       HTML("<hr>"),
                       radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
                       conditionalPanel(
