@@ -3299,7 +3299,7 @@ shinyServer(function(input, output, session){
     if(!is.null(titlePrefix)){
       titlePrefixOutput <- titlePrefix
     } else {
-      titlePrefixOutput <- "Sample Size (trips): "
+      titlePrefixOutput <- "Sample Size: "
     }
     
     if (input$inCMAG != "All" || input$inCMG != 3 || input$inCMEthnicity != "All" || input$inCMSES != "All" ){
