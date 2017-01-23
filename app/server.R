@@ -79,6 +79,10 @@ nameOfTheSelectedRegion <- NULL
 
 scenarioAltRegion <- NULL
 
+# name of the alternative region - only for "Health" tab
+
+scenarioAltRegionHealth <- NULL
+
 # directory with precalculated data for "Mode Share"
 
 tripsdfRegionalInputData <- 'data/csv/tripsdf_regional/'
@@ -136,9 +140,17 @@ shinyServer(function(input, output, session){
       
       updateSelectInput(session, inputId = "inRegionSelected", choices = generateRegionsList(input$inRegions))
       
+      # only for "Health" tab - regenerate list with MS/DP for selected region setting alternative region == main selected region
+      
+      updateSelectInput(session, inputId = "inRegionSelectedHealth", choices = generateRegionsList(), selected = input$inRegions)
+      
       # set name of the selected main region
       
       nameOfTheSelectedRegion <<- names(regions[regions == as.integer(input$inRegions)])
+      
+      # set name of the alternative region in "Health" tab
+      
+      scenarioAltRegionHealth <<- names(regions[regions == as.integer(input$inRegions)])
       
     }
   })
@@ -183,6 +195,42 @@ shinyServer(function(input, output, session){
     # set name of the alternative region
     
     scenarioAltRegion <<- names(regions[regions == as.integer(input$inRegionSelected)])
+    
+  })
+  
+  # observe alternative region in "Health" tab
+  
+  observe({
+    
+    # observe alternatvie region in "Health"
+    
+    input$inRegionSelectedHealth
+    
+    # set list with MS/DP values for selected alternative region
+    
+    #updateSelectInput(session, inputId = "inHealthMS1", choices =  generateUniqueMS(input$inRegionSelectedHealth))
+    
+    # inputs only available in "Health"
+    
+    casesOfDP <- subset(directProbCasesAboveGivenPerc, MS == as.numeric(input$inHealthMS1) & ebikes == as.numeric(input$inHealthEB1) & equity == as.numeric(input$inHealthEQ1) & region == as.numeric(input$inRegionSelectedHealth))
+    
+    if (nrow(casesOfDP) > 0){
+      
+      show('region-health-switch-warning')
+      shinyjs::html('region-health-switch-warning', 'Warning: in selected alternative region number of observed cyclists in a population is greater than "Select % of Population who are Potential Cyclists"')
+      
+    } else {
+      
+      # hide <p> with warning + remove content
+      
+      hide('region-health-switch-warning')
+      shinyjs::html('region-health-switch-warning', '')
+      
+    }
+    
+    # set name of the alternative region
+    
+    scenarioAltRegionHealth <<- names(regions[regions == as.integer(input$inRegionSelectedHealth)])
     
   })
   
@@ -271,11 +319,8 @@ shinyServer(function(input, output, session){
   
   filterHealthData <- reactive({
     
-    
-#     sessionData$yll
-#     sessionData$yllReduction
-#     sessionData$death 
     input$inRegions
+    input$inRegionSelectedHealth
     
     data1 <- NULL
     if (input$inHealthVarSwitch == "Deaths")
@@ -315,6 +360,41 @@ shinyServer(function(input, output, session){
     
     dat4 <- data2[,c("age.band", "gender",columnName1)]
     colnames(dat4) <- c("age.band", "gender", "scenario")
+    
+    # if alternative region is different
+    
+    data1AltRegion <- NULL
+    data2AltRegion <- NULL
+    
+    if (input$inRegions != input$inRegionSelectedHealth){
+      
+      if (input$inHealthVarSwitch == "Deaths")
+        data1AltRegion <- subset(death, regions == input$inRegionSelectedHealth)
+      else if (input$inHealthVarSwitch == "YLL")
+        data1AltRegion <- subset(yll, regions == input$inRegionSelectedHealth)
+      
+      # Temporarily removing YLL total values
+      data1 <- subset(data1AltRegion, age.band != "All Ages")
+      data2 <- subset(yllReduction, regions == input$inRegionSelectedHealth)
+      
+      if (input$inHealthAG != 'All'){
+        # Temporarily removing YLL total values
+        data1 <- subset(data1, age.band == input$inHealthAG)
+        data2 <- subset(data2, age.band == input$inHealthAG | age.band == "All Ages")
+      }
+      if (input$inHealthG != 3){
+        # Temporarily removing YLL total values
+        data1 <- subset(data1, gender %in% input$inHealthG)
+        data2 <- subset(data2, gender %in% input$inHealthG | gender == "Both Gender")
+      }
+      
+      dat3 <- data1[,c("age.band", "gender",columnName1)]
+      colnames(dat3) <- c("age.band", "gender", "scenario")
+      
+      dat4 <- data2[,c("age.band", "gender",columnName1)]
+      colnames(dat4) <- c("age.band", "gender", "scenario")
+      
+    }
     
     scYllData <<- dat1
     scYllReductionData <<- dat2
@@ -836,14 +916,18 @@ shinyServer(function(input, output, session){
   output$plotHealth <- renderChart({
     
     input$inHealthVarSwitch
+    input$inRegionSelectedHealth
     filterHealthData()
+    
     h1 <- Highcharts$new()
-    h1$chart(type = "column")
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
     
     
     if (nrow(scYllReductionData) > 0){
       
       if (input$inHealthSwitch == "Scenario"){
+
         eq <- "Off"
         if (input$inHealthEQ == 1)
           eq <- "On"
@@ -852,7 +936,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllData$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllData$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -862,25 +946,28 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllData1$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
-        gender = "Male"
-        print(scYllData)
-        if (scYllData$gender == 2)
-          gender = "Female"
-        h1$xAxis(categories = paste(scYllData$gender, scYllData$age.band))
+        h1$series(data = scYllData1$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth, "]")) )
+        
+        # recode gender code to text values
+        
+        scYllDataRecoded <- dplyr::inner_join(scYllData, data.frame(gender=c(1,2), genderTextValue=c("Male","Female")), by="gender")
+        
+        scYllDataRecoded <- dplyr::arrange(scYllDataRecoded, gender, age.band)
+        
+        h1$xAxis(categories = paste(scYllDataRecoded$genderTextValue, scYllDataRecoded$age.band))
+        
       }else{
-        print('here')
         # For both gender, create new series
         ugender <- sort(unique(scYllData$gender))
-        print(str(ugender))
+        
         for (i in 1:length(ugender)){
           data <- subset(scYllData, gender == ugender[i])
-          print(str(data))
           seriesName <- "Male"
           if (ugender[i] == 2)
             seriesName <- "Female"
           h1$series(data = data$scenario, name = seriesName)
         }
+        
         h1$xAxis(categories = append(input$inHealthAG, " "), title = list(text = 'Age and Gender Group'))
         if (length(unique(scYllData$age.band)) > 1)
           h1$xAxis(categories = unique(scYllData$age.band), title = list(text = 'Age and Gender Groups'))
@@ -891,7 +978,11 @@ shinyServer(function(input, output, session){
         h1$yAxis(title = list(text = 'Averted number of Deaths'))
       
     }else{
-      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), 
+                  style = list(fontFamily = 'Arial, sans-serif',
+                               fontSize = '14px',
+                               fontWeight = 'bold',
+                               color = "#f00"))
     }
     if (input$inHealthVarSwitch == "YLL")
       h1$title(text = "Reduction in Years of Life Lost (YLL) for the Selected Region")
@@ -907,7 +998,9 @@ shinyServer(function(input, output, session){
     filterHealthData()
     
     h1 <- Highcharts$new()
-    h1$chart(type = "column")
+    h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
+                                           fontSize = '12px'))
+    
     if (nrow(scYllReductionData) > 0){
       if (input$inHealthSwitch == "Scenario"){
         
@@ -919,7 +1012,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "))
+        h1$series(data = scYllReductionData$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -929,11 +1022,16 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData1$scenario, name = paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "))
-        gender = "Male"
-        if (scYllReductionData$gender == 2)
-          gender = "Female"
-        h1$xAxis(categories = paste(scYllReductionData$gender, scYllReductionData$age.band))
+        h1$series(data = scYllReductionData1$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth ,"]")) )
+        
+        # recode gender code to text values
+        
+        scYllDataRecoded <- dplyr::inner_join(scYllReductionData, data.frame(gender=c(1,2), genderTextValue=c("Male","Female")), by="gender")
+        
+        scYllDataRecoded <- dplyr::arrange(scYllDataRecoded, gender, age.band)
+        
+        h1$xAxis(categories = paste(scYllDataRecoded$genderTextValue, scYllDataRecoded$age.band))
+        
       }else{
         
         # For both gender, create new series
@@ -954,7 +1052,11 @@ shinyServer(function(input, output, session){
       
       h1$yAxis(title = list(text = 'Percentage of the total population'))
     }else{
-      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"), style = list(font = 'bold 14px "Trebuchet MS", Verdana, sans-serif', color = "#f00"))
+      h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
+                  style = list(fontFamily = 'Arial, sans-serif',
+                               fontSize = '14px',
+                               fontWeight = 'bold',
+                               color = "#f00"))
     }
     
     if (input$inHealthVarSwitch == "YLL")
