@@ -214,10 +214,12 @@ shinyUI(fluidPage(
                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
-                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario"= "Scenario"), inline = TRUE),
+                     radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario/Region"= "Scenario"), inline = TRUE),
                      HTML("<hr>"),
                      conditionalPanel(
                        condition = "input.inHealthSwitch == 'Scenario'",
+                       selectInput(inputId = "inRegionSelectedHealth", label = "Select Region:", choices = regionsList),
+                       hidden(p(id = "region-health-switch-warning", class = "region-switch-warnings", "")),
                        selectInput(inputId = "inHealthMS1", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),
                        radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                        radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
