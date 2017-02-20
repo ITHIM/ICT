@@ -2313,7 +2313,7 @@ shinyServer(function(input, output, session){
                                            fontSize = '12px'))
     
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
-      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
@@ -2328,7 +2328,7 @@ shinyServer(function(input, output, session){
       
       h1$series(data = bc$Freq[-1], name = firstColName)
       bc <- NULL
-      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
@@ -2450,7 +2450,8 @@ shinyServer(function(input, output, session){
     
     bc <- NULL
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
-      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
+      
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
@@ -2461,7 +2462,7 @@ shinyServer(function(input, output, session){
       }
       
       h1$series(data = bc$Freq[-1], name = firstColName)
-      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
