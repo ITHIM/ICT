@@ -248,15 +248,11 @@ shinyServer(function(input, output, session){
       
       if (input$conditionedPanels == 3) {
         
-        print('subset3')
-        
         sessionData$RegionmilesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegionSelected)
         
       # "Physical Activity"
         
       } else if (input$conditionedPanels == 4){
-        
-        print('subset4')
         
         sessionData$Regionidata <<- subset(idata, HHoldGOR_B02ID == input$inRegionSelected)
         
@@ -264,15 +260,11 @@ shinyServer(function(input, output, session){
         
       } else if (input$conditionedPanels == 6){
         
-        print('subset6')
-        
         sessionData$RegioncarMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegionSelected)
         
       # "CO2"
         
       } else if (input$conditionedPanels == 7){
-        
-        print('subset7')
         
         sessionData$Regionco2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegionSelected)
         
@@ -504,8 +496,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('plotMETDataTable - reg changed!')
       
       # full data
       
@@ -2568,8 +2558,6 @@ shinyServer(function(input, output, session){
     
     if(input$inRegionSwitch == 'Region'){
       
-      print('filterMilesCycledData - reg changed!')
-      
       # full data
       
       dataAltRegFull <- data.frame(data = sessionData$RegionmilesCycled[[columnName]])
@@ -2860,8 +2848,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('filterCarMilesData - reg changed!')
       
       # full data
       
@@ -3167,8 +3153,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('filterCarMilesData - reg changed!')
       
       # full data
       
