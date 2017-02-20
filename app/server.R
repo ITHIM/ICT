@@ -2341,6 +2341,16 @@ shinyServer(function(input, output, session){
       
       h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
       
+      # add extra subtitle if denominator is "Total Population"
+      
+      if (input$inMSTotOrCyc == 'pop'){
+        
+        extraSubtitle <- "Proportions calculated using the total population as a denominator, but the bar for those doing zero cycling is not shown."
+        
+        subtitle <- ifelse(nchar(subtitle) == 0, extraSubtitle, paste0(subtitle, "<br>", extraSubtitle))
+        
+      }
+      
       h1$subtitle(text = subtitle)
       h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
       
@@ -2351,16 +2361,6 @@ shinyServer(function(input, output, session){
                                fontSize = '14px',
                                fontWeight = 'bold',
                                color = "#f00"))
-      
-    }
-    
-    if (input$inMSTotOrCyc == 'cyc'){
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Cyclists)')
-      
-    } else {
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Population)')
       
     }
     
@@ -2473,6 +2473,16 @@ shinyServer(function(input, output, session){
       
       h1$series(data = bc$Freq[-1], name = secondColName)
       
+      # add extra subtitle if denominator is "Total Population"
+      
+      if (input$inMSTotOrCyc == 'pop'){
+        
+        extraSubtitle <- "Proportions calculated using the total population as a denominator, but the bar for those doing zero cycling is not shown."
+      
+        subtitle <- ifelse(nchar(subtitle) == 0, extraSubtitle, paste0(subtitle, "<br>", extraSubtitle))
+        
+      }
+      
       h1$subtitle(text = subtitle)
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), 
@@ -2480,16 +2490,6 @@ shinyServer(function(input, output, session){
                                fontSize = '14px',
                                fontWeight = 'bold',
                                color = "#f00"))
-    }
-    
-    if (input$inMSTotOrCyc == 'cyc'){
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Cyclists)')
-      
-    } else {
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Population)')
-      
     }
     
     h1$title(text = extended_title)
