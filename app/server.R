@@ -248,15 +248,11 @@ shinyServer(function(input, output, session){
       
       if (input$conditionedPanels == 3) {
         
-        print('subset3')
-        
         sessionData$RegionmilesCycled <<- subset(milesCycled, HHoldGOR_B02ID == input$inRegionSelected)
         
       # "Physical Activity"
         
       } else if (input$conditionedPanels == 4){
-        
-        print('subset4')
         
         sessionData$Regionidata <<- subset(idata, HHoldGOR_B02ID == input$inRegionSelected)
         
@@ -264,15 +260,11 @@ shinyServer(function(input, output, session){
         
       } else if (input$conditionedPanels == 6){
         
-        print('subset6')
-        
         sessionData$RegioncarMiles <<- subset(carMiles, HHoldGOR_B02ID == input$inRegionSelected)
         
       # "CO2"
         
       } else if (input$conditionedPanels == 7){
-        
-        print('subset7')
         
         sessionData$Regionco2data <<- subset(co2data, HHoldGOR_B02ID == input$inRegionSelected)
         
@@ -504,8 +496,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('plotMETDataTable - reg changed!')
       
       # full data
       
@@ -2313,7 +2303,7 @@ shinyServer(function(input, output, session){
                                            fontSize = '12px'))
     
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
-      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
@@ -2328,7 +2318,7 @@ shinyServer(function(input, output, session){
       
       h1$series(data = bc$Freq[-1], name = firstColName)
       bc <- NULL
-      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
@@ -2341,6 +2331,16 @@ shinyServer(function(input, output, session){
       
       h1$xAxis(categories = c("> 0 and <= 2", "> 2 and <= 5", "> 5 and <= 10", "> 10 and <= 20","> 20 and <= 40", "> 40 and <= 60", "> 60"))
       
+      # add extra subtitle if denominator is "Total Population"
+      
+      if (input$inMSTotOrCyc == 'pop'){
+        
+        extraSubtitle <- "Proportions calculated using the total population as a denominator, but the bar for those doing zero cycling is not shown."
+        
+        subtitle <- ifelse(nchar(subtitle) == 0, extraSubtitle, paste0(subtitle, "<br>", extraSubtitle))
+        
+      }
+      
       h1$subtitle(text = subtitle)
       h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
       
@@ -2351,16 +2351,6 @@ shinyServer(function(input, output, session){
                                fontSize = '14px',
                                fontWeight = 'bold',
                                color = "#f00"))
-      
-    }
-    
-    if (input$inMSTotOrCyc == 'cyc'){
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Cyclists)')
-      
-    } else {
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Population)')
       
     }
     
@@ -2450,7 +2440,8 @@ shinyServer(function(input, output, session){
     
     bc <- NULL
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
-      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(firstColData$data)))))
+      
+      bc <- as.data.frame(table (cut (firstColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
@@ -2461,7 +2452,7 @@ shinyServer(function(input, output, session){
       }
       
       h1$series(data = bc$Freq[-1], name = firstColName)
-      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(c(-1, 0, 2, 5, 10, 20, 40, 60), max(secondColData$data)))))
+      bc <- as.data.frame(table (cut (secondColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       if (input$inMSTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
@@ -2473,6 +2464,16 @@ shinyServer(function(input, output, session){
       
       h1$series(data = bc$Freq[-1], name = secondColName)
       
+      # add extra subtitle if denominator is "Total Population"
+      
+      if (input$inMSTotOrCyc == 'pop'){
+        
+        extraSubtitle <- "Proportions calculated using the total population as a denominator, but the bar for those doing zero cycling is not shown."
+      
+        subtitle <- ifelse(nchar(subtitle) == 0, extraSubtitle, paste0(subtitle, "<br>", extraSubtitle))
+        
+      }
+      
       h1$subtitle(text = subtitle)
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size &lt; 10)"), 
@@ -2480,16 +2481,6 @@ shinyServer(function(input, output, session){
                                fontSize = '14px',
                                fontWeight = 'bold',
                                color = "#f00"))
-    }
-    
-    if (input$inMSTotOrCyc == 'cyc'){
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Cyclists)')
-      
-    } else {
-      
-      extended_title <- paste0(extended_title, ' (denominator: Total Population)')
-      
     }
     
     h1$title(text = extended_title)
@@ -2566,8 +2557,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('filterMilesCycledData - reg changed!')
       
       # full data
       
@@ -2859,8 +2848,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('filterCarMilesData - reg changed!')
       
       # full data
       
@@ -3166,8 +3153,6 @@ shinyServer(function(input, output, session){
     # to save time only if comparision with alternative region is selected
     
     if(input$inRegionSwitch == 'Region'){
-      
-      print('filterCarMilesData - reg changed!')
       
       # full data
       
