@@ -27,6 +27,9 @@ tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car P
 yll <- readRDS("data/csv/ylls.rds")
 death <- readRDS("data/csv/deaths.rds")
 yllReduction <- readRDS("data/csv/yll_reduction.rds")
+# Round death and yll reductions numbers to two decimal places
+death[,4:ncol(death)] <- round(death[,4:ncol(death)], 2)
+yllReduction[,4:ncol(yllReduction)] <- round(yllReduction[,4:ncol(yllReduction)], 2)
 
 
 # Read Car Miles data
