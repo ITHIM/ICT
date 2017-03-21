@@ -46,8 +46,8 @@ denominatorRButton <- c("Total Population" = "pop",
 # denominatorRButton <- c("Total Cyclists" = "cyc")
 
 
-phyGLRButton <- c("Marginal MET hours" =    "off",
-                  "% meeting WHO physical activity guidelines" = "on")
+phyGLRButton <- c("% meeting WHO physical activity guidelines" = "on",
+                  "Marginal MET hours" =    "off")
 
 TTRButton <- c("Histogram" =    "histogram",
                "Slower/Faster trips" = "trip speed")
