@@ -49,8 +49,8 @@ denominatorRButton <- c("Total Population" = "pop",
 phyGLRButton <- c("% meeting WHO physical activity guidelines" = "on",
                   "Marginal MET hours" =    "off")
 
-TTRButton <- c("Histogram" =    "histogram",
-               "Slower/Faster trips" = "trip speed")
+TTRButton <- c("Slower/Faster trips" = "trip speed",
+               "Histogram" =    "histogram")
 
 onOffRButton <- c("On" = 1,
                   "Off" = 0)
