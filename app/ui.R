@@ -19,7 +19,7 @@ variableList <- variableList[,7:length(colnames(sdata))]
 
 variableRButton <- c("Number of Cyclists" =    "% Cyclists in the Total Population",
                      "Miles Cycled" = "Total Miles Cycled Per Person (per week)",
-                     "Physical Activity" = "Marginal METs Per Person (per week)",
+                     "Physical Activity" = "Travel Marginal METs Per Person (per week)",
                      "Health" = "Years of Life Lost (YLL)",
                      "Car Miles" = "Car Miles Per person (per week)",
                      "CO2" = "Transport CO2 Per Person (per week)"

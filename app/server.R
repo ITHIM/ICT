@@ -1497,12 +1497,17 @@ shinyServer(function(input, output, session){
   output$plotGenericVariable <- renderChart({
     generateScenarioTable()
     #retrieveVariableName()
-    if (input$varname != "Car Miles Per person (per week)"){
-      h <- genericPlot(input$varname)
-      h$title(text = input$varname)
-    }else{
+    if (input$varname == "Car Miles Per person (per week)"){
       h <- genericPlot(input$CMVarName)
       h$title(text = input$CMVarName)
+      
+    } else if (input$varname == "Travel Marginal METs Per Person (per week)"){
+      h <- genericPlot("Marginal METs Per Person (per week)")
+      h$title(text = input$varname)
+      
+    } else {
+      h <- genericPlot(input$varname)
+      h$title(text = input$varname)
       
     }
     h$set(dom = "plotGenericVariable")
