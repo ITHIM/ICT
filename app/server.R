@@ -581,6 +581,14 @@ shinyServer(function(input, output, session){
           filtered_title <- getMETFilteredTitle("", secondColData)
           
         }
+        
+        # if no filter is selected
+        
+        if (input$mgender == 3 && input$methnicity == "All" && input$mses == "All" && input$mag == "All"){
+          
+          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+        
+        }
       }
       
       h1 <- Highcharts$new()
@@ -1489,12 +1497,17 @@ shinyServer(function(input, output, session){
   output$plotGenericVariable <- renderChart({
     generateScenarioTable()
     #retrieveVariableName()
-    if (input$varname != "Car Miles Per person (per week)"){
-      h <- genericPlot(input$varname)
-      h$title(text = input$varname)
-    }else{
+    if (input$varname == "Car Miles Per person (per week)"){
       h <- genericPlot(input$CMVarName)
       h$title(text = input$CMVarName)
+      
+    } else if (input$varname == "Travel Marginal METs Per Person (per week)"){
+      h <- genericPlot("Marginal METs Per Person (per week)")
+      h$title(text = input$varname)
+      
+    } else {
+      h <- genericPlot(input$varname)
+      h$title(text = input$varname)
       
     }
     h$set(dom = "plotGenericVariable")
@@ -1562,6 +1575,12 @@ shinyServer(function(input, output, session){
         
         filtered_title <- getTripsFilteredTitle("", firstColData)
         
+      }
+      
+      # if no filter is selected -> Total-Pop
+      
+      if (input$inBDAG == "All" && input$inBDGender == 3 && input$inBDEthnicity == "All" && input$inBDSES == "All" ){
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Mode Share")
       }
     }
     
@@ -2432,6 +2451,14 @@ shinyServer(function(input, output, session){
         subtitle <- getMilesCycledFilteredTitle("", secondColData)
       
       }
+      
+      # if no filter is selected
+      
+      if (input$inMSAG == "All" && input$inMSG == 3 && input$inMSEthnicity == "All" && input$inMSSES == "All" ){
+      
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
+      
+      }
     }
     
     h1 <- Highcharts$new()
@@ -2648,6 +2675,15 @@ shinyServer(function(input, output, session){
         subtitle <- getCarMilesFilteredTitle("", secondColData)
         
       }
+      
+      # if no filter is selected
+      
+      if (input$inCMAG == "All" && input$inCMG == 3 && input$inCMEthnicity == "All" && input$inCMSES == "All" ){
+      
+        extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        
+      }
+      
     }
     
     h1 <- Highcharts$new()
@@ -2938,6 +2974,15 @@ shinyServer(function(input, output, session){
         subtitle <- getCO2FilteredTitle("", secondColData)
         
       }
+      
+      # if no filter selected
+      
+      if (input$inCO2AG == "All" && input$inCO2G == 3 && input$inCO2Ethnicity == "All" && input$inCO2SES == "All" ){
+        
+        extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+      
+      }
+      
     }
     
     h1 <- Highcharts$new()
