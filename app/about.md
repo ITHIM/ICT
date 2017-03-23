@@ -21,15 +21,17 @@
 
 ## Welcome to the Impacts of Cycling Tool (ICT)
 
-Impacts of Cycling Tool (ICT) is released under a <a href="https://github.com/ITHIM/ICT/blob/regional/LICENSE" target = '_blank'>Affero GPL</a> and we accept no liability, included but not limited to loss or damages. The code of which is hosted on <a href="https://github.com/ITHIM/ICT/tree/regional" target="_blank">GitHub</a>.
+Impacts of Cycling Tool (ICT) is released under an <a href="https://github.com/ITHIM/ICT/blob/regional/LICENSE" target = '_blank'>Affero GPL</a> and we accept no liability, included but not limited to loss or damages. The code of which is hosted on <a href="https://github.com/ITHIM/ICT/tree/regional" target="_blank">GitHub</a>.
 
-This site is a Department for Transport funded project created by <a href = "http://www.cedar.iph.cam.ac.uk/" target = "_blank">CEDAR</a>. The ICT academic project members include:
+We would like to thank the Department for Transport for funding received as part of the <a href ="www.pct.bike" target="_blank">Propensity to Cycle Tool (PCT) Project </a>
+
+The ICT has been created by <a href = "http://www.cedar.iph.cam.ac.uk/" target = "_blank">CEDAR</a>. The ICT academic project members include:
 
 * <a href="http://www.cedar.iph.cam.ac.uk/people/leads/james-woodcock/" target = "_blank">James Woodcock</a> 
 * <a href="http://www.lshtm.ac.uk/aboutus/people/goodman.anna" target = "_blank">Anna Goodman</a>
 * <a href="http://www.cedar.iph.cam.ac.uk/people/cdfs/ali-abbas/" target = "_blank">Ali Abbas</a>
 * <a href="http://www.cedar.iph.cam.ac.uk/people/support/alvaro-ullrich/" target = "_blank">Alvaro Ullrich</a> 
-* Tomasz Szreniawski
+* <a href = "http://szreniawski.pl/tomasz" target = "_blank">Tomasz Szreniawski</a>
 * <a href="http://rachelaldred.org/" target = "_blank">Rachel Aldred</a> 
 * <a href="http://robinlovelace.net/" target = "_blank">Robin Lovelace</a>
     
