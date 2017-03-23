@@ -41,7 +41,7 @@ switchRButton <- c("Scenario versus Baseline/alternative Scenario" =    "comp",
                    "Sub-population versus total population" = "sep")
 
 denominatorRButton <- c("Total Population" = "pop",
-                       "Total Cyclists" = "cyc")
+                        "Total Cyclists" = "cyc")
 
 # denominatorRButton <- c("Total Cyclists" = "cyc")
 
@@ -174,7 +174,7 @@ shinyUI(fluidPage(
                      #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
                      HTML("<hr>"),
                      radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
-
+                     
     ),
     conditionalPanel(condition="input.conditionedPanels == 3",
                      selectInput(inputId = "inMSMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
@@ -243,7 +243,7 @@ shinyUI(fluidPage(
                      radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
                      HTML("<hr>"),
                      radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-
+                     
     ),
     conditionalPanel(condition="input.conditionedPanels == 7",
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
@@ -273,14 +273,14 @@ shinyUI(fluidPage(
     ),
     # for now only "Mode Share", "Miles Cycled", "Physical Activity", "Car Miles", "CO2"
     conditionalPanel(condition="[1, 3, 4, 6, 7].indexOf(parseInt(input.conditionedPanels)) > -1",
-                      HTML("<hr>"),
-                      radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
-                      conditionalPanel(
-                        condition = "input.inRegionSwitch == 'Region'",
-                        HTML("<hr>"),
-                        selectInput(inputId = "inRegionSelected", label = "Select Region:", choices = regionsList),
-                        hidden(p(id = "region-switch-warning", class = "region-switch-warnings", ""))
-                      )
+                     HTML("<hr>"),
+                     radioButtons("inRegionSwitch", label = "Comparison with:", c("Baseline" = "Baseline", "An alternative Region" = "Region"), inline = TRUE),
+                     conditionalPanel(
+                       condition = "input.inRegionSwitch == 'Region'",
+                       HTML("<hr>"),
+                       selectInput(inputId = "inRegionSelected", label = "Select Region:", choices = regionsList),
+                       hidden(p(id = "region-switch-warning", class = "region-switch-warnings", ""))
+                     )
     )
   ),
   mainPanel(
@@ -302,9 +302,9 @@ shinyUI(fluidPage(
                                          three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                ))
-      ,
-      showOutput("plotTTFilteredMode", "highcharts"),
-      showOutput("plotTTTotalMode", "highcharts")
+               ,
+               showOutput("plotTTFilteredMode", "highcharts"),
+               showOutput("plotTTTotalMode", "highcharts")
       ),
       tabPanel("Miles Cycled", value = 3,
                a(id = "MCHelp", "Help?", href = "#"),
