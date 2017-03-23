@@ -366,10 +366,10 @@ shinyUI(fluidPage(
       tabPanel(HTML("CO<sub>2<sub>"), value = 7,
                a(id = "CO2Help", "Help?", href = "#"),
                hidden (div(id = "CO2HelpText",
-                           helpText(HTML("Displays two plots for CO2 produced during car travel, defined as travel as a car/van driver or 
-                                                          car/van passenger.  Users can choose to compare CO2 emissions from car travel between selected 
-                                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
-               )),
+                           helpText(HTML("Population distributions of CO2 from car travel - for  CO2 reduced see Summary tab. Displays two plots 
+                                         for CO2 produced during car travel, defined as travel as a car/van driver or car/van passenger. 
+                                         Users can choose to compare CO2 emissions from car travel between selected sub-populations and the 
+                                         total population, and/or between selected scenarios and baseline.")),
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
