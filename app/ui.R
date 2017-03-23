@@ -354,11 +354,11 @@ shinyUI(fluidPage(
       tabPanel("Car Miles", value = 6,
                a(id = "CMHelp", "Help?", href = "#"),
                hidden (div(id = "CMHelpText",
-                           helpText(HTML("Displays two plots for total Car Miles per week for the whole populatioin in the selected
-                                                    scenario and baseline. Car Miles are calculated as the sum of all miles spent travelling as a
-                                                    car/van driver, a car/van passenger, by motorcycle or by taxi.  Users can choose to compare car
-                                                    miles between selected sub-populations and the total population, and/or between selected scenarios and baseline."))
-               ))
+                           helpText(HTML("Population distributions of car distance - for car miles reduced see Summary tab. Displays two plots 
+                                         for total Car Miles per week for the whole population in the selected scenario and baseline. Car Miles 
+                                         are calculated as the sum of all miles spent travelling as a car/van driver, a car/van passenger, by 
+                                         motorcycle or by taxi. Users can choose to compare car miles between selected sub-populations and the 
+                                         total population, and/or between selected scenarios and baseline."))
                ,
                showOutput("plotFilteredCarMiles", "highcharts"),
                showOutput("plotCarMiles", "highcharts")
