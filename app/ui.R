@@ -358,7 +358,7 @@ shinyUI(fluidPage(
                                          for total Car Miles per week for the whole population in the selected scenario and baseline. Car Miles 
                                          are calculated as the sum of all miles spent travelling as a car/van driver, a car/van passenger, by 
                                          motorcycle or by taxi. Users can choose to compare car miles between selected sub-populations and the 
-                                         total population, and/or between selected scenarios and baseline."))
+                                         total population, and/or between selected scenarios and baseline."))))
                ,
                showOutput("plotFilteredCarMiles", "highcharts"),
                showOutput("plotCarMiles", "highcharts")
@@ -369,7 +369,7 @@ shinyUI(fluidPage(
                            helpText(HTML("Population distributions of CO2 from car travel - for  CO2 reduced see Summary tab. Displays two plots 
                                          for CO2 produced during car travel, defined as travel as a car/van driver or car/van passenger. 
                                          Users can choose to compare CO2 emissions from car travel between selected sub-populations and the 
-                                         total population, and/or between selected scenarios and baseline.")),
+                                         total population, and/or between selected scenarios and baseline.")))),
                showOutput("plotFilteredCO2", "highcharts"),
                showOutput("plotCO2", "highcharts")
       ),
