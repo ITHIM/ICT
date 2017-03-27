@@ -550,7 +550,7 @@ shinyServer(function(input, output, session){
         firstColName <- "Scenario (Total Population)"
         secondColName <- "Scenario (Sub-population)"
         
-        extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+        extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - ")
         filtered_title <- getMETFilteredTitle("", secondColData)
         
       }else{
@@ -561,7 +561,7 @@ shinyServer(function(input, output, session){
           
           firstColData = scFilteredMETdata
           secondColData = scMETdataAltRegFiltered
-          extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
           secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
@@ -573,7 +573,7 @@ shinyServer(function(input, output, session){
           # Keep the data mixed
           firstColData = pd
           secondColData = scFilteredMETdata
-          extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- "Baseline (Sub-population)"
           secondColName <- "Scenario (Sub-population)"
@@ -586,7 +586,7 @@ shinyServer(function(input, output, session){
         
         if (input$mgender == 3 && input$methnicity == "All" && input$mses == "All" && input$mag == "All"){
           
-          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
         
         }
       }
@@ -596,12 +596,17 @@ shinyServer(function(input, output, session){
                                              fontSize = '12px'))
       
       if (input$phyGuideline == 'on'){
+        
+        # change the title reflecting which outcome measure is used
+        
+        extended_title <- paste0(extended_title, '% meeting WHO physical activity guidelines')
+        
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
         h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh >= 8.75)", 
                                 "Meeting the higher guidelines (METh >= 17.5)"), 
-                 title = list(text = 'Marginal MET Hours'))
+                 title = list(text = '% meeting WHO physical activity guidelines'))
         h1$series(data = bc$Freq, name = firstColName)
         
         bc <- createPhyActTable(secondColData)
@@ -634,6 +639,10 @@ shinyServer(function(input, output, session){
         
         
       }else{
+        
+        # change the title reflecting which outcome measure is used
+        
+        extended_title <- paste0(extended_title, 'Marginal MET hours (walking, cycling, sports and recreation activity)')
         
         bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
@@ -731,7 +740,7 @@ shinyServer(function(input, output, session){
           firstColData = scMETdataAltRegFull
           secondColData = scMETdataAltRegFiltered
           
-          extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - ")
           
           firstColName <- "Scenario - alternative Region (Total Population)"
           secondColName <- "Scenario - alternative Region (Sub-Population)"
@@ -745,7 +754,7 @@ shinyServer(function(input, output, session){
           firstColData = bMETdata
           secondColData = pd
           
-          extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- "Baseline (Total Population)"
           secondColName <- "Baseline (Sub-Population)"
@@ -765,7 +774,7 @@ shinyServer(function(input, output, session){
           firstColData = scMETdata
           secondColData = scMETdataAltRegFull
           
-          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
           
           # set columns names
           
@@ -785,7 +794,7 @@ shinyServer(function(input, output, session){
           firstColData = bMETdata
           secondColData = scMETdata
           
-          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Marginal MET Hours")
+          extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- "Baseline (Total Population)"
           secondColName <- "Scenario (Sub-Population)"
@@ -802,12 +811,17 @@ shinyServer(function(input, output, session){
       
       
       if (input$phyGuideline == 'on'){
+        
+        # change the title reflecting which outcome measure is used
+        
+        extended_title <- paste0(extended_title, '% meeting WHO physical activity guidelines')
+        
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
         h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh >= 8.75)", 
                                 "Meeting the higher guidelines (METh >= 17.5)"), 
-                 title = list(text = 'Marginal MET Hours'))
+                 title = list(text = '% meeting WHO physical activity guidelines'))
         h1$series(data = bc$Freq, name = firstColName)
         
         bc <- createPhyActTable(secondColData)#$total_mmet)
@@ -840,13 +854,18 @@ shinyServer(function(input, output, session){
         
       }else{
         
+        # change the title reflecting which outcome measure is used
+        
+        extended_title <- paste0(extended_title, 'Marginal MET hours (walking, cycling, sports and recreation activity)')
+        
         bc <- as.data.frame(table (cut (firstColData$total_mmet, breaks = c(seq(-4.4,52.8, 4.4), max(firstColData$total_mmet)))))
         bc$Freq <- round(bc$Freq  / sum(bc$Freq) * 100, digits = 1)
         bc1max <- max(bc$Freq, na.rm = T)
         
         h1$xAxis(categories = c("0",">0 & <=4.4",">4.4 & <=8.8",">8.8 & <=13.2",">13.2 & <=17.6",
                                 ">17.6 & <=22",">22 & <=26.4",">26.4 & <=30.8",">30.8 & <=35.2",
-                                ">35.2 & <=39.6",">39.6 & <=44",">44 & <=48.4",">48.4 & <52.8",">52.8"), title = list(text = 'Marginal MET Hours'))
+                                ">35.2 & <=39.6",">39.6 & <=44",">44 & <=48.4",">48.4 & <52.8",">52.8"),
+                                title = list(text = 'Marginal MET Hours'))
         h1$series(data = bc$Freq, name = firstColName)
         max_val <- 0
         if (nrow(secondColData) > 1)
