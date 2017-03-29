@@ -1,5 +1,4 @@
 library(stringr)
-
 # idata <- read.csv("data/csv/mmets_regional_var.csv", as.is = T)
 # Temporarily reading as an rds file
 idata <- readRDS("data/csv/mmets_regional.rds")
