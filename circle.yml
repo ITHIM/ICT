@@ -3,3 +3,7 @@ deployment:
     branch: regional
     commands:
       - git push git@npt1.vs.mythic-beasts.com:ICT $CIRCLE_SHA1:regional -f
+  master:
+    branch: master
+    commands:
+      - git push git@npct0.vs.mythic-beasts.com:ICT $CIRCLE_SHA1:master -f
