@@ -561,10 +561,10 @@ shinyServer(function(input, output, session){
           
           firstColData = scFilteredMETdata
           secondColData = scMETdataAltRegFiltered
-          extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - ")
+          extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
-          secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
+          secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-population)")
           
           filtered_title <- getMETFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
           
@@ -573,7 +573,7 @@ shinyServer(function(input, output, session){
           # Keep the data mixed
           firstColData = pd
           secondColData = scFilteredMETdata
-          extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - ")
+          extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- "Baseline (Sub-population)"
           secondColName <- "Scenario (Sub-population)"
@@ -743,7 +743,7 @@ shinyServer(function(input, output, session){
           extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - ")
           
           firstColName <- "Scenario - alternative Region (Total Population)"
-          secondColName <- "Scenario - alternative Region (Sub-Population)"
+          secondColName <- "Scenario - alternative Region (Sub-population)"
           
           filtered_title <- getMETFilteredTitle("", secondColData)
           
@@ -757,7 +757,7 @@ shinyServer(function(input, output, session){
           extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- "Baseline (Total Population)"
-          secondColName <- "Baseline (Sub-Population)"
+          secondColName <- "Baseline (Sub-population)"
           
           filtered_title <- getMETFilteredTitle("", secondColData)
           
@@ -782,7 +782,7 @@ shinyServer(function(input, output, session){
           secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Total Population)")
           
           # TODO: below 'if' is not applicable in alternative region comparision?
-          # secondColName <- "Scenario (Sub-Population)"
+          # secondColName <- "Scenario (Sub-population)"
           # if (nrow(sessionData$idata) == nrow(scMETdata))
           #   secondColName <- "Scenario (Total Population)"
           
@@ -797,7 +797,7 @@ shinyServer(function(input, output, session){
           extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
           
           firstColName <- "Baseline (Total Population)"
-          secondColName <- "Scenario (Sub-Population)"
+          secondColName <- "Scenario (Sub-population)"
           if (nrow(sessionData$idata) == nrow(scMETdata))
             secondColName <- "Scenario (Total Population)"
           
@@ -1555,7 +1555,7 @@ shinyServer(function(input, output, session){
       extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Mode Share")
       
       firstColName <- "Scenario (Total Population)" # "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      secondColName <- "Scenario (Sub-population)"
       
       # set proper subtitle
       
@@ -1570,10 +1570,10 @@ shinyServer(function(input, output, session){
         firstColData = tdScenario
         secondColData = tdAltRegionScenario
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - Mode Share")
         
-        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-Population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-population)") # "Scenario (Total Population)"
         
         # set proper subtitle
         
@@ -1585,10 +1585,10 @@ shinyServer(function(input, output, session){
         firstColData = tdBaseline
         secondColData = tdScenario
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - Mode Share")
         
-        firstColName <- "Baseline (Sub-Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- "Baseline (Sub-population)"
+        secondColName <- "Scenario (Sub-population)"
         
         # set proper subtitle
         
@@ -1657,7 +1657,7 @@ shinyServer(function(input, output, session){
         extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Mode Share")
         
         firstColName <- "Scenario - alternative Region (Total Population)" 
-        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        secondColName <- "Scenario - alternative Region (Sub-population)"
         
         # set proper subtitle
         
@@ -1673,7 +1673,7 @@ shinyServer(function(input, output, session){
         extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Mode Share")
         
         firstColName <- "Baseline (Total Population)" # "Scenario (Total Population)"
-        secondColName <- "Baseline (Sub-Population)"
+        secondColName <- "Baseline (Sub-population)"
         
         # set proper subtitle
         
@@ -2285,7 +2285,7 @@ shinyServer(function(input, output, session){
         secondColData = scMilesCycledDataAltRegFiltered
         
         firstColName <- "Scenario - alternative Region (Total Population)"
-        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        secondColName <- "Scenario - alternative Region (Sub-population)"
         
         subtitle <- getMilesCycledFilteredTitle("", secondColData)
         extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Total Miles Cycled per Cyclist per week")
@@ -2297,7 +2297,7 @@ shinyServer(function(input, output, session){
         secondColData = blMilesCycledFilteredData
         
         firstColName <- "Baseline (Total Population)"
-        secondColName <- "Baseline (Sub-Population)"
+        secondColName <- "Baseline (Sub-population)"
         
         subtitle <- getMilesCycledFilteredTitle("", secondColData)
         extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
@@ -2436,7 +2436,7 @@ shinyServer(function(input, output, session){
       secondColData = scMilesCycledFilteredData
       
       firstColName <- "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      secondColName <- "Scenario (Sub-population)"
       
       extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
       subtitle <- getMilesCycledFilteredTitle("", secondColData)
@@ -2452,9 +2452,9 @@ shinyServer(function(input, output, session){
         secondColData = scMilesCycledDataAltRegFiltered
         
         firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-population)")
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
+        extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
         subtitle <- getMilesCycledFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
         
       } else {
@@ -2463,10 +2463,10 @@ shinyServer(function(input, output, session){
         firstColData = blMilesCycledFilteredData
         secondColData = scMilesCycledFilteredData
         
-        firstColName <- "Baseline (Sub-Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- "Baseline (Sub-population)"
+        secondColName <- "Scenario (Sub-population)"
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
+        extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
         subtitle <- getMilesCycledFilteredTitle("", secondColData)
       
       }
@@ -2657,7 +2657,7 @@ shinyServer(function(input, output, session){
       secondColData = scCarMilesFilteredData
       
       firstColName <- "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      secondColName <- "Scenario (Sub-population)"
       
       extended_title <- paste0("Scenario [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
       
@@ -2673,10 +2673,10 @@ shinyServer(function(input, output, session){
         firstColData = scCarMilesFilteredData
         secondColData = scCarMilesDataAltRegFiltered
         
-        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-Population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)") # "Scenario (Total Population)"
+        firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-population)") # "Scenario (Total Population)"
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
         subtitle <- getCarMilesFilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
         
@@ -2686,10 +2686,10 @@ shinyServer(function(input, output, session){
         firstColData = blCarMilesFilteredData
         secondColData = scCarMilesFilteredData
         
-        firstColName <- "Baseline (Sub-Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- "Baseline (Sub-population)"
+        secondColName <- "Scenario (Sub-population)"
         
-        extended_title <- paste0("Sub-Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        extended_title <- paste0("Sub-population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
         subtitle <- getCarMilesFilteredTitle("", secondColData)
         
@@ -2764,7 +2764,7 @@ shinyServer(function(input, output, session){
         secondColData = scCarMilesDataAltRegFiltered
         
         firstColName <- "Scenario - alternative Region (Total Population)" 
-        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        secondColName <- "Scenario - alternative Region (Sub-population)"
         
         extended_title <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] - Car Miles per person per week")
         
@@ -2777,7 +2777,7 @@ shinyServer(function(input, output, session){
         secondColData = blCarMilesFilteredData
         
         firstColName <- "Baseline (Total Population)"
-        secondColName <- "Baseline (Sub-Population)"
+        secondColName <- "Baseline (Sub-population)"
         
         extended_title <- paste0("Baseline [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         
@@ -2958,7 +2958,7 @@ shinyServer(function(input, output, session){
       secondColData = scCO2FilteredData
       
       firstColName <- "Scenario (Total Population)"
-      secondColName <- "Scenario (Sub-Population)"
+      secondColName <- "Scenario (Sub-population)"
       
       extended_title <- HTML(paste0("Scenario [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
       subtitle <- getCO2FilteredTitle("", secondColData)
@@ -2975,9 +2975,9 @@ shinyServer(function(input, output, session){
         secondColData = scCO2DataAltRegionFiltered
         
         firstColName <- paste0("Scenario [", nameOfTheSelectedRegion, "] (Sub-population)")
-        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-Population)")
+        secondColName <- paste0("Scenario - alternative Region [", scenarioAltRegion, "] (Sub-population)")
         
-        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+        extended_title <- HTML(paste0("Sub-population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
         subtitle <- getCO2FilteredTitle(paste0("Scenario [", nameOfTheSelectedRegion, "]:"), firstColData, paste0(", Scenario - alternative Region [", scenarioAltRegion, "]: "), secondColData)
         
       } else {
@@ -2986,10 +2986,10 @@ shinyServer(function(input, output, session){
         firstColData = blCO2FilteredData
         secondColData = scCO2FilteredData
         
-        firstColName <- "Baseline (Sub-Population)"
-        secondColName <- "Scenario (Sub-Population)"
+        firstColName <- "Baseline (Sub-population)"
+        secondColName <- "Scenario (Sub-population)"
         
-        extended_title <- HTML(paste0("Sub-Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
+        extended_title <- HTML(paste0("Sub-population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
         subtitle <- getCO2FilteredTitle("", secondColData)
         
       }
@@ -3074,7 +3074,7 @@ shinyServer(function(input, output, session){
         secondColData = scCO2DataAltRegionFiltered
         
         firstColName <- "Scenario - alternative Region (Total Population)"
-        secondColName <- "Scenario - alternative Region (Sub-Population)"
+        secondColName <- "Scenario - alternative Region (Sub-population)"
         
         subtitle <- getCO2FilteredTitle("", secondColData)
         extended_title <- HTML(paste0("Scenario - alternative Region [", scenarioAltRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
@@ -3086,7 +3086,7 @@ shinyServer(function(input, output, session){
         secondColData = blCO2FilteredData
         
         firstColName <- "Baseline (Total Population)"
-        secondColName <- "Baseline (Sub-Population)"
+        secondColName <- "Baseline (Sub-population)"
         
         extended_title <- HTML(paste0("Baseline [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
         subtitle <- getCO2FilteredTitle("", secondColData)
