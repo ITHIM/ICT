@@ -1071,7 +1071,7 @@ shinyServer(function(input, output, session){
           h1$xAxis(categories = unique(scYllReductionData$age.band), title = list(text = 'Age and Gender Groups'))
       }
       
-      h1$yAxis(title = list(text = 'Percentage of the total population'))
+      h1$yAxis(title = list(text = 'Percentage reduction in disease burden'))
     }else{
       h1$subtitle(text = HTML("Sorry: Not Enough Data to Display Selected Population (Population Size = 0)"),
                   style = list(fontFamily = 'Arial, sans-serif',
