@@ -587,6 +587,10 @@ shinyServer(function(input, output, session){
         if (input$mgender == 3 && input$methnicity == "All" && input$mses == "All" && input$mag == "All"){
           
           extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
+          # Replace sub-population with total population for both first and second column names
+          firstColName <- gsub("Sub-population", "Total Population", firstColName)
+          secondColName <- gsub("Sub-population", "Total Population", secondColName)
+          
         
         }
       }
@@ -1600,6 +1604,10 @@ shinyServer(function(input, output, session){
       
       if (input$inBDAG == "All" && input$inBDGender == 3 && input$inBDEthnicity == "All" && input$inBDSES == "All" ){
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Mode Share")
+        # Replace sub-population with total population for both first and second column names
+        firstColName <- gsub("Sub-population", "Total Population", firstColName)
+        secondColName <- gsub("Sub-population", "Total Population", secondColName)
+        
       }
     }
     
@@ -2476,6 +2484,10 @@ shinyServer(function(input, output, session){
       if (input$inMSAG == "All" && input$inMSG == 3 && input$inMSEthnicity == "All" && input$inMSSES == "All" ){
       
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
+        # Replace sub-population with total population for both first and second column names
+        firstColName <- gsub("Sub-population", "Total Population", firstColName)
+        secondColName <- gsub("Sub-population", "Total Population", secondColName)
+        
       
       }
     }
@@ -2700,6 +2712,10 @@ shinyServer(function(input, output, session){
       if (input$inCMAG == "All" && input$inCMG == 3 && input$inCMEthnicity == "All" && input$inCMSES == "All" ){
       
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
+        # Replace sub-population with total population for both first and second column names
+        firstColName <- gsub("Sub-population", "Total Population", firstColName)
+        secondColName <- gsub("Sub-population", "Total Population", secondColName)
+        
         
       }
       
