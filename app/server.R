@@ -879,7 +879,22 @@ shinyServer(function(input, output, session){
                                                      width = 100,
                                                      x = 4, 
                                                      y = 10, 
-                                                     style = list(fontSize = '10px', fontFamily = 'Arial, sans-serif'))))
+                                                     style = list(fotSize = '10px', fontFamily = 'Arial, sans-serif'))))
+        
+        h1$exporting(enabled = T,
+                     chartOptions = list(
+                       legend = list(
+                         x = -30,
+                         itemDistance = 80,
+                         itemMarginBottom = 5
+                       ),
+                       xAxis = list(
+                         title = list(
+                           y = 10
+                         )
+                       )
+                     ))
+        
         
       }else{
         
@@ -936,6 +951,29 @@ shinyServer(function(input, output, session){
         }
         
         h1$plotOptions(column=list(animation=FALSE))
+        # Set exporting style
+        # Reduce font size of the x-axis
+        h1$exporting(enabled = T,
+                     chartOptions = list(
+                       legend = list(
+                         x = -30,
+                         itemDistance = 80,
+                         itemMarginBottom = 5
+                       ),
+                       xAxis = list(
+                         title = list(
+                           y = 10
+                         ),
+                         labels = list (
+                           style = list (
+                             fontSize = "8px"  
+                           )
+                         )
+                       )
+                     ))
+        
+        
+        
       }
       
     }
@@ -943,19 +981,6 @@ shinyServer(function(input, output, session){
     h1$title(text = extended_title)
     h1$tooltip(formatter = "#! function() {  return this.series.name +'<br/>' + 'Value: <b>' + this.y + '%'; } !#")
     h1$set(dom = "plotScenarioMET")
-    h1$exporting(enabled = T,
-                 chartOptions = list(
-                   legend = list(
-                     x = -30,
-                     itemDistance = 80,
-                     itemMarginBottom = 5
-                   ),
-                   xAxis = list(
-                     title = list(
-                       y = 10
-                     )
-                   )
-                 ))
     return(h1)
     
   })
