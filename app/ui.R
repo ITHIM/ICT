@@ -27,6 +27,9 @@ variableRButton <- c("Number of Cyclists" =    "% Cyclists in the Total Populati
 carMilesRButton <- c("Car Miles" = "Car Miles Per person (per week)",
                      "Car Miles Reduced" = "Car Miles Reduced Per person (per week)")
 
+summaryhealthRButton <- c("Health" = "Years of Life Lost (YLL)",
+                   "Health benefit - YLL reduciton" = "Years of Life Lost (YLL) reduction (%)")
+
 
 # % cyclists in the total population	Miles cycled per person per week	Car miles cycled  per week	Marginal METs per person per week	Car miles per person per week	Car miles reduced per person per week	CO2 from car travel per person per week
 
@@ -269,6 +272,12 @@ shinyUI(fluidPage(
                      conditionalPanel(
                        condition = "input.varname == 'Car Miles Per person (per week)'",
                        radioButtons("CMVarName", label = "Car Miles Variable:", carMilesRButton)
+                     ),
+                     
+                     
+                     conditionalPanel(
+                       condition = "input.varname == 'Years of Life Lost (YLL)'",
+                       radioButtons("HVarName", label = "Health Variable:", summaryhealthRButton)
                      )
     ),
     # for now only "Mode Share", "Miles Cycled", "Physical Activity", "Car Miles", "CO2"
