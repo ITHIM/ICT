@@ -1,7 +1,6 @@
 pkgs <- c(
   "DT",
   "devtools",
-  "shinyBS",
   "shinyjs",
   "dplyr",  
   "plyr",  
