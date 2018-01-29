@@ -1574,6 +1574,10 @@ shinyServer(function(input, output, session){
       h <- genericPlot(input$CMVarName)
       h$title(text = input$CMVarName)
       
+    } else if (input$varname == "Years of Life Lost (YLL)"){
+      h <- genericPlot(input$HVarName)
+      h$title(text = input$HVarName)
+      
     } else if (input$varname == "Travel Marginal METs Per Person (per week)"){
       h <- genericPlot("Marginal METs Per Person (per week)")
       h$title(text = input$varname)
