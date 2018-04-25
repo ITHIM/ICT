@@ -181,7 +181,7 @@ shinyServer(function(input, output, session){
     if (input$inRegionSwitch == "Region" & nrow(casesOfDP) > 0){
       
       show('region-switch-warning')
-      shinyjs::html('region-switch-warning', 'Warning: in selected alternative region number of observed cyclists in a population is greater than "Select % of Population who are Potential Cyclists"')
+      shinyjs::html('region-switch-warning', 'Warning: in selected alternative region number of observed cyclists in a population is greater than "Select % of Population who are Regular Cyclists"')
       
     } else {
       
@@ -217,7 +217,7 @@ shinyServer(function(input, output, session){
     if (nrow(casesOfDP) > 0){
       
       show('region-health-switch-warning')
-      shinyjs::html('region-health-switch-warning', 'Warning: in selected alternative region number of observed cyclists in a population is greater than "Select % of Population who are Potential Cyclists"')
+      shinyjs::html('region-health-switch-warning', 'Warning: in selected alternative region number of observed cyclists in a population is greater than "Select % of Population who are Regular Cyclists"')
       
     } else {
       
@@ -1007,7 +1007,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllData$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
+        h1$series(data = scYllData$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -1017,7 +1017,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllData1$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth, "]")) )
+        h1$series(data = scYllData1$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth, "]")) )
         
         # recode gender code to text values
         
@@ -1083,7 +1083,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
+        h1$series(data = scYllReductionData$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -1093,7 +1093,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData1$scenario, name = paste(paste(paste("% Potential Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth ,"]")) )
+        h1$series(data = scYllReductionData1$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth ,"]")) )
         
         # recode gender code to text values
         
@@ -1517,7 +1517,7 @@ shinyServer(function(input, output, session){
     h1$yAxis(title = list(text = var))
     
     # Read updated MS according to the selected region
-    h1$xAxis(categories = append("Baseline", paste0((sort(unique(generateUniqueMS(input$inRegions)), decreasing = F) * 100), "%")), title = list(text = '% of Potential Cyclists'))
+    h1$xAxis(categories = append("Baseline", paste0((sort(unique(generateUniqueMS(input$inRegions)), decreasing = F) * 100), "%")), title = list(text = '% of Regular Cyclists'))
     
     
     if (input$inEB != "All" & input$inEQ != "All"){

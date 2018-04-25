@@ -108,6 +108,7 @@ shinyUI(fluidPage(
               includeMarkdown("README.md")
   )),
   selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions),
+  
   # there is an issue with bsCollapse - it doesn't close
   # a(bsCollapse(id = "intro",
   #              bsCollapsePanel(
@@ -150,7 +151,7 @@ shinyUI(fluidPage(
     HTML("<hr>"),
     conditionalPanel(condition="input.conditionedPanels == 1",
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
-                              selectInput(inputId = "inBDMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
+                              selectInput(inputId = "inBDMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS)
                      ),
                      
                      radioButtons(inputId = "inBDEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
@@ -165,7 +166,7 @@ shinyUI(fluidPage(
                      
     ),
     conditionalPanel(condition="input.conditionedPanels == 2",
-                     selectInput(inputId = "inTTMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),#, selected = uBDMS[2]),
+                     selectInput(inputId = "inTTMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#, selected = uBDMS[2]),
                      radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
@@ -180,7 +181,7 @@ shinyUI(fluidPage(
                      
     ),
     conditionalPanel(condition="input.conditionedPanels == 3",
-                     selectInput(inputId = "inMSMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     selectInput(inputId = "inMSMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
@@ -196,7 +197,7 @@ shinyUI(fluidPage(
     conditionalPanel(condition="input.conditionedPanels == 4",
                      
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
-                              selectInput(inputId = "inMETMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
+                              selectInput(inputId = "inMETMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS)
                      ),
                      radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons("inMETEB", "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -213,7 +214,7 @@ shinyUI(fluidPage(
     )
     ,
     conditionalPanel(condition="input.conditionedPanels == 5",
-                     selectInput(inputId = "inHealthMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     selectInput(inputId = "inHealthMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
@@ -223,7 +224,7 @@ shinyUI(fluidPage(
                        condition = "input.inHealthSwitch == 'Scenario'",
                        selectInput(inputId = "inRegionSelectedHealth", label = "Select Region:", choices = regionsList),
                        hidden(p(id = "region-health-switch-warning", class = "region-switch-warnings", "")),
-                       selectInput(inputId = "inHealthMS1", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),
+                       selectInput(inputId = "inHealthMS1", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),
                        radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                        radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
                      ),
@@ -236,7 +237,7 @@ shinyUI(fluidPage(
                      
     ),
     conditionalPanel(condition="input.conditionedPanels == 6",
-                     selectInput(inputId = "inCMMS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
+                     selectInput(inputId = "inCMMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
@@ -250,7 +251,7 @@ shinyUI(fluidPage(
     ),
     conditionalPanel(condition="input.conditionedPanels == 7",
                      tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
-                              selectInput(inputId = "inCO2MS", label = "Select % of Population who are Potential Cyclists:", choices =  uniqueMS)
+                              selectInput(inputId = "inCO2MS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS)
                      ),
                      radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
@@ -298,7 +299,7 @@ shinyUI(fluidPage(
                a(id = "MSHelp", "Help?", href = "#"),
                hidden (div(id = "MSHelpText",
                            helpText(HTML("Displays plots for mode share of trips based on main mode only. A scenario is selected by a combination of 
-                                         three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected 
+                                         three inputs: % of Population who are Regular Cyclists, Equity and Ebike. Users can choose to compare mode share between selected 
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                )),
                showOutput("plotBDMode", "highcharts"),
@@ -308,7 +309,7 @@ shinyUI(fluidPage(
                a(id = "MTHelp", "Help?", href = "#"),
                hidden (div(id = "MTHelpText",
                            helpText(HTML("Displays plots of the change in journey time for trips that have been switched to cycling in a scenario, stratified by the previous main mode of the trip. A scenario is selected by a combination of
-                                         three inputs: % of Population who are Potential Cyclists, Equity and Ebike. Users can choose to compare mode share between selected
+                                         three inputs: % of Population who are Regular Cyclists, Equity and Ebike. Users can choose to compare mode share between selected
                                          sub-populations and the total population, and/or between selected scenarios and baseline."))
                ))
                ,
@@ -353,7 +354,7 @@ shinyUI(fluidPage(
                                   Displays two plots for health gains measured as Years of Life Lost (YLL) and Premature Deaths Averted. 
                                   YLLs are taken from the <a href='http://www.healthdata.org/gbd' target='_blank'>Global Burden of Disease Study for the UK 2013</a>. 
                                   YLL is an estimate of the age specific life expectancy against an &#39;ideal&#39; reference population. 
-                                  A scenario is selected by a combination of three inputs: % of Population who are Potential Cyclists, Equity and Ebike &#45; 
+                                  A scenario is selected by a combination of three inputs: % of Population who are Regular Cyclists, Equity and Ebike &#45; 
                                   this scenario can then be compared against baseline or against an alternative scenario. Results are presented by 
                                   age and gender, or the display can be restricted to particular age and gender groups using the subpopulation option. "))
                )),
