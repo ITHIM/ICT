@@ -170,10 +170,7 @@ shinyUI(fluidPage(
                      )
                      
 
-    )
-    
-    ,
-  
+    ),
     conditionalPanel(condition="input.conditionedPanels == 5",
                      selectInput(inputId = "inHealthMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
@@ -195,11 +192,7 @@ shinyUI(fluidPage(
                      radioButtons("inHealthG", "Gender: ", gender, inline = TRUE),
                      HTML("<hr>"),
                      radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
-                     
-    )
-  
-    ,
-    
+    ),
     
     conditionalPanel(condition="input.conditionedPanels == 8",
                      radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
