@@ -157,10 +157,10 @@ shinyServer(function(input, output, session){
   
   setMSValues <- reactive({
     
-    updateSelectInput(session, inputId = "inBDMS", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inTTMS", choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inMSMS",  choices =  generateUniqueMS(input$inRegions))
-    updateSelectInput(session, inputId = "inMETMS", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inGMS", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inGMS", choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inGMS",  choices =  generateUniqueMS(input$inRegions))
+    updateSelectInput(session, inputId = "inGMS", choices =  generateUniqueMS(input$inRegions))
     updateSelectInput(session, inputId = "inHealthMS",  choices =  generateUniqueMS(input$inRegions))
     updateSelectInput(session, inputId = "inCMMS",  choices =  generateUniqueMS(input$inRegions))
     updateSelectInput(session, inputId = "inCO2MS", choices =  generateUniqueMS(input$inRegions))
@@ -175,8 +175,8 @@ shinyServer(function(input, output, session){
     input$inRegionSelected
     input$inRegionSwitch
     
-    # TODO: assuming that input$inBDMS, input$inBDEB, input$inBDEQ are synced amongst tabs. In the future inputs should be unified
-    casesOfDP <- subset(directProbCasesAboveGivenPerc, MS == as.numeric(input$inBDMS) & ebikes == as.numeric(input$inBDEB) & equity == as.numeric(input$inBDEQ) & region == as.numeric(input$inRegionSelected))
+    # TODO: assuming that input$inGMS, input$inGEB, input$inGEQ are synced amongst tabs. In the future inputs should be unified
+    casesOfDP <- subset(directProbCasesAboveGivenPerc, MS == as.numeric(input$inGMS) & ebikes == as.numeric(input$inGEB) & equity == as.numeric(input$inGEQ) & region == as.numeric(input$inRegionSelected))
     
     if (input$inRegionSwitch == "Region" & nrow(casesOfDP) > 0){
       
@@ -440,32 +440,46 @@ shinyServer(function(input, output, session){
   plotMETDataTable<- reactive({
     input$inRegions
     input$inRegionSelected
+    
+    if (is.null(sessionData$idata) || is.na(sessionData$idata))
+      return()
+    
     # cat(" In Met table: ", nrow(sessionData$idata), "\n")
-    data <- subset(sessionData$idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,baseline))
+    
+    #print("col names : ", names(sessionData$idata))
+    
+    data <- subset(sessionData$idata, select = c(ID,age_group,Sex_B01ID,EthGroupTS_B02ID,NSSec_B03ID,TripPurpose_B04ID, baseline))
+    
+    
     data["total_mmet"] <- data$baseline
     
     bMETdata <<- data
     
     
-    if (input$mag != 'All'){
-      data <- subset(data, age_group == input$mag)
+    if (input$inGAG != 'All'){
+      data <- subset(data, age_group == input$inGAG)
     }
-    if (input$mgender != 3)
-      data <- subset(data, Sex_B01ID %in% input$mgender)
+    if (input$inGGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inGGender)
     
-    if (input$mses != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$mses)
+    if (input$inGSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inGSES)
     }
     
-    if (input$methnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$methnicity)
+    if (input$inGTP != "All"){
+      data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    }
+    
+    if (input$inGEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
     }
     pd <<- data
     
-    columnName <- paste(paste("MS", input$inMETMS,sep = ""),  paste("ebik", input$inMETEB,sep = ""), 
-                        paste("eq", input$inMETEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inGMS,sep = ""),  paste("ebik", input$inGEB,sep = ""), 
+                        paste("eq", input$inGEQ,sep = ""), sep="_")
     
-    data <- subset(sessionData$idata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID",columnName))
+    data <- subset(sessionData$idata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID",
+                                                 "TripPurpose_B04ID",columnName))
     
     data["total_mmet"] <- data[columnName]
     
@@ -475,18 +489,22 @@ shinyServer(function(input, output, session){
     #scMETdata
     #scFilteredMETdata
     
-    if (input$mag != 'All'){
-      data <- subset(data, age_group == input$mag)
+    if (input$inGAG != 'All'){
+      data <- subset(data, age_group == input$inGAG)
     }
-    if (input$mgender != 3)
-      data <- subset(data, Sex_B01ID %in% input$mgender)
+    if (input$inGGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inGGender)
     
-    if (input$mses != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$mses)
+    if (input$inGSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inGSES)
     }
     
-    if (input$methnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$methnicity)
+    if (input$inGTP != "All"){
+      data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    }
+    
+    if (input$inGEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
     }
     
     #data[is.na(data)] <- 0
@@ -499,7 +517,8 @@ shinyServer(function(input, output, session){
       
       # full data
       
-      data <- subset(sessionData$Regionidata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID","HHoldGOR_B02ID",columnName))
+      data <- subset(sessionData$Regionidata, select = c("ID","age_group","Sex_B01ID","EthGroupTS_B02ID","NSSec_B03ID","HHoldGOR_B02ID", 
+                                                         "TripPurpose_B04ID", columnName))
       
       data["total_mmet"] <- data[columnName]
       
@@ -507,18 +526,22 @@ shinyServer(function(input, output, session){
       
       # filtered data
       
-      if (input$mag != 'All'){
-        data <- subset(data, age_group == input$mag)
+      if (input$inGAG != 'All'){
+        data <- subset(data, age_group == input$inGAG)
       }
-      if (input$mgender != 3)
-        data <- subset(data, Sex_B01ID %in% input$mgender)
+      if (input$inGGender != 3)
+        data <- subset(data, Sex_B01ID %in% input$inGGender)
       
-      if (input$mses != "All"){
-        data <- subset(data, NSSec_B03ID %in% input$mses)
+      if (input$inGSES != "All"){
+        data <- subset(data, NSSec_B03ID %in% input$inGSES)
       }
       
-      if (input$methnicity != "All"){
-        data <- subset(data, EthGroupTS_B02ID %in% input$methnicity)
+      if (input$inGTP != "All"){
+        data <- subset(data, TripPurpose_B04ID == input$inGTP)
+      }
+      
+      if (input$inGEthnicity != "All"){
+        data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
       }
       
       scMETdataAltRegFiltered <<- data
@@ -529,7 +552,7 @@ shinyServer(function(input, output, session){
   
   output$plotMET <- renderChart({
     input$inRegions
-    input$flipMETHG
+    input$flipG
     input$phyGuideline
     plotMETDataTable()
     
@@ -540,7 +563,7 @@ shinyServer(function(input, output, session){
     filtered_title <- ""
     
     if (!is.null(idata) & !is.null(scMETdata)){
-      if (input$flipMETHG == 'sep'){
+      if (input$flipG == 'sep'){
         
         # Keep the data separated
         # scMETdata and scFilteredMETdata
@@ -584,7 +607,7 @@ shinyServer(function(input, output, session){
         
         # if no filter is selected
         
-        if (input$mgender == 3 && input$methnicity == "All" && input$mses == "All" && input$mag == "All"){
+        if (input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All" && input$inGAG == "All" && input$inGTP == "All"){
           
           extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
           # Replace sub-population with total population for both first and second column names
@@ -746,7 +769,7 @@ shinyServer(function(input, output, session){
   
   output$plotScenarioMET <- renderChart({
     input$inRegions
-    input$flipMETHG
+    input$flipG
     input$phyGuideline
     
     plotMETDataTable()
@@ -759,7 +782,7 @@ shinyServer(function(input, output, session){
     
     if (!is.null(scMETdata)){
       
-      if (input$flipMETHG == 'sep'){
+      if (input$flipG == 'sep'){
         
         # if comparision with alternative region is selected
         
@@ -1176,7 +1199,7 @@ shinyServer(function(input, output, session){
   getFilteredBDTitle <- function (src){
     filtered_title <- ""
     if (src == "BD")
-      filtered_title <- paste("Cycling Multiplier: ", input$inBDMS, ", Equity: ", input$inBDEQ, " and Ebike: ", input$inBDEB , sep = "" )
+      filtered_title <- paste("Cycling Multiplier: ", input$inGMS, ", Equity: ", input$inGEQ, " and Ebike: ", input$inGEB , sep = "" )
     else if (src == "FT")
       filtered_title <- paste("Cycling Multiplier: ", input$inFTMS, ", Equity: ", input$inFTEQ, " and Ebike: ", input$inFTEB, sep = "" )
     
@@ -1260,32 +1283,32 @@ shinyServer(function(input, output, session){
     # # cat(npeople, "\n")
     # 
     # if (nrow(data) != nrow (dataSource)){
-    if (input$mgender != 3 || input$methnicity != "All" || input$mses != "All" || input$mag != "All"){
+    if (input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" || input$inGAG != "All" || input$inGTP != "All"){
       
       displayGender <- "All"
-      if (input$mgender == 1){
+      if (input$inGGender == 1){
         displayGender <- "Male"
-      }else if (input$mgender == 2){
+      }else if (input$inGGender == 2){
         displayGender <- "Female"
       }
       
       displayEthnicity <- "All"
-      if (input$methnicity == 1){
+      if (input$inGEthnicity == 1){
         displayEthnicity <- "White"
-      }else if (input$methnicity == 2){
+      }else if (input$inGEthnicity == 2){
         displayEthnicity <- "Non-White"
       }
       
       displaySES <- "All"
-      if (input$mses == 1){
+      if (input$inGSES == 1){
         displaySES <- "Managerial and professional occupations"
-      }else if (input$mses == 2){
+      }else if (input$inGSES == 2){
         displaySES <- "Intermediate occupations and small employers"
-      }else if (input$mses == 3){
+      }else if (input$inGSES == 3){
         displaySES <- "Routine and manual occupations"
-      }else if (input$mses == 4){
+      }else if (input$inGSES == 4){
         displaySES <- "Never worked and long-term unemployed"
-      }else if (input$mses == 5){
+      }else if (input$inGSES == 5){
         displaySES <- "Not classified (including students)"
       }
       
@@ -1295,7 +1318,7 @@ shinyServer(function(input, output, session){
         
       } else {
         
-        filters_info <- paste0( ", Age Group: ", str_trim(input$mag), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0( ", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -1342,32 +1365,32 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size (trips): "
     }
     
-    if (input$inBDAG != "All" || input$inBDGender != 3 || input$inBDEthnicity != "All" || input$inBDSES != "All" ){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" || input$inGTP != "All" ){
       
       displayGender <- "All"
-      if (input$inBDGender == 1){
+      if (input$inGGender == 1){
         displayGender <- "Male"
-      }else if (input$inBDGender == 2){
+      }else if (input$inGGender == 2){
         displayGender <- "Female"
       }
       
       displayEthnicity <- "All"
-      if (input$inBDEthnicity == 1){
+      if (input$inGEthnicity == 1){
         displayEthnicity <- "White"
-      }else if (input$inBDEthnicity == 2){
+      }else if (input$inGEthnicity == 2){
         displayEthnicity <- "Non-White"
       }
       
       displaySES <- "All"
-      if (input$inBDSES == 1){
+      if (input$inGSES == 1){
         displaySES <- "Managerial and professional occupations"
-      }else if (input$inBDSES == 2){
+      }else if (input$inGSES == 2){
         displaySES <- "Intermediate occupations and small employers"
-      }else if (input$inBDSES == 3){
+      }else if (input$inGSES == 3){
         displaySES <- "Routine and manual occupations"
-      }else if (input$inBDSES == 4){
+      }else if (input$inGSES == 4){
         displaySES <- "Never worked and long-term unemployed"
-      }else if (input$inBDSES == 5){
+      }else if (input$inGSES == 5){
         displaySES <- "Not classified (including students)"
       }
       
@@ -1377,7 +1400,7 @@ shinyServer(function(input, output, session){
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inBDAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -1402,8 +1425,8 @@ shinyServer(function(input, output, session){
     
     # Filter data of trips
     
-    columnName <- paste(paste("MS", input$inBDMS,sep = ""),  paste("ebik", input$inBDEB,sep = ""), 
-                        paste("eq", input$inBDEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inGMS,sep = ""),  paste("ebik", input$inGEB,sep = ""), 
+                        paste("eq", input$inGEQ,sep = ""), sep="_")
     
     # full baseline
     
@@ -1427,13 +1450,15 @@ shinyServer(function(input, output, session){
     
     # filtered scenario
     
-    tdScenario <<- subset(tdScenarioTemp, agegroup == input$inBDAG & gender == input$inBDGender & ses == input$inBDSES & ethnicity == input$inBDEthnicity)
+    tdScenario <<- subset(tdScenarioTemp, agegroup == input$inGAG & gender == input$inGGender & ses == input$inGSES & ethnicity == input$inGEthnicity
+                          & purpose == input$inGTP)
     
     # filtered baseline
     
     tdBaselineTemp <- readRDS(paste0(tripsdfRegionalInputData, 'filtered/', input$inRegions, '/baseline.rds'))
     
-    tdBaseline <<- subset(tdBaselineTemp, agegroup == input$inBDAG & gender == input$inBDGender & ses == input$inBDSES & ethnicity == input$inBDEthnicity)
+    tdBaseline <<- subset(tdBaselineTemp, agegroup == input$inGAG & gender == input$inGGender & ses == input$inGSES & ethnicity == input$inGEthnicity
+                          & purpose == input$inGTP)
     
     # bd <<- data2
     
@@ -1443,7 +1468,8 @@ shinyServer(function(input, output, session){
       
       tdAltRegionScenarioTemp <- readRDS(paste0(tripsdfRegionalInputData, 'filtered/', input$inRegionSelected, '/', columnName, '.rds'))
       
-      tdAltRegionScenario <<- subset(tdAltRegionScenarioTemp, agegroup == input$inBDAG & gender == input$inBDGender & ses == input$inBDSES & ethnicity == input$inBDEthnicity)
+      tdAltRegionScenario <<- subset(tdAltRegionScenarioTemp, agegroup == input$inGAG & gender == input$inGGender & ses == input$inGSES & ethnicity == input$inGEthnicity
+                                     & purpose == input$inGTP)
       
     }
       
@@ -1602,7 +1628,7 @@ shinyServer(function(input, output, session){
     # "Scenario versus Baseline" = "comp",
     # "Sub-population versus total population" = "sep"
     
-    if (input$flipMS == 'sep'){
+    if (input$flipG == 'sep'){
       
       # Keep the data separated
       # scMETdata and scFilteredMETdata
@@ -1656,7 +1682,7 @@ shinyServer(function(input, output, session){
       
       # if no filter is selected -> Total-Pop
       
-      if (input$inBDAG == "All" && input$inBDGender == 3 && input$inBDEthnicity == "All" && input$inBDSES == "All" ){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All" && input$inGTP == "All"){
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Mode Share")
         # Replace sub-population with total population for both first and second column names
         firstColName <- gsub("Sub-population", "Total Population", firstColName)
@@ -1707,7 +1733,7 @@ shinyServer(function(input, output, session){
   
   output$plotBDSCMode <- renderChart({
     generateBDScenarioTable()
-    if (input$flipMS == 'sep'){
+    if (input$flipG == 'sep'){
       
       # check if comparision with alternative region is selected
       
@@ -1842,31 +1868,31 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    if (input$inTTAG != "All" || input$inTTGender != 3 || input$inTTEthnicity != "All" || input$inTTSES != "All" ){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" ){
       displayGender <- "All"
-      if (input$inTTGender == 1){
+      if (input$inGGender == 1){
         displayGender <- "Male"
-      }else if (input$inTTGender == 2){
+      }else if (input$inGGender == 2){
         displayGender <- "Female"
       }
       
       displayEthnicity <- "All"
-      if (input$inTTEthnicity == 1){
+      if (input$inGEthnicity == 1){
         displayEthnicity <- "White"
-      }else if (input$inTTEthnicity == 2){
+      }else if (input$inGEthnicity == 2){
         displayEthnicity <- "Non-White"
       }
       
       displaySES <- "All"
-      if (input$inTTSES == 1){
+      if (input$inGSES == 1){
         displaySES <- "Managerial and professional occupations"
-      }else if (input$inTTSES == 2){
+      }else if (input$inGSES == 2){
         displaySES <- "Intermediate occupations and small employers"
-      }else if (input$inTTSES == 3){
+      }else if (input$inGSES == 3){
         displaySES <- "Routine and manual occupations"
-      }else if (input$inTTSES == 4){
+      }else if (input$inGSES == 4){
         displaySES <- "Never worked and long-term unemployed"
-      }else if (input$inTTSES == 5){
+      }else if (input$inGSES == 5){
         displaySES <- "Not classified (including students)"
       }
       
@@ -1876,7 +1902,7 @@ shinyServer(function(input, output, session){
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inTTAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -1916,7 +1942,7 @@ shinyServer(function(input, output, session){
     
     # construct scenario name + filename
     
-    scenarioName <- paste(paste0("MS", input$inTTMS), paste0("ebik", input$inTTEB), paste0("eq", input$inTTEQ), sep="_")
+    scenarioName <- paste(paste0("MS", input$inGMS), paste0("ebik", input$inGEB), paste0("eq", input$inGEQ), sep="_")
     
     scenarioFilename <- paste0(scenarioName, '.rds')
     
@@ -1930,7 +1956,8 @@ shinyServer(function(input, output, session){
       
       # filter data
       
-      chartData <- subset(chartData, agegroup == input$inTTAG & gender == input$inTTGender & ses == input$inTTSES & ethnicity == input$inTTEthnicity)
+      chartData <- subset(chartData, agegroup == input$inGAG & gender == input$inGGender & ses == input$inGSES & ethnicity == input$inGEthnicity
+                          & purpose == input$inGTP)
       
       # TODO: na check?
       
@@ -1938,7 +1965,7 @@ shinyServer(function(input, output, session){
         
         h1$title(text = paste0("Sub-population [", nameOfTheSelectedRegion, "] - Histogram of Relative Changes in Trip Durations"))
         
-        if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
+        if (input$inGAG == 'All' & input$inGGender == 3 & input$inGSES == "All" & input$inGEthnicity == "All" & input$inGTP == "All"){
            
           h1$title(text = paste0("Total population [", nameOfTheSelectedRegion, "] - Histogram of Relative Changes in Trip Durations"))
         }
@@ -2008,7 +2035,8 @@ shinyServer(function(input, output, session){
       
       # filter data
       
-      chartData <- subset(chartData, agegroup == input$inTTAG & gender == input$inTTGender & ses == input$inTTSES & ethnicity == input$inTTEthnicity)
+      chartData <- subset(chartData, agegroup == input$inGAG & gender == input$inGGender & ses == input$inGSES & ethnicity == input$inGEthnicity
+                          & purpose == input$inGTP)
       
       # TODO: na check?
       
@@ -2016,7 +2044,7 @@ shinyServer(function(input, output, session){
         
         h1$title(text = paste0("Sub-population [", nameOfTheSelectedRegion, "] - Proportion of Faster/Slower Trips"))
         
-        if (input$inBDAG == 'All' & input$inBDGender == 3 & input$inBDSES == "All" & input$inBDEthnicity == "All"){
+        if (input$inGAG == 'All' & input$inGGender == 3 & input$inGSES == "All" & input$inGEthnicity == "All" & input$inGTP == "All"){
           
           h1$title(text = paste0("Total population [", nameOfTheSelectedRegion, "] - Proportion of Faster/Slower Trips"))
         }
@@ -2090,7 +2118,7 @@ shinyServer(function(input, output, session){
     
     # construct scenario name + filename
     
-    scenarioName <- paste(paste0("MS", input$inTTMS), paste0("ebik", input$inTTEB), paste0("eq", input$inTTEQ), sep="_")
+    scenarioName <- paste(paste0("MS", input$inGMS), paste0("ebik", input$inGEB), paste0("eq", input$inGEQ), sep="_")
     
     scenarioFilename <- paste0(scenarioName, '.rds')
     
@@ -2336,7 +2364,7 @@ shinyServer(function(input, output, session){
     subtitle <- ""
     extended_title <- ""
     
-    if (input$inMSflip == 'sep'){
+    if (input$flipG == 'sep'){
       
       # check if comparision with alternative region is selected
       
@@ -2401,11 +2429,10 @@ shinyServer(function(input, output, session){
     h1 <- Highcharts$new()
     h1$chart(type = "column", style = list(fontFamily = 'Arial, sans-serif',
                                            fontSize = '12px'))
-    
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
       
-      if (input$inMSTotOrCyc == 'cyc'){
+      if (input$inGTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
       }
@@ -2419,7 +2446,7 @@ shinyServer(function(input, output, session){
       h1$series(data = bc$Freq[-1], name = firstColName)
       bc <- NULL
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
-      if (input$inMSTotOrCyc == 'cyc'){
+      if (input$inGTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
       }
@@ -2433,7 +2460,7 @@ shinyServer(function(input, output, session){
       
       # add extra subtitle if denominator is "Total Population"
       
-      if (input$inMSTotOrCyc == 'pop'){
+      if (input$inGTotOrCyc == 'pop'){
         
         extraSubtitle <- "Proportions calculated using the total population as a denominator, but the bar for those doing zero cycling is not shown."
         
@@ -2492,7 +2519,7 @@ shinyServer(function(input, output, session){
     # "Scenario versus Baseline" = "comp",
     # "Sub-population versus total population" = "sep"
     
-    if (input$inMSflip == 'sep'){
+    if (input$flipG == 'sep'){
       # Keep the data separated
       firstColData = scMilesCycledData
       secondColData = scMilesCycledFilteredData
@@ -2535,7 +2562,8 @@ shinyServer(function(input, output, session){
       
       # if no filter is selected
       
-      if (input$inMSAG == "All" && input$inMSG == 3 && input$inMSEthnicity == "All" && input$inMSSES == "All" ){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"
+          && input$inGTP == "All"){
       
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
         # Replace sub-population with total population for both first and second column names
@@ -2554,7 +2582,7 @@ shinyServer(function(input, output, session){
     if (max(firstColData$data) > 0 && max(secondColData$data) > 0){
       
       bc <- as.data.frame(table (cut (firstColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
-      if (input$inMSTotOrCyc == 'cyc'){
+      if (input$inGTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
       }
@@ -2565,7 +2593,7 @@ shinyServer(function(input, output, session){
       
       h1$series(data = bc$Freq[-1], name = firstColName)
       bc <- as.data.frame(table (cut (secondColData$data, breaks = c(-1, 0, 2, 5, 10, 20, 40, 60, Inf))))
-      if (input$inMSTotOrCyc == 'cyc'){
+      if (input$inGTotOrCyc == 'cyc'){
         bc$Freq <- round(bc$Freq  / sum(bc$Freq[-1]) * 100, digits = 1)
         h1$yAxis(title = list(text = 'Percentage of Cyclists'))
       }
@@ -2578,7 +2606,7 @@ shinyServer(function(input, output, session){
       
       # add extra subtitle if denominator is "Total Population"
       
-      if (input$inMSTotOrCyc == 'pop'){
+      if (input$inGTotOrCyc == 'pop'){
         
         extraSubtitle <- "Proportions calculated using the total population as a denominator, but the bar for those doing zero cycling is not shown."
       
@@ -2629,24 +2657,28 @@ shinyServer(function(input, output, session){
     
     data <- sessionData$milesCycled
     
-    if (input$inMSAG != 'All'){
-      data <- subset(data, age_group == input$inMSAG)
+    if (input$inGAG != 'All'){
+      data <- subset(data, age_group == input$inGAG)
     }
-    if (input$inMSG != 3)
-      data <- subset(data, Sex_B01ID %in% input$inMSG)
+    if (input$inGGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inGGender)
     
-    if (input$inMSSES != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inMSSES)
+    if (input$inGSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inGSES)
     }
     
-    if (input$inMSEthnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inMSEthnicity)
+    if (input$inGEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
+    }
+    
+    if (input$inGTP != "All"){
+      data <- subset(data, TripPurpose_B04ID  == input$inGTP)
     }
     #data[is.na(data)] <- 0
     
     
-    columnName <- paste(paste("MS", input$inMSMS,sep = ""),  paste("ebik", input$inMSEB,sep = ""), 
-                        paste("eq", input$inMSEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inGMS,sep = ""),  paste("ebik", input$inGEB,sep = ""), 
+                        paste("eq", input$inGEQ,sep = ""), sep="_")
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
@@ -2680,19 +2712,25 @@ shinyServer(function(input, output, session){
       
       dataAltRegFiltered <- sessionData$RegionmilesCycled
       
-      if (input$inMSAG != 'All'){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inMSAG)
+      if (input$inGAG != 'All'){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inGAG)
       }
-      if (input$inMSG != 3)
-        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inMSG)
+      if (input$inGGender != 3)
+        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inGGender)
       
-      if (input$inMSSES != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID %in% input$inMSSES)
+      if (input$inGSES != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID %in% input$inGSES)
       }
       
-      if (input$inMSEthnicity != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID %in% input$inMSEthnicity)
+      if (input$inGEthnicity != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID %in% input$inGEthnicity)
       }
+      
+      if (input$inGTP != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, TripPurpose_B04ID == input$inGTP)
+      }
+      
+      
       
       dataAltRegFiltered <- data.frame(data = dataAltRegFiltered[[columnName]])
       
@@ -2716,7 +2754,7 @@ shinyServer(function(input, output, session){
     # "Scenario versus Baseline" = "comp",
     # "Sub-population versus total population" = "sep"
     
-    if (input$inCMflip == 'sep'){
+    if (input$flipG == 'sep'){
       
       # Keep the data separated
       firstColData = scCarMilesData
@@ -2763,7 +2801,7 @@ shinyServer(function(input, output, session){
       
       # if no filter is selected
       
-      if (input$inCMAG == "All" && input$inCMG == 3 && input$inCMEthnicity == "All" && input$inCMSES == "All" ){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"  && input$inGTP == "All" ){
       
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         # Replace sub-population with total population for both first and second column names
@@ -2823,7 +2861,7 @@ shinyServer(function(input, output, session){
     extended_title <- ""
     subtitle <- ""
     
-    if (input$inCMflip == 'sep'){
+    if (input$flipG == 'sep'){
       
       # check if comparision with alternative region is selected
       
@@ -2933,24 +2971,28 @@ shinyServer(function(input, output, session){
     input$inRegionSelected
     data <- sessionData$carMiles
     
-    if (input$inCMAG != 'All'){
-      data <- subset(data, age_group == input$inCMAG)
+    if (input$inGAG != 'All'){
+      data <- subset(data, age_group == input$inGAG)
     }
-    if (input$inCMG != 3)
-      data <- subset(data, Sex_B01ID %in% input$inCMG)
+    if (input$inGGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inGGender)
     
-    if (input$inCMSES != "All"){
-      data <- subset(data, NSSec_B03ID %in% input$inCMSES)
+    if (input$inGSES != "All"){
+      data <- subset(data, NSSec_B03ID %in% input$inGSES)
     }
     
-    if (input$inCMEthnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID %in% input$inCMEthnicity)
+    if (input$inGEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
+    }
+    
+    if (input$inGTP != "All"){
+      data <- subset(data, TripPurpose_B04ID == input$inGTP)
     }
     #data[is.na(data)] <- 0
     
     
-    columnName <- paste(paste("MS", input$inCMMS,sep = ""),  paste("ebik", input$inCMEB,sep = ""), 
-                        paste("eq", input$inCMEQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inGMS,sep = ""),  paste("ebik", input$inGEB,sep = ""), 
+                        paste("eq", input$inGEQ,sep = ""), sep="_")
     
     #data1 <- milesCycled[,c("ID", "age_group","Sex_B01ID","NSSec_B03ID","EthGroupTS_B02ID", "baseline_milesCycled", columnName)]
     
@@ -2984,20 +3026,24 @@ shinyServer(function(input, output, session){
       
       dataAltRegFiltered <- sessionData$RegioncarMiles
       
-      if (input$inCMAG != 'All'){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inCMAG)
+      if (input$inGAG != 'All'){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inGAG)
       }
       
-      if (input$inCMG != 3){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inCMG)
+      if (input$inGGender != 3){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inGGender)
       }
       
-      if (input$inCMSES != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID %in% input$inCMSES)
+      if (input$inGSES != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID %in% input$inGSES)
       }
       
-      if (input$inCMEthnicity != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID %in% input$inCMEthnicity)
+      if (input$inGEthnicity != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID %in% input$inGEthnicity)
+      }
+      
+      if (input$inGTP != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, TripPurpose_B04ID == input$inGTP)
       }
       
       dataAltRegFiltered <- data.frame(data = dataAltRegFiltered[[columnName]])
@@ -3021,7 +3067,7 @@ shinyServer(function(input, output, session){
     # "Scenario versus Baseline" = "comp",
     # "Sub-population versus total population" = "sep"
     
-    if (input$inCO2flip == 'sep'){
+    if (input$flipG == 'sep'){
       
       # Keep the data separated
       firstColData = scCO2Data
@@ -3066,7 +3112,7 @@ shinyServer(function(input, output, session){
       
       # if no filter selected
       
-      if (input$inCO2AG == "All" && input$inCO2G == 3 && input$inCO2Ethnicity == "All" && input$inCO2SES == "All" ){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All" && input$inGTP == "All" ){
         
         extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
       
@@ -3133,7 +3179,7 @@ shinyServer(function(input, output, session){
     extended_title <- ""
     subtitle <- ""
     
-    if (input$inCO2flip == 'sep'){
+    if (input$flipG == 'sep'){
       
       # check if comparision with alternative region is selected
       
@@ -3245,24 +3291,29 @@ shinyServer(function(input, output, session){
     
     data <- sessionData$co2data
     
-    if (input$inCO2AG != 'All'){
-      data <- subset(data, age_group == input$inCO2AG)
+    if (input$inGAG != 'All'){
+      data <- subset(data, age_group == input$inGAG)
     }
-    if (input$inCO2G != 3)
-      data <- subset(data, Sex_B01ID %in% input$inCO2G)
+    if (input$inGGender != 3)
+      data <- subset(data, Sex_B01ID %in% input$inGGender)
     
-    if (input$inCO2SES != "All"){
-      data <- subset(data, NSSec_B03ID == input$inCO2SES)
+    if (input$inGSES != "All"){
+      data <- subset(data, NSSec_B03ID == input$inGSES)
     }
     
-    if (input$inCO2Ethnicity != "All"){
-      data <- subset(data, EthGroupTS_B02ID == input$inCO2Ethnicity)
+    if (input$inGEthnicity != "All"){
+      data <- subset(data, EthGroupTS_B02ID == input$inGEthnicity)
     }
+    
+    if (input$inGTP != "All"){
+      data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    }
+    
     # Remove all NA rows from the dataset
     data[is.na(data)] <- 0
     
-    columnName <- paste(paste("MS", input$inCO2MS,sep = ""),  paste("ebik", input$inCO2EB,sep = ""), 
-                        paste("eq", input$inCO2EQ,sep = ""), sep="_")
+    columnName <- paste(paste("MS", input$inGMS,sep = ""),  paste("ebik", input$inGEB,sep = ""), 
+                        paste("eq", input$inGEQ,sep = ""), sep="_")
     
     # cat(dim(data), " : ", columnName, "\n")
     
@@ -3298,20 +3349,20 @@ shinyServer(function(input, output, session){
       
       dataAltRegFiltered <- sessionData$Regionco2data
       
-      if (input$inCO2AG != 'All'){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inCO2AG)
+      if (input$inGAG != 'All'){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, age_group == input$inGAG)
       }
       
-      if (input$inCO2G != 3){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inCO2G)
+      if (input$inGGender != 3){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, Sex_B01ID %in% input$inGGender)
       }
       
-      if (input$inCO2SES != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID == input$inCO2SES)
+      if (input$inGSES != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, NSSec_B03ID == input$inGSES)
       }
       
-      if (input$inCO2Ethnicity != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID == input$inCO2Ethnicity)
+      if (input$inGEthnicity != "All"){
+        dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID == input$inGEthnicity)
       }
       
       # Remove all NA rows from the dataset just like it is for selected (not alternative) region
@@ -3357,31 +3408,31 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    if (input$inCO2AG != "All" || input$inCO2G != 3 || input$inCO2Ethnicity != "All" || input$inCO2SES != "All" ){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" ){
       displayGender <- "All"
-      if (input$inCO2G == 1){
+      if (input$inGGender == 1){
         displayGender <- "Male"
-      }else if (input$inCO2G == 2){
+      }else if (input$inGGender == 2){
         displayGender <- "Female"
       }
       
       displayEthnicity <- "All"
-      if (input$inCO2Ethnicity == 1){
+      if (input$inGEthnicity == 1){
         displayEthnicity <- "White"
-      }else if (input$inCO2Ethnicity == 2){
+      }else if (input$inGEthnicity == 2){
         displayEthnicity <- "Non-White"
       }
       
       displaySES <- "All"
-      if (input$inCO2SES == 1){
+      if (input$inGSES == 1){
         displaySES <- "Managerial and professional occupations"
-      }else if (input$inCO2SES == 2){
+      }else if (input$inGSES == 2){
         displaySES <- "Intermediate occupations and small employers"
-      }else if (input$inCO2SES == 3){
+      }else if (input$inGSES == 3){
         displaySES <- "Routine and manual occupations"
-      }else if (input$inCO2SES == 4){
+      }else if (input$inGSES == 4){
         displaySES <- "Never worked and long-term unemployed"
-      }else if (input$inCO2SES == 5){
+      }else if (input$inGSES == 5){
         displaySES <- "Not classified (including students)"
       }
       
@@ -3391,7 +3442,7 @@ shinyServer(function(input, output, session){
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inCO2AG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -3440,31 +3491,32 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    if (input$inMSAG != "All" || input$inMSG != 3 || input$inMSEthnicity != "All" || input$inMSSES != "All" ){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" 
+        || input$inGTP != "All"){
       displayGender <- "All"
-      if (input$inMSG == 1){
+      if (input$inGGender == 1){
         displayGender <- "Male"
-      }else if (input$inMSG == 2){
+      }else if (input$inGGender == 2){
         displayGender <- "Female"
       }
       
       displayEthnicity <- "All"
-      if (input$inMSEthnicity == 1){
+      if (input$inGEthnicity == 1){
         displayEthnicity <- "White"
-      }else if (input$inMSEthnicity == 2){
+      }else if (input$inGEthnicity == 2){
         displayEthnicity <- "Non-White"
       }
       
       displaySES <- "All"
-      if (input$inMSSES == 1){
+      if (input$inGSES == 1){
         displaySES <- "Managerial and professional occupations"
-      }else if (input$inMSSES == 2){
+      }else if (input$inGSES == 2){
         displaySES <- "Intermediate occupations and small employers"
-      }else if (input$inMSSES == 3){
+      }else if (input$inGSES == 3){
         displaySES <- "Routine and manual occupations"
-      }else if (input$inMSSES == 4){
+      }else if (input$inGSES == 4){
         displaySES <- "Never worked and long-term unemployed"
-      }else if (input$inMSSES == 5){
+      }else if (input$inGSES == 5){
         displaySES <- "Not classified (including students)"
       }
 
@@ -3474,7 +3526,7 @@ shinyServer(function(input, output, session){
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inMSAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -3523,31 +3575,31 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    if (input$inCMAG != "All" || input$inCMG != 3 || input$inCMEthnicity != "All" || input$inCMSES != "All" ){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" ){
       displayGender <- "All"
-      if (input$inCMG == 1){
+      if (input$inGGender == 1){
         displayGender <- "Male"
-      }else if (input$inCMG == 2){
+      }else if (input$inGGender == 2){
         displayGender <- "Female"
       }
       
       displayEthnicity <- "All"
-      if (input$inCMEthnicity == 1){
+      if (input$inGEthnicity == 1){
         displayEthnicity <- "White"
-      }else if (input$inCMEthnicity == 2){
+      }else if (input$inGEthnicity == 2){
         displayEthnicity <- "Non-White"
       }
       
       displaySES <- "All"
-      if (input$inCMSES == 1){
+      if (input$inGSES == 1){
         displaySES <- "Managerial and professional occupations"
-      }else if (input$inCMSES == 2){
+      }else if (input$inGSES == 2){
         displaySES <- "Intermediate occupations and small employers"
-      }else if (input$inCMSES == 3){
+      }else if (input$inGSES == 3){
         displaySES <- "Routine and manual occupations"
-      }else if (input$inCMSES == 4){
+      }else if (input$inGSES == 4){
         displaySES <- "Never worked and long-term unemployed"
-      }else if (input$inCMSES == 5){
+      }else if (input$inGSES == 5){
         displaySES <- "Not classified (including students)"
       }
       
@@ -3557,7 +3609,7 @@ shinyServer(function(input, output, session){
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inCMAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -3579,7 +3631,7 @@ shinyServer(function(input, output, session){
   #     if (input$inBDEQ != 3){
   #       updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
   #       updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
-  #       updateTextInput(session, "inMSEQ", NULL, input$inBDEQ)
+  #       updateTextInput(session, "inGEQ", NULL, input$inBDEQ)
   #       updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
   #       updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
   #       
@@ -3588,7 +3640,7 @@ shinyServer(function(input, output, session){
   #     if (input$inHealthEQ != 3){
   #       updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
   #       updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
-  #       updateTextInput(session, "inMSEQ", NULL, input$inHealthEQ)
+  #       updateTextInput(session, "inGEQ", NULL, input$inHealthEQ)
   #       updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
   #       updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
   #     }
@@ -3919,7 +3971,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "mgender", NULL, input$inBDGender)
     updateTextInput(session, "inMSG", NULL, input$inBDGender)
     updateTextInput(session, "inCMG", NULL, input$inBDGender)
-    updateTextInput(session, "inCO2G", NULL, input$inBDGender)
+    updateTextInput(session, "inGGender", NULL, input$inBDGender)
   })
   
   observe({input$inHealthG
@@ -3928,7 +3980,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "mgender", NULL, input$inHealthG)
     updateTextInput(session, "inMSG", NULL, input$inHealthG)
     updateTextInput(session, "inCMG", NULL, input$inHealthG)
-    updateTextInput(session, "inCO2G", NULL, input$inHealthG)
+    updateTextInput(session, "inGGender", NULL, input$inHealthG)
   })
   
   observe({input$mgender
@@ -3937,7 +3989,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inHealthG", NULL, input$mgender)
     updateTextInput(session, "inMSG", NULL, input$mgender)
     updateTextInput(session, "inCMG", NULL, input$mgender)
-    updateTextInput(session, "inCO2G", NULL, input$mgender)
+    updateTextInput(session, "inGGender", NULL, input$mgender)
     
   })
   
@@ -3947,7 +3999,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inHealthG", NULL, input$inMSG)
     updateTextInput(session, "mgender", NULL, input$inMSG)
     updateTextInput(session, "inCMG", NULL, input$inMSG)
-    updateTextInput(session, "inCO2G", NULL, input$inMSG)
+    updateTextInput(session, "inGGender", NULL, input$inMSG)
   })
   
   observe({input$inCMG
@@ -3956,20 +4008,20 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inHealthG", NULL, input$inCMG)
     updateTextInput(session, "mgender", NULL, input$inCMG)
     updateTextInput(session, "inMSG", NULL, input$inCMG)
-    updateTextInput(session, "inCO2G", NULL, input$inCMG)
+    updateTextInput(session, "inGGender", NULL, input$inCMG)
   })
   
-  observe({input$inCO2G
-    updateTextInput(session, "inTTGender", NULL, input$inCO2G)
-    updateTextInput(session, "inBDGender", NULL, input$inCO2G)
-    updateTextInput(session, "inHealthG", NULL, input$inCO2G)
-    updateTextInput(session, "mgender", NULL, input$inCO2G)
-    updateTextInput(session, "inMSG", NULL, input$inCO2G)
-    updateTextInput(session, "inCMG", NULL, input$inCO2G)
+  observe({input$inGGender
+    updateTextInput(session, "inTTGender", NULL, input$inGGender)
+    updateTextInput(session, "inBDGender", NULL, input$inGGender)
+    updateTextInput(session, "inHealthG", NULL, input$inGGender)
+    updateTextInput(session, "mgender", NULL, input$inGGender)
+    updateTextInput(session, "inMSG", NULL, input$inGGender)
+    updateTextInput(session, "inCMG", NULL, input$inGGender)
   })
   
   observe({input$inTTGender
-    updateTextInput(session, "inCO2G", NULL, input$inTTGender)
+    updateTextInput(session, "inGGender", NULL, input$inTTGender)
     updateTextInput(session, "inBDGender", NULL, input$inTTGender)
     updateTextInput(session, "inHealthG", NULL, input$inTTGender)
     updateTextInput(session, "mgender", NULL, input$inTTGender)
@@ -3982,7 +4034,7 @@ shinyServer(function(input, output, session){
   #   mgender
   #   inMSG
   #   inCMG
-  #   inCO2G
+  #   inGGender
   
   
   # SES
@@ -3992,7 +4044,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "mses", NULL, input$inBDSES)
     updateTextInput(session, "inMSSES", NULL, input$inBDSES)
     updateTextInput(session, "inCMSES", NULL, input$inBDSES)
-    updateTextInput(session, "inCO2SES", NULL, input$inBDSES)
+    updateTextInput(session, "inGSES", NULL, input$inBDSES)
   })
   
   
@@ -4001,7 +4053,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inBDSES", NULL, input$mses)
     updateTextInput(session, "inMSSES", NULL, input$mses)
     updateTextInput(session, "inCMSES", NULL, input$mses)
-    updateTextInput(session, "inCO2SES", NULL, input$mses)
+    updateTextInput(session, "inGSES", NULL, input$mses)
   })
   
   observe({input$inMSSES
@@ -4009,7 +4061,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inBDSES", NULL, input$inMSSES)
     updateTextInput(session, "mses", NULL, input$inMSSES)
     updateTextInput(session, "inCMSES", NULL, input$inMSSES)
-    updateTextInput(session, "inCO2SES", NULL, input$inMSSES)
+    updateTextInput(session, "inGSES", NULL, input$inMSSES)
   })
   
   observe({input$inCMSES
@@ -4017,19 +4069,19 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inBDSES", NULL, input$inCMSES)
     updateTextInput(session, "mses", NULL, input$inCMSES)
     updateTextInput(session, "inMSSES", NULL, input$inCMSES)
-    updateTextInput(session, "inCO2SES", NULL, input$inCMSES)
+    updateTextInput(session, "inGSES", NULL, input$inCMSES)
   })
   
-  observe({input$inCO2SES
-    updateTextInput(session, "inTTSES", NULL, input$inCO2SES)
-    updateTextInput(session, "inBDSES", NULL, input$inCO2SES)
-    updateTextInput(session, "mses", NULL, input$inCO2SES)
-    updateTextInput(session, "inMSSES", NULL, input$inCO2SES)
-    updateTextInput(session, "inCMSES", NULL, input$inCO2SES)
+  observe({input$inGSES
+    updateTextInput(session, "inTTSES", NULL, input$inGSES)
+    updateTextInput(session, "inBDSES", NULL, input$inGSES)
+    updateTextInput(session, "mses", NULL, input$inGSES)
+    updateTextInput(session, "inMSSES", NULL, input$inGSES)
+    updateTextInput(session, "inCMSES", NULL, input$inGSES)
   })
   
   observe({input$inTTSES
-    updateTextInput(session, "inCO2SES", NULL, input$inTTSES)
+    updateTextInput(session, "inGSES", NULL, input$inTTSES)
     updateTextInput(session, "inBDSES", NULL, input$inTTSES)
     updateTextInput(session, "mses", NULL, input$inTTSES)
     updateTextInput(session, "inMSSES", NULL, input$inTTSES)
@@ -4041,7 +4093,7 @@ shinyServer(function(input, output, session){
   #   mses
   #   inMSSES
   #   inCMSES
-  #   inCO2SES
+  #   inGSES
   
   #Ethnicity
   
@@ -4051,7 +4103,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "methnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inBDEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inBDEthnicity)
-    updateTextInput(session, "inCO2Ethnicity", NULL, input$inBDEthnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$inBDEthnicity)
   })
   
   observe({input$methnicity
@@ -4059,7 +4111,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inBDEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$methnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$methnicity)
-    updateTextInput(session, "inCO2Ethnicity", NULL, input$methnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$methnicity)
     
   })
   
@@ -4068,7 +4120,7 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inBDEthnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inMSEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inMSEthnicity)
-    updateTextInput(session, "inCO2Ethnicity", NULL, input$inMSEthnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$inMSEthnicity)
   })
   
   observe({input$inCMEthnicity
@@ -4076,46 +4128,46 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "inBDEthnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inCMEthnicity)
     updateTextInput(session, "inMSEthnicity", NULL, input$inCMEthnicity)
-    updateTextInput(session, "inCO2Ethnicity", NULL, input$inCMEthnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$inCMEthnicity)
   })
   
-  observe({input$inCO2Ethnicity
-    updateTextInput(session, "inTTEthnicity", NULL, input$inCO2Ethnicity)
-    updateTextInput(session, "inBDEthnicity", NULL, input$inCO2Ethnicity)
-    updateTextInput(session, "methnicity", NULL, input$inCO2Ethnicity)
-    updateTextInput(session, "inMSEthnicity", NULL, input$inCO2Ethnicity)
-    updateTextInput(session, "inCMEthnicity", NULL, input$inCO2Ethnicity)
+  observe({input$inGEthnicity
+    updateTextInput(session, "inTTEthnicity", NULL, input$inGEthnicity)
+    updateTextInput(session, "inBDEthnicity", NULL, input$inGEthnicity)
+    updateTextInput(session, "methnicity", NULL, input$inGEthnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$inGEthnicity)
+    updateTextInput(session, "inCMEthnicity", NULL, input$inGEthnicity)
   })
   
   observe({input$inTTEthnicity
-    updateTextInput(session, "inCO2Ethnicity", NULL, input$inTTEthnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$inTTEthnicity)
     updateTextInput(session, "inBDEthnicity", NULL, input$inTTEthnicity)
     updateTextInput(session, "methnicity", NULL, input$inTTEthnicity)
-    updateTextInput(session, "inMSEthnicity", NULL, input$inTTEthnicity)
+    updateTextInput(session, "inGEthnicity", NULL, input$inTTEthnicity)
     updateTextInput(session, "inCMEthnicity", NULL, input$inTTEthnicity)
   })
   
   #   inBDEthnicity
   #   methnicity
-  #   inMSEthnicity
+  #   inGEthnicity
   #   inCMEthnicity
-  #   inCO2Ethnicity
+  #   inGEthnicity
   
   
   observe({input$flipMS
     updateTextInput(session, "flipTT", NULL, input$flipMS)
     updateTextInput(session, "flipMETHG", NULL, input$flipMS)
     updateTextInput(session, "inMSflip", NULL, input$flipMS)
-    updateTextInput(session, "inCMflip", NULL, input$flipMS)
-    updateTextInput(session, "inCO2flip", NULL, input$flipMS)
+    updateTextInput(session, "flipG", NULL, input$flipMS)
+    updateTextInput(session, "flipG", NULL, input$flipMS)
   })
   
   observe({input$flipMETHG
     updateTextInput(session, "flipTT", NULL, input$flipMETHG)
     updateTextInput(session, "flipMS", NULL, input$flipMETHG)
     updateTextInput(session, "inMSflip", NULL, input$flipMETHG)
-    updateTextInput(session, "inCMflip", NULL, input$flipMETHG)
-    updateTextInput(session, "inCO2flip", NULL, input$flipMETHG)
+    updateTextInput(session, "flipG", NULL, input$flipMETHG)
+    updateTextInput(session, "flipG", NULL, input$flipMETHG)
     
   })
   
@@ -4123,33 +4175,33 @@ shinyServer(function(input, output, session){
     updateTextInput(session, "flipTT", NULL, input$inMSflip)
     updateTextInput(session, "flipMS", NULL, input$inMSflip)
     updateTextInput(session, "flipMETHG", NULL, input$inMSflip)
-    updateTextInput(session, "inCMflip", NULL, input$inMSflip)
-    updateTextInput(session, "inCO2flip", NULL, input$flipMS)
+    updateTextInput(session, "flipG", NULL, input$inMSflip)
+    updateTextInput(session, "flipG", NULL, input$flipMS)
     
   })
   
-  observe({input$inCMflip
-    updateTextInput(session, "flipTT", NULL, input$inCMflip)
-    updateTextInput(session, "flipMS", NULL, input$inCMflip)
-    updateTextInput(session, "flipMETHG", NULL, input$inCMflip)
-    updateTextInput(session, "inMSflip", NULL, input$inCMflip)
-    updateTextInput(session, "inCO2flip", NULL, input$inCMflip)
+  observe({input$flipG
+    updateTextInput(session, "flipTT", NULL, input$flipG)
+    updateTextInput(session, "flipMS", NULL, input$flipG)
+    updateTextInput(session, "flipMETHG", NULL, input$flipG)
+    updateTextInput(session, "inMSflip", NULL, input$flipG)
+    updateTextInput(session, "flipG", NULL, input$flipG)
   })
   
-  observe({input$inCO2flip
-    updateTextInput(session, "flipTT", NULL, input$inCO2flip)
-    updateTextInput(session, "flipMS", NULL, input$inCO2flip)
-    updateTextInput(session, "flipMETHG", NULL, input$inCO2flip)
-    updateTextInput(session, "inMSflip", NULL, input$inCO2flip)
-    updateTextInput(session, "inCMflip", NULL, input$inCO2flip)
+  observe({input$flipG
+    updateTextInput(session, "flipTT", NULL, input$flipG)
+    updateTextInput(session, "flipMS", NULL, input$flipG)
+    updateTextInput(session, "flipMETHG", NULL, input$flipG)
+    updateTextInput(session, "inMSflip", NULL, input$flipG)
+    updateTextInput(session, "flipG", NULL, input$flipG)
   })
   
   observe({input$flipTT
-    updateTextInput(session, "inCO2flip", NULL, input$flipTT)
+    updateTextInput(session, "flipG", NULL, input$flipTT)
     updateTextInput(session, "flipMS", NULL, input$flipTT)
     updateTextInput(session, "flipMETHG", NULL, input$flipTT)
     updateTextInput(session, "inMSflip", NULL, input$flipTT)
-    updateTextInput(session, "inCMflip", NULL, input$flipTT)
+    updateTextInput(session, "flipG", NULL, input$flipTT)
   })
   
   
@@ -4157,8 +4209,8 @@ shinyServer(function(input, output, session){
   #flipMS
   #flipMETHG
   #inMSflip
-  #inCMflip
-  #inCO2flip
+  #flipG
+  #flipG
   
   shinyjs::onclick("MSHelp", shinyjs::toggle(id = "MSHelpText", anim = FALSE))
   shinyjs::onclick("MTHelp", shinyjs::toggle(id = "MTHelpText", anim = FALSE))
