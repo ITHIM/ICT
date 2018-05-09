@@ -93,8 +93,7 @@ purpose <- c("All" = "All",
              "Shopping" = 4,
              "Other escort" = 5, 
              "Personal business" = 6, 
-             "Leisure" = 7,
-             "Other including just walk" = 8)
+             "Leisure" = 7)
 
 # default MS/DP values are: 0.05 0.10 0.15 0.25 0.50 0.75 1.00
 # for init use the first (default) region from the list
