@@ -3626,64 +3626,6 @@ shinyServer(function(input, output, session){
       filtered_title
   }
   
-  #   observe({
-  #     
-  #     if (input$inBDEQ != 3){
-  #       updateTextInput(session, "inHealthEQ", NULL, input$inBDEQ)
-  #       updateTextInput(session, "inMETEQ", NULL, input$inBDEQ)
-  #       updateTextInput(session, "inGEQ", NULL, input$inBDEQ)
-  #       updateTextInput(session, "inCMEQ", NULL, input$inBDEQ)
-  #       updateTextInput(session, "inCO2EQ", NULL, input$inBDEQ)
-  #       
-  #     }
-  #     
-  #     if (input$inHealthEQ != 3){
-  #       updateTextInput(session, "inBDEQ", NULL, input$inHealthEQ)
-  #       updateTextInput(session, "inMETEQ", NULL, input$inHealthEQ)
-  #       updateTextInput(session, "inGEQ", NULL, input$inHealthEQ)
-  #       updateTextInput(session, "inCMEQ", NULL, input$inHealthEQ)
-  #       updateTextInput(session, "inCO2EQ", NULL, input$inHealthEQ)
-  #     }
-  #     
-  #     
-  #     
-  #     if (input$inMETEQ != 3){
-  #       updateTextInput(session, "inBDEQ", NULL, input$inMETEQ)
-  #       updateTextInput(session, "inHealthEQ", NULL, input$inMETEQ)
-  #       updateTextInput(session, "inMSEQ", NULL, input$inMETEQ)
-  #       updateTextInput(session, "inCMEQ", NULL, input$inMETEQ)
-  #       updateTextInput(session, "inCO2EQ", NULL, input$inMETEQ)
-  #     }
-  #     
-  #     if (input$inMSEQ != 3){
-  #       updateTextInput(session, "inBDEQ", NULL, input$inMSEQ)
-  #       updateTextInput(session, "inHealthEQ", NULL, input$inMSEQ)
-  #       updateTextInput(session, "inMETEQ", NULL, input$inMSEQ)
-  #       updateTextInput(session, "inCMEQ", NULL, input$inMSEQ)
-  #       updateTextInput(session, "inCO2EQ", NULL, input$inMSEQ)
-  #     }
-  #     
-  #     if (input$inCMEQ != 3){
-  #       updateTextInput(session, "inBDEQ", NULL, input$inCMEQ)
-  #       updateTextInput(session, "inHealthEQ", NULL, input$inCMEQ)
-  #       updateTextInput(session, "inMETEQ", NULL, input$inCMEQ)
-  #       updateTextInput(session, "inMSEQ", NULL, input$inCMEQ)
-  #       updateTextInput(session, "inCO2EQ", NULL, input$inCMEQ)
-  #     }
-  #     
-  #     if (input$inCO2EQ != 3){
-  #       updateTextInput(session, "inBDEQ", NULL, input$inCO2EQ)
-  #       updateTextInput(session, "inHealthEQ", NULL, input$inCO2EQ)
-  #       updateTextInput(session, "inMETEQ", NULL, input$inCO2EQ)
-  #       updateTextInput(session, "inMSEQ", NULL, input$inCO2EQ)
-  #       updateTextInput(session, "inCMEQ", NULL, input$inCO2EQ)
-  #     }
-  # 
-  #   })
-  
-  
-  
-  
   # EQ
   observe({
     input$inBDEQ
@@ -4206,11 +4148,7 @@ shinyServer(function(input, output, session){
   
   
   
-  #flipMS
-  #flipMETHG
-  #inMSflip
-  #flipG
-  #flipG
+
   
   shinyjs::onclick("MSHelp", shinyjs::toggle(id = "MSHelpText", anim = FALSE))
   shinyjs::onclick("MTHelp", shinyjs::toggle(id = "MTHelpText", anim = FALSE))
@@ -4221,40 +4159,6 @@ shinyServer(function(input, output, session){
   shinyjs::onclick("CO2Help", shinyjs::toggle(id = "CO2HelpText", anim = FALSE))
   shinyjs::onclick("mainIntro", shinyjs::toggle(id = "mainIntroText", anim = FALSE))
   
-  
-  # Experiment with nvd3 library
-  #   output$myChart <- renderChart({
-  #     #data1 <- subset(yll, age.band != "All Ages")
-  #     dat1 <- yll[,c("age.band", "gender","MS64_ebik1_eq1")]
-  #     
-  #     colnames(dat1) <- c("age.band", "gender", "scenario")
-  #     
-  #     # hair_eye_male <- subset(as.data.frame(HairEyeColor), Sex == "Male")
-  #     n2 <- nPlot(scenario ~ age.band, group = 'gender', data = dat1, type = 'multiBarChart')
-  #     n2$set(dom = "myChart")
-  #     return(n2)
-  #   })
-  
-  #   output$oSample <- renderPlot({
-  #     if (input$goButton == 0){
-  #       cat(" button 0")
-  #       return()
-  #     }else{
-  #       cat(" button 1")
-  #       
-  #     }
-  #     
-  #     # plot-making code here
-  #   })
-  
-  #   observe({
-  #     # do_something_button is your actionButton id.
-  #     if (input$intro > 0) {
-  #       cat("press!")
-  #       #updateTextInput(session = session, inputId = "goButton", label = "pressed", value = "pressed")
-  #     }
-  #     
-  #   })
   
   
 })
