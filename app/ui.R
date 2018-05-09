@@ -173,56 +173,7 @@ shinyUI(fluidPage(
     )
     
     ,
-    # conditionalPanel(condition="input.conditionedPanels == 2",
-    #                  selectInput(inputId = "inTTMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#, selected = uBDMS[2]),
-    #                  radioButtons(inputId = "inTTEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                  radioButtons(inputId = "inTTEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  selectizeInput("inTP", "Trip Purpose:", purpose, selected = purpose[1], multiple = F),
-    #                  HTML("<hr>"),
-    #                  selectizeInput("inTTAG", "Age Group:", ag, selected = ag[1], multiple = F),
-    #                  radioButtons("inTTGender", "Gender: ", gender, inline = TRUE),
-    #                  selectizeInput("inTTSES", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
-    #                  radioButtons("inTTEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                  #HTML("<hr>"),
-    #                  #radioButtons("flipTT", label = "Flip Histogram:", switchRButton, inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  radioButtons("flipTTPlot", label = "Flip Plot:", TTRButton, inline = TRUE)
-    #                  
-    # ),
-    # conditionalPanel(condition="input.conditionedPanels == 3",
-    #                  selectInput(inputId = "inMSMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-    #                  radioButtons(inputId = "inMSEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                  radioButtons(inputId = "inMSEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  selectizeInput("inMSTP", "Trip Purpose:", purpose, selected = purpose[1], multiple = F),
-    #                  HTML("<hr>"),
-    #                  selectizeInput("inMSAG", "Age Group:", ag, multiple = F),
-    #                  radioButtons("inMSG", "Gender: ", gender, inline = TRUE),
-    #                  selectizeInput("inMSSES", "Socio Economic Classification :", ses, multiple = F),
-    #                  radioButtons("inMSEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  radioButtons("inMSflip", label = "Flip Histogram:", switchRButton, inline = TRUE),
-    #                  
-    # ),
-    # conditionalPanel(condition="input.conditionedPanels == 4",
-    #                  
-    #                  tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
-    #                           selectInput(inputId = "inMETMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS)
-    #                  ),
-    #                  radioButtons("inMETEQ", "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                  radioButtons("inMETEB", "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                  
-    #                  HTML("<hr>"),
-    #                  selectizeInput("mag", "Age Group:", ag, selected = ag[1], multiple = F),
-    #                  radioButtons("mgender", "Gender: ", gender, inline = TRUE),
-    #                  selectizeInput("mses", "Socio Economic Classification :", ses, selected = ses[1], multiple = F),
-    #                  radioButtons("methnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  radioButtons("flipMETHG", label = "Flip Histogram:", switchRButton, inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  radioButtons("phyGuideline", label = "Physical activity outcome measure:", phyGLRButton, inline = TRUE)
-    # )
+  
     conditionalPanel(condition="input.conditionedPanels == 5",
                      selectInput(inputId = "inHealthMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
                      radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
@@ -246,35 +197,7 @@ shinyUI(fluidPage(
                      radioButtons("inHealthVarSwitch", label = "Variable:", healthRButton, inline = TRUE)
                      
     )
-    
-    # ,
-    # conditionalPanel(condition="input.conditionedPanels == 6",
-    #                  selectInput(inputId = "inCMMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-    #                  radioButtons(inputId = "inCMEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                  radioButtons(inputId = "inCMEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  selectizeInput("inCMAG", "Age Group:", ag, multiple = F),
-    #                  radioButtons("inCMG", "Gender: ", gender, inline = TRUE),
-    #                  selectizeInput("inCMSES", "Socio Economic Classification :", ses),
-    #                  radioButtons("inCMEthnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  radioButtons("inCMflip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-    #                  
-    # ),
-    # conditionalPanel(condition="input.conditionedPanels == 7",
-    #                  tags$div(title="Select percentage of total regional population who are as likely to cycle based on trip distance as existing cyclists",
-    #                           selectInput(inputId = "inCO2MS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS)
-    #                  ),
-    #                  radioButtons(inputId = "inCO2EQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
-    #                  radioButtons(inputId = "inCO2EB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  selectizeInput("inCO2AG", "Age Group:", ag, multiple = F),
-    #                  radioButtons("inCO2G", "Gender: ", gender, inline = TRUE),
-    #                  selectizeInput("inCO2SES", "Socio Economic Classification :", ses),
-    #                  radioButtons("inCO2Ethnicity", label = "Ethnic Group:", ethnicity, inline = TRUE),
-    #                  HTML("<hr>"),
-    #                  radioButtons("inCO2flip", label = "Flip Histogram:", switchRButton, inline = TRUE)
-    # )
+  
     ,
     
     
