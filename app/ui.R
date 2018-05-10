@@ -132,8 +132,11 @@ shinyUI(fluidPage(
                      
                      radioButtons(inputId = "inGEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inGEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
-                     HTML("<hr>"),
-                     selectizeInput("inGTP", "Trip Purpose:", purpose, selected = purpose[1], multiple = F),
+                     conditionalPanel(condition="[1, 2].indexOf(parseInt(input.conditionedPanels)) > -1",
+                                      HTML("<hr>"),
+                                      selectizeInput("inGTP", "Trip Purpose:", purpose, selected = purpose[1], multiple = F)
+                     ),
+                     
                      HTML("<hr>"),
                      selectizeInput("inGAG", "Age Group:", ag, selected = ag[1], multiple = F),
                      radioButtons("inGGender", "Gender: ", gender, inline = TRUE),
