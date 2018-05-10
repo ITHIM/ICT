@@ -466,9 +466,9 @@ shinyServer(function(input, output, session){
       data <- subset(data, NSSec_B03ID %in% input$inGSES)
     }
     
-    if (input$inGTP != "All"){
-      data <- subset(data, TripPurpose_B04ID == input$inGTP)
-    }
+    # if (input$inGTP != "All"){
+    #   data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    # }
     
     if (input$inGEthnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
@@ -499,9 +499,9 @@ shinyServer(function(input, output, session){
       data <- subset(data, NSSec_B03ID %in% input$inGSES)
     }
     
-    if (input$inGTP != "All"){
-      data <- subset(data, TripPurpose_B04ID == input$inGTP)
-    }
+    # if (input$inGTP != "All"){
+    #   data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    # }
     
     if (input$inGEthnicity != "All"){
       data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
@@ -536,9 +536,9 @@ shinyServer(function(input, output, session){
         data <- subset(data, NSSec_B03ID %in% input$inGSES)
       }
       
-      if (input$inGTP != "All"){
-        data <- subset(data, TripPurpose_B04ID == input$inGTP)
-      }
+      # if (input$inGTP != "All"){
+      #   data <- subset(data, TripPurpose_B04ID == input$inGTP)
+      # }
       
       if (input$inGEthnicity != "All"){
         data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
@@ -607,7 +607,7 @@ shinyServer(function(input, output, session){
         
         # if no filter is selected
         
-        if (input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All" && input$inGAG == "All" && input$inGTP == "All"){
+        if (input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All" && input$inGAG == "All"){# && input$inGTP == "All"){
           
           extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - ")
           # Replace sub-population with total population for both first and second column names
@@ -1283,7 +1283,7 @@ shinyServer(function(input, output, session){
     # # cat(npeople, "\n")
     # 
     # if (nrow(data) != nrow (dataSource)){
-    if (input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" || input$inGAG != "All" || input$inGTP != "All"){
+    if (input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" || input$inGAG != "All"){# || input$inGTP != "All"){
       
       displayGender <- "All"
       if (input$inGGender == 1){
@@ -2562,8 +2562,8 @@ shinyServer(function(input, output, session){
       
       # if no filter is selected
       
-      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"
-          && input$inGTP == "All"){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"){
+          # && input$inGTP == "All"){
       
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Total Miles Cycled per Cyclist per week")
         # Replace sub-population with total population for both first and second column names
@@ -2671,9 +2671,9 @@ shinyServer(function(input, output, session){
       data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
     }
     
-    if (input$inGTP != "All"){
-      data <- subset(data, TripPurpose_B04ID  == input$inGTP)
-    }
+    # if (input$inGTP != "All"){
+    #   data <- subset(data, TripPurpose_B04ID  == input$inGTP)
+    # }
     #data[is.na(data)] <- 0
     
     
@@ -2726,9 +2726,9 @@ shinyServer(function(input, output, session){
         dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID %in% input$inGEthnicity)
       }
       
-      if (input$inGTP != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, TripPurpose_B04ID == input$inGTP)
-      }
+      # if (input$inGTP != "All"){
+      #   dataAltRegFiltered <- subset(dataAltRegFiltered, TripPurpose_B04ID == input$inGTP)
+      # }
       
       
       
@@ -2801,7 +2801,7 @@ shinyServer(function(input, output, session){
       
       # if no filter is selected
       
-      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"  && input$inGTP == "All" ){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"){#  && input$inGTP == "All" ){
       
         extended_title <- paste0("Total Population [", nameOfTheSelectedRegion, "] - Car Miles per person per week")
         # Replace sub-population with total population for both first and second column names
@@ -2985,9 +2985,9 @@ shinyServer(function(input, output, session){
       data <- subset(data, EthGroupTS_B02ID %in% input$inGEthnicity)
     }
     
-    if (input$inGTP != "All"){
-      data <- subset(data, TripPurpose_B04ID == input$inGTP)
-    }
+    # if (input$inGTP != "All"){
+    #   data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    # }
     #data[is.na(data)] <- 0
     
     
@@ -3042,9 +3042,9 @@ shinyServer(function(input, output, session){
         dataAltRegFiltered <- subset(dataAltRegFiltered, EthGroupTS_B02ID %in% input$inGEthnicity)
       }
       
-      if (input$inGTP != "All"){
-        dataAltRegFiltered <- subset(dataAltRegFiltered, TripPurpose_B04ID == input$inGTP)
-      }
+      # if (input$inGTP != "All"){
+      #   dataAltRegFiltered <- subset(dataAltRegFiltered, TripPurpose_B04ID == input$inGTP)
+      # }
       
       dataAltRegFiltered <- data.frame(data = dataAltRegFiltered[[columnName]])
       
@@ -3112,7 +3112,7 @@ shinyServer(function(input, output, session){
       
       # if no filter selected
       
-      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All" && input$inGTP == "All" ){
+      if (input$inGAG == "All" && input$inGGender == 3 && input$inGEthnicity == "All" && input$inGSES == "All"){# && input$inGTP == "All" ){
         
         extended_title <- HTML(paste0("Total Population [", nameOfTheSelectedRegion, "] - CO<sub>2</sub> (kg) from car travel per person per week"))
       
@@ -3305,9 +3305,9 @@ shinyServer(function(input, output, session){
       data <- subset(data, EthGroupTS_B02ID == input$inGEthnicity)
     }
     
-    if (input$inGTP != "All"){
-      data <- subset(data, TripPurpose_B04ID == input$inGTP)
-    }
+    # if (input$inGTP != "All"){
+    #   data <- subset(data, TripPurpose_B04ID == input$inGTP)
+    # }
     
     # Remove all NA rows from the dataset
     data[is.na(data)] <- 0
@@ -3491,8 +3491,8 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" 
-        || input$inGTP != "All"){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All"){
+        # || input$inGTP != "All"){
       displayGender <- "All"
       if (input$inGGender == 1){
         displayGender <- "Male"
