@@ -1581,7 +1581,10 @@ shinyServer(function(input, output, session){
       
     }
     
-    h1$exporting(enabled = T)
+    h1$exporting(enabled = T, 
+                 sourceWidth = 1920,
+                 sourceWidth = 1080,
+                 scale = 16)
     return(h1)
   }
   
