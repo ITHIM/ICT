@@ -28,7 +28,7 @@ carMilesRButton <- c("Car Miles" = "Car Miles Per person (per week)",
                      "Car Miles Reduced" = "Car Miles Reduced Per person (per week)")
 
 summaryhealthRButton <- c("Health" = "Years of Life Lost (YLL)",
-                   "Health benefit - YLL reduciton" = "Years of Life Lost (YLL) reduction (%)")
+                   "Health benefit - YLL reduction" = "Years of Life Lost (YLL) reduction (%)")
 
 
 # % cyclists in the total population	Miles cycled per person per week	Car miles cycled  per week	Marginal METs per person per week	Car miles per person per week	Car miles reduced per person per week	CO2 from car travel per person per week
