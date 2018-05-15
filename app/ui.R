@@ -116,7 +116,10 @@ shinyUI(fluidPage(
   hidden (div(id = "mainIntroText",
               includeMarkdown("README.md")
   )),
-  selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions),
+  
+  conditionalPanel(condition="[1, 2, 3, 4, 5, 6, 7, 8].indexOf(parseInt(input.conditionedPanels)) > -1",
+    selectInput(inputId = "inRegions", label = "Select Region:", choices =  regions)
+  ),
   
   sidebarPanel(
     
