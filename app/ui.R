@@ -133,7 +133,7 @@ shinyUI(fluidPage(
                               selectInput(inputId = "inGMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS)
                      ),
                      
-                     radioButtons(inputId = "inGEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inGEQ", label = "Select Age and Gender uptake Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inGEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      conditionalPanel(condition="[1, 2].indexOf(parseInt(input.conditionedPanels)) > -1",
                                       HTML("<hr>"),
@@ -179,7 +179,7 @@ shinyUI(fluidPage(
     ),
     conditionalPanel(condition="input.conditionedPanels == 5",
                      selectInput(inputId = "inHealthMS", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),#uBDMS, selected = uBDMS[2]),
-                     radioButtons(inputId = "inHealthEQ", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inHealthEQ", label = "Select Age and Gender uptake Equity (EQ):", onOffRButton, inline = TRUE),
                      radioButtons(inputId = "inHealthEB", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE),
                      HTML("<hr>"),
                      radioButtons("inHealthSwitch", label = "Comparison with:", c("Baseline" = "Baseline","An alternative scenario/Region"= "Scenario"), inline = TRUE),
@@ -189,7 +189,7 @@ shinyUI(fluidPage(
                        selectInput(inputId = "inRegionSelectedHealth", label = "Select Region:", choices = regionsList),
                        hidden(p(id = "region-health-switch-warning", class = "region-switch-warnings", "")),
                        selectInput(inputId = "inHealthMS1", label = "Select % of Population who are Regular Cyclists:", choices =  uniqueMS),
-                       radioButtons(inputId = "inHealthEQ1", label = "Select Equity (EQ):", onOffRButton, inline = TRUE),
+                       radioButtons(inputId = "inHealthEQ1", label = "Select Age and Gender uptake Equity (EQ):", onOffRButton, inline = TRUE),
                        radioButtons(inputId = "inHealthEB1", label = "Select Ebike (EB):", onOffRButton, selected = onOffRButton[2], inline = TRUE)
                      ),
                      HTML("<hr>"),
@@ -201,7 +201,7 @@ shinyUI(fluidPage(
     ),
     
     conditionalPanel(condition="input.conditionedPanels == 8",
-                     radioButtons(inputId = "inEQ", label = "Select Equity (EQ):", allOnOffRButton, inline = TRUE),
+                     radioButtons(inputId = "inEQ", label = "Select Age and Gender uptake Equity (EQ):", allOnOffRButton, inline = TRUE),
                      radioButtons(inputId = "inEB", label = "Select Ebike (EB):", allOnOffRButton, inline = TRUE),
                      HTML("<hr>"),
                      
