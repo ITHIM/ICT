@@ -1394,13 +1394,40 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       
+      
+      # purpose <- c("All" = "All",
+      #              "Commuting" = 1,
+      #              "Business" = 2, 	
+      #              "Education / escort education" = 3, 
+      #              "Shopping" = 4,
+      #              "Other escort" = 5, 
+      #              "Personal business" = 6, 
+      #              "Leisure" = 7)
+      
+      displayPurpose <- 'All'
+      if (input$inGTP == 1){
+        displayPurpose <- "Commuting"
+      }else if (input$inGTP == 2){
+        displayPurpose <- "Business"
+      }else if (input$inGTP == 3){
+        displayPurpose <- "Education / escort education"
+      }else if (input$inGTP == 4){
+        displayPurpose <- "Shopping"
+      }else if (input$inGTP == 5){
+        displayPurpose <- "Other escort"
+      }else if (input$inGTP == 6){
+        displayPurpose <- "Personal business"
+      }else if (input$inGTP == 7){
+        displayPurpose <- "Leisure"
+      }
+      
       if(showingTotal){
         
         filters_info <- ""
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Purpose: ", displayPurpose, ", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
@@ -1871,7 +1898,7 @@ shinyServer(function(input, output, session){
       titlePrefixOutput <- "Sample Size: "
     }
     
-    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" ){
+    if (input$inGAG != "All" || input$inGGender != 3 || input$inGEthnicity != "All" || input$inGSES != "All" || input$inGTP != "All" ){
       displayGender <- "All"
       if (input$inGGender == 1){
         displayGender <- "Male"
@@ -1899,13 +1926,31 @@ shinyServer(function(input, output, session){
         displaySES <- "Not classified (including students)"
       }
       
+      
+      displayPurpose <- 'All'
+      if (input$inGTP == 1){
+        displayPurpose <- "Commuting"
+      }else if (input$inGTP == 2){
+        displayPurpose <- "Business"
+      }else if (input$inGTP == 3){
+        displayPurpose <- "Education / escort education"
+      }else if (input$inGTP == 4){
+        displayPurpose <- "Shopping"
+      }else if (input$inGTP == 5){
+        displayPurpose <- "Other escort"
+      }else if (input$inGTP == 6){
+        displayPurpose <- "Personal business"
+      }else if (input$inGTP == 7){
+        displayPurpose <- "Leisure"
+      }
+      
       if(showingTotal){
         
         filters_info <- ""
         
       } else {
         
-        filters_info <- paste0(", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
+        filters_info <- paste0(", Purpose: ", displayPurpose, ", Age Group: ", str_trim(input$inGAG), ", Gender: ", displayGender, ", Socio Economic Classification: ", displaySES, " and Ethnicity: ", displayEthnicity)
         
       }
       
