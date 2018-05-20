@@ -1030,7 +1030,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllData$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
+        h1$series(data = scYllData$scenario, name = paste(paste(paste("% Regular Cyclists",(as.numeric(input$inHealthMS) * 100) ), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -1040,7 +1040,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllData1$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth, "]")) )
+        h1$series(data = scYllData1$scenario, name = paste(paste(paste("% Regular Cyclists",(as.numeric(input$inHealthMS) * 100) ), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth, "]")) )
         
         # recode gender code to text values
         
@@ -1106,7 +1106,7 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
+        h1$series(data = scYllReductionData$scenario, name = paste(paste(paste("% Regular Cyclists",(as.numeric(input$inHealthMS1) * 100) ), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", nameOfTheSelectedRegion ,"]")) )
         
         eq <- "Off"
         if (input$inHealthEQ1 == 1)
@@ -1116,7 +1116,8 @@ shinyServer(function(input, output, session){
         if (input$inHealthEB1 == 1)
           eb <- "On"
         
-        h1$series(data = scYllReductionData1$scenario, name = paste(paste(paste("% Regular Cyclists",input$inHealthMS1), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth ,"]")) )
+        
+        h1$series(data = scYllReductionData1$scenario, name = paste(paste(paste("% Regular Cyclists", (as.numeric(input$inHealthMS1) * 100) ), paste("Equity", eq), paste("Ebike", eb), sep=", "), paste0("[", scenarioAltRegionHealth ,"]")) )
         
         # recode gender code to text values
         
