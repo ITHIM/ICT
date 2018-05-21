@@ -1079,9 +1079,9 @@ shinyServer(function(input, output, session){
                                color = "#f00"))
     }
     if (input$inHealthVarSwitch == "YLL")
-      h1$title(text = "Reduction in Years of Life Lost (YLL) for the Selected Region")
+      h1$title(text = "Reduction in Years of Life Lost (YLL) ")
     else
-      h1$title(text = "Averted number of Deaths for the Selected Region")
+      h1$title(text = "Averted number of Deaths ")
     h1$set(dom = "plotHealth")
     h1$exporting(enabled = T)
     return(h1)
@@ -1155,9 +1155,9 @@ shinyServer(function(input, output, session){
     }
     
     if (input$inHealthVarSwitch == "YLL")
-      h1$title(text = "Reduction in percentage of Years of Life Lost (YLL) for the Selected Region")
+      h1$title(text = "Reduction in percentage of Years of Life Lost (YLL) ")
     else
-      h1$title(text = "Reduction in percentage of Deaths for the Selected Region")
+      h1$title(text = "Reduction in percentage of Deaths ")
     h1$tooltip(valueSuffix= '%')
     h1$set(dom = "plotHealthReduction")
     h1$exporting(enabled = T)
