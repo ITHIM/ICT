@@ -631,8 +631,8 @@ shinyServer(function(input, output, session){
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
-        h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh >= 8.75)", 
-                                "Meeting the higher guidelines (METh >= 17.5)"), 
+        h1$xAxis(categories = c("Not meeting guidelines (MMETh < 8.75)", "Meeting the guidelines (MMETh >= 8.75)", 
+                                "Meeting the higher guidelines (MMETh >= 17.5)"), 
                  title = list(text = '% meeting WHO physical activity guidelines'))
         h1$series(data = bc$Freq, name = firstColName)
         
@@ -871,8 +871,8 @@ shinyServer(function(input, output, session){
         bc <- createPhyActTable(firstColData)
         bc$Freq <- round(bc$Freq  / nrow(firstColData) * 100, digits = 1)
         
-        h1$xAxis(categories = c("Not meeting guidelines (METh < 8.75)", "Meeting the guidelines (METh >= 8.75)", 
-                                "Meeting the higher guidelines (METh >= 17.5)"), 
+        h1$xAxis(categories = c("Not meeting guidelines (MMETh < 8.75)", "Meeting the guidelines (MMETh >= 8.75)", 
+                                "Meeting the higher guidelines (MMETh >= 17.5)"), 
                  title = list(text = '% meeting WHO physical activity guidelines'))
         h1$series(data = bc$Freq, name = firstColName)
         
